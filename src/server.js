@@ -13,13 +13,14 @@ import authApi from '../routes/Auth_api.js'; // authentication routes
 import googleAuth from '../routes/Google_auth.js'; // Google OAuth authentication
 import protectedRoutes from '../routes/protected_pages.js'; // protected routes(dashboard page, profile page...)
 import { errorHandler, logger } from "../middleware/JWT-Error-Logger-Roles.js";
+import { startCleanupInterval } from './cleanup.js';
 
 
 
 const app = express();
 const PORT = process.env.PORT;
 app.use(express.json());
-app.use(express.urlencoded({extended: false})); // It is used for typing data in search bars
+app.use(express.urlencoded({extended: false})); // It is used to take data for rq.body.....
 app.use(cookieParser()); // to use cookies in all routes
 
 const __filename = fileURLToPath(import.meta.url);
@@ -30,7 +31,8 @@ app.use(logger); // just for testing purposes
 // STATIC FILES ==> to serve files like html, css, js...
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
-
+// INTERVAL ==> every 20m
+startCleanupInterval();
 
 
 // ROUTES
@@ -40,7 +42,6 @@ app.use('/api', orders); // Orders routes
 app.use('/', protectedRoutes);  // Protected pages (dashboard, profile...)
 app.use('/', authPages); // Authentication pages (login, signup)
 app.use('/api', authApi); // Authentication routes
-
 
 
 

@@ -40,7 +40,7 @@ export async function getUsers() {
 // @POST find user by email
 export async function getUserByEmail(email) {
     try {
-        const [rows] = await pool.query('SELECT id, email, password_hash, user_role as role FROM users WHERE email = ?', [email]); 
+        const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]); 
         return rows[0];
 
     } catch (error) {

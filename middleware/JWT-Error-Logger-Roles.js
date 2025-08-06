@@ -11,7 +11,7 @@ const logFilePath = path.join(__dirname, '..', 'logs', 'requests.log');
 
 export function logger(req, res, next) {
     const timestamp = new Date().toLocaleString('en-GB', { timeZone: 'Europe/Skopje' });
-    console.log(`${req.method} ${req.protocol}://${req.get('host')}${req.originalUrl} - ${timestamp}\n`); // alson log to console
+    console.log(`${req.method} ${req.protocol}://${req.get('host')}${req.originalUrl} - ${timestamp}\n`); // also log to console
 
     const logEntry = `${req.method} ${req.protocol}://${req.get('host')}${req.originalUrl} - ${timestamp}\n`;
     

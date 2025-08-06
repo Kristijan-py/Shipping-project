@@ -63,6 +63,14 @@ router.get('/reset-password', (req, res) => {
   }
 });
 
+router.get('/verify-email-page', (req, res) => {
+  try {
+    res.sendFile(path.join(__dirname, '..', 'public', 'verify-email-page.html'));
+  } catch (error) {
+    console.error("Error sending verification success page:", error.message);
+    res.status(500).send("Internal Server Error");
+  }
+});
 
 
 export default router;

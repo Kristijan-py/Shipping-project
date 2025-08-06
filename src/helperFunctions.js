@@ -125,7 +125,7 @@ export async function sendresetEmail(email, link) {
         from: process.env.EMAIL_USER,
         to: email,
         subject: 'Password reset',
-        html: `<p>Click the link to reset your password:     <button><a href="${link}">${link}</a></button></p>
+        html: `<p>Click the link to reset your password:     <button><a href="${link}">Reset Password</a></button></p>
         <p>If you did not request this, please ignore this email.</p>`,
     });
         console.log("Reset email sent successfully ✅");

@@ -2,7 +2,6 @@ import express from 'express';
 import bcrypt from "bcrypt"; // hashing passwords
 import crypto from 'crypto'; // for generating secure tokens
 import jwt from 'jsonwebtoken'; // Pass the login using token
-import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import dotenv from 'dotenv';
@@ -13,6 +12,7 @@ import {getUserByEmail, createUser} from '../src/database.js';
 
 const router = express.Router();
 router.use(express.json());
+router.use(express.urlencoded({extended: false}));
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -22,12 +22,9 @@ const __dirname = dirname(__filename);
 // @POST a user SIGNUP
 router.post('/signup', async (req, res) => {
     try {
-        console.log("Password:", req.body.password);
-        console.log("Confirm:", req.body.confirm_password);
-
         // Check if user already exists
         const ifUserExist = await ifUserExists(req.body.email, req.body.phone);
-        if(ifUserExist) {
+        if(ifUserExist) { // can be true or false so in that case dont put !
             return res.status(400).send({error: "User with this email or phone number already exists"});
         }
 
@@ -52,22 +49,22 @@ router.post('/signup', async (req, res) => {
         // EMAIL VERIFICATION
         const emailToken = crypto.randomBytes(32).toString('hex');
         const hashedToken = crypto.createHash('sha256').update(emailToken).digest('hex');
-        const expires = new Date(Date.now() + 1000 * 60 * 15 + 120 * 60_000); // 120 * 60_000 is for UTC+2 for Macedonia
+        const expires = new Date(Date.now() + 1000 * 60 * 15);
 
         await pool.query('UPDATE users SET email_token = ?, email_token_expires = ? WHERE email = ?', 
             [hashedToken, expires, req.body.email]
         );
 
-        const link = `${req.protocol}://${req.get('host')}/verify-email?token=${emailToken}&email=${req.body.email}`;
+        const link = `${req.protocol}://${req.get('host')}/api/verify-email?token=${emailToken}&email=${req.body.email}`;
         await verifyEmail(req.body.email, link); // sendimg a mail to the user
 
-        return res.redirect('/dashboard'); // redirect to dashboard page after signup
+        res.redirect('/login'); // redirect to login page after signup
 
     } catch (error) {
         console.log("Error while creating a user: ", error.message);
         return false;
     }
-})
+});
 
 
 // @POST a user LOGIN
@@ -83,13 +80,13 @@ router.post('/login', async (req, res) => {
             return res.status(400).send({error: "Incorrect password!"});
         };
 
-        if(user.is_verified !== true){
+        if(user.is_verified !== 1){
             return res.status(403).send({error: "Verify your email before logging in."});
         }
 
 
         // JWT
-        const accessToken = jwt.sign({id: user.id, email: user.email, role: user.role}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '15m'}); // create token with user id and email, expires in 15 minutes
+        const accessToken = jwt.sign({id: user.id, email: user.email, role: user.user_role}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '15m'}); // create token with user id and email, expires in 15 minutes
         res.cookie("token", accessToken, {
             httpOnly: true,      // JS can't access it
             secure: false,       // true in production with HTTPS
@@ -98,7 +95,7 @@ router.post('/login', async (req, res) => {
         });
         
         console.log("Logged in successfully ✅");
-        console.log("JWT payload:", { id: user.id, email: user.email, role: user.role }); // for debugging
+        console.log("JWT payload:", { id: user.id, email: user.email, role: user.user_role }); // for debugging
 
         return res.redirect('/dashboard'); // redirect to dashboard page after login
 
@@ -125,11 +122,11 @@ router.get('/verify-email', async (req, res) => {
 
     // If exists in DATABASE, verify it
     await pool.query(
-        'UPDATE users SET is_verified = true, email_token = NULL, email_token_expires = NULL WHERE email = ?',
+        'UPDATE users SET is_verified = 1, email_token = NULL, email_token_expires = NULL WHERE email = ?',
         [email]
     );
 
-    res.sendFile(path.join(__dirname, '..', 'public', 'verify-email.html'));
+    res.redirect('/verify-email-page');
 
 })
 
@@ -144,13 +141,13 @@ router.post('/forgotPassword', async (req, res) => {
         // Generate a random token for password reset
         const resetToken = crypto.randomBytes(32).toString('hex'); // generate a secure random token
         const resetTokenHash = crypto.createHash('sha256').update(resetToken).digest('hex'); // hashing the token
-        const resetTokenExpiration = new Date(Date.now() + 900000 + 120 * 60_000) // 15 minutes expiration time (+ 120 * 60_000 is for UTC +2 timezone for Macedonia)
+        const resetTokenExpiration = new Date(Date.now() + 900000 + 120 * 60_000) // 15 minutes expiration time (120 * 60_00 for UTC+2 timezone)
         .toISOString()
         .slice(0, 19).replace('T', ' '); // format to MySQL datetime
 
         await pool.query('UPDATE users SET reset_token = ?, reset_token_expires = ? WHERE email = ?', [resetTokenHash, resetTokenExpiration, user.email]);
 
-        const link = `${req.protocol}://${req.get('host')}/reset-password?token=${resetToken}&email=${user.email}`; // link to reset password
+        const link = `${req.protocol}://${req.get('host')}/reset-password?resetToken=${resetToken}&email=${user.email}`; // link to reset password
         console.log(link);
         await sendresetEmail(user.email, link); // send the reset link to the user's email for verification if the user is in our database
         return res.status(200).send({message: "Password reset link sent to your email!"});
@@ -164,8 +161,7 @@ router.post('/forgotPassword', async (req, res) => {
 // @POST reset password
 router.post('/reset-password', async (req, res) => {
     try {
-        const { resetToken, email } = req.query; // from URL
-        const { newPassword, confirmPassword } = req.body; // FROM THE HTML FORM
+        const { resetToken, email, newPassword, confirmPassword } = req.body; // FROM THE HTML FORM
 
         if (!resetToken || !email || !newPassword || !confirmPassword) {
             return res.status(400).send({error: "All fields are required"});
