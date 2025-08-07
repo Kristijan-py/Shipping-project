@@ -134,20 +134,20 @@ export async function getOrderById(id) {
 }
 
 // @POST order
-export async function createOrder(sender_name, sender_phone, buyer_phone, buyer_city, buyer_village, buyer_adress, price, shipping_fee, whos_paying) {
-    const [data] = await pool.query(`INSERT INTO orders (sender_name, sender_phone, buyer_phone, buyer_city, buyer_village, buyer_adress, price, shipping_fee, whos_paying)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`, [sender_name, sender_phone, buyer_phone, buyer_city, buyer_village, buyer_adress, price, shipping_fee, whos_paying]);
+export async function createOrder(sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying) {
+    const [data] = await pool.query(`INSERT INTO orders (sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying]);
     const id = data.insertId;
     return getOrderById(id); // call the get order by id to display all the info
 }
 
 
 // @PUT order
-export async function updateOrder(id, sender_name, sender_phone, buyer_phone, buyer_city, buyer_village, buyer_adress, price, shipping_fee, whos_paying) {
+export async function updateOrder(id, sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying) {
     const [data] = await pool.query
     (`UPDATE orders
-    SET sender_name = ?, sender_phone = ?, buyer_phone = ?, buyer_city = ?, buyer_village = ?, buyer_adress = ?, price =?, shipping_fee =?, whos_paying =?
-    WHERE id = ?` , [sender_name, sender_phone, buyer_phone, buyer_city, buyer_village, buyer_adress, price, shipping_fee, whos_paying, id]);
+    SET sender_name = ?, sender_phone = ?, buyer_phone = ?, buyer_city = ?, buyer_village = ?, buyer_adress = ?, price =?, package_type=?, whos_paying =?
+    WHERE id = ?` , [sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying, id]);
     return getOrderById(id);
 }
 

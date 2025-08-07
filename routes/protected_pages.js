@@ -3,7 +3,7 @@ import path from 'path';
 import { authenticateToken } from '../middleware/JWT-Error-Logger-Roles.js';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
-
+import { getOrders } from '../src/database.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -15,7 +15,7 @@ const router = express.Router();
 
 
 
-// @GET home page
+// @GET dashboard page
 router.get('/dashboard', authenticateToken, (req, res) => {  // secure page with JWT authentication
   try {
     res.sendFile(path.join(__dirname, '..', 'public', 'dashboard.html'));
@@ -23,6 +23,29 @@ router.get('/dashboard', authenticateToken, (req, res) => {  // secure page with
     console.error("Error sending dashboard page:", error.message);
     res.status(500).send("Internal Server Error");
   }
+});
+
+// @GET Create Orders page
+router.get('/createOrders', authenticateToken, (req, res) => {
+  try {
+    res.sendFile(path.join(__dirname, '..', 'public', 'createOrders.html'));
+  } catch (error) {
+    console.error('Error sending create orders page ', error.message);
+    res.status(500).send("Internal Server Error");
+  }
+
+});
+
+
+// @GET View Orders page
+router.get('/viewOrders', authenticateToken, (req, res) => {
+  try {
+    res.sendFile(path.join(__dirname, '..', 'public', 'viewOrders.html'));
+  } catch (error) {
+    console.error('Error sending create orders page ', error.message);
+    res.status(500).send("Internal Server Error");
+  }
+
 });
 
 

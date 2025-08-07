@@ -3,6 +3,7 @@ const router = express.Router();
 
 import { getOrders, getOrderById, createOrder, updateOrder, deleteOrder } from '../src/database.js';
 import { authenticateToken } from '../middleware/JWT-Error-Logger-Roles.js';
+import { error } from 'console';
 
 router.use(express.json());
 router.use(express.urlencoded({ extended: false }));
@@ -14,15 +15,16 @@ router.get('/orders', authenticateToken, async (req, res) => {
     try {
         const orders = await getOrders();
         if (!orders || orders.length === 0) {
-            return res.status(404).send({error: "Orders not found"});
+            return res.status(404).render('orders', { orders: [], error: "No orders found." });
         }
 
-        res.status(200).send(orders);
+        res.render('orders', {orders, error: null}); // when render is called, express knows is ejs and search for views foulder where i setted in server.js
     } catch (error) {
         console.log('Error fetching orders: ', error.message);
         res.status(500).send({error: "Internal server error"})
     }
 });
+
 
 
 // @GET a order by id
@@ -43,10 +45,11 @@ router.get('/orders/:id', authenticateToken, async (req, res) => {
 
 // @POST a order
 router.post('/createOrder', authenticateToken, async (req, res) => {
-    const { sender_name, sender_phone, buyer_phone, buyer_city, buyer_village, buyer_adress, price, shipping_fee, whos_paying } = req.body;
+    const { sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying } = req.body;
     try {
-        const newOrder = await createOrder(sender_name, sender_phone, buyer_phone, buyer_city, buyer_village, buyer_adress, price, shipping_fee, whos_paying);
-        res.status(201).send(newOrder);
+        const newOrder = await createOrder(sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying);
+        console.log('Order created');
+        res.status(201).send('Order created');
     } catch (error) {
         console.log("Error while creating a order: ", error.message);
         res.status(500).send({error: "Internal server error"});
@@ -56,10 +59,10 @@ router.post('/createOrder', authenticateToken, async (req, res) => {
 
 // @PUT a order
 router.put('/updateOrder', authenticateToken, async (req, res) => {
-    const { id, sender_name, sender_phone, buyer_phone, buyer_city, buyer_village, buyer_adress, price, shipping_fee, whos_paying } = req.body
+    const { id, sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying } = req.body
     try {
 
-        const updatedOrder = await updateOrder(id, sender_name, sender_phone, buyer_phone, buyer_city, buyer_village, buyer_adress, price, shipping_fee, whos_paying);
+        const updatedOrder = await updateOrder(id, sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying);
         if(!updatedOrder) {
             return res.status(404).send({error: "Order not found!"});
         }

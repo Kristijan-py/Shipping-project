@@ -26,6 +26,9 @@ app.use(cookieParser()); // to use cookies in all routes
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+app.set('view engine', 'ejs'); // setting view engine to show created orders
+app.set('views', path.join(__dirname, '..', 'views'));
+
 app.use(logger); // just for testing purposes
 
 // STATIC FILES ==> to serve files like html, css, js...

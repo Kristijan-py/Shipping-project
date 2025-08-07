@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Orders</title>
+</head>
+<body>
+    <h1>All Orders</h1>
+
+    <% if (error) { %>
+        <p style="color: red;"><%= error %></p>
+    <% } else if (orders.length === 0) { %>
+        <p>No orders found.</p>
+    <% } else { %>
+        <ul>
+            <% orders.forEach(order => { %>
+                <li>
+                    <strong>ID:</strong> <%= order.id %><br>
+                    <strong>Sender Name:</strong> <%= order.sender_name %><br>
+                    <strong>Sender Phone:</strong> <%= order.sender_phone %><br>
+                    <strong>Buyer Name:</strong> <%= order.buyer_name %><br>
+                    <strong>Buyer Phone:</strong> <%= order.buyer_phone %><br>
+                    <strong>Buyer City:</strong> <%= order.buyer_city %><br>
+                    <strong>Buyer Village:</strong> <%= order.buyer_village %><br>
+                    <strong>Buyer Adress:</strong> <%= order.buyer_adress %><br>
+                    <strong>Price:</strong> <%= order.price %><br>
+                    <strong>Package Type:</strong> <%= order.package_type %><br>
+                    <strong>Shipping Fee:</strong> <%= order.shipping_fee %><br>
+                    <strong>Who's Paying:</strong> <%= order.whos_paying %><br>
+                    <br>
+                </li>
+            <% }) %>
+        </ul>
+    <% } %>
+</body>
+</html>

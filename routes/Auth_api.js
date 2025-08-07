@@ -86,12 +86,12 @@ router.post('/login', async (req, res) => {
 
 
         // JWT
-        const accessToken = jwt.sign({id: user.id, email: user.email, role: user.user_role}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '15m'}); // create token with user id and email, expires in 15 minutes
+        const accessToken = jwt.sign({id: user.id, email: user.email, role: user.user_role}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '1h'}); // create token with user id and email, expires in 15 minutes
         res.cookie("token", accessToken, {
             httpOnly: true,      // JS can't access it
             secure: false,       // true in production with HTTPS
             sameSite: 'strict',  // CSRF protection
-            maxAge: 900000       // 15 minutes   
+            maxAge: 3600000       // 1 hour   
         });
         
         console.log("Logged in successfully ✅");
