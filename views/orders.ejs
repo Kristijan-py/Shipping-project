@@ -11,6 +11,9 @@
     <% } else if (orders.length === 0) { %>
         <p>No orders found.</p>
     <% } else { %>
+        <div style="display: flex; margin-left: 400px">
+            <button><a href="/dashboard">Dashboard</a></button>
+        </div>
         <ul>
             <% orders.forEach(order => { %>
                 <li>
