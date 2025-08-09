@@ -20,42 +20,49 @@ passport.use(new GoogleStrategy({
   },
   async function(accessToken, refreshToken, profile, cb) {
     try {
-        const[rows] = await pool.query('SELECT * FROM oauth_users WHERE provider = ? AND subject = ?', ['google', profile.id]);
+      const[rows] = await pool.query('SELECT * FROM oauth_users WHERE provider = ? AND subject = ?', ['google', profile.id]);
 
-        if (rows.length === 0) { // USER DOES NOT EXIST
-            // create a user in the database
-            const [userResult] = await pool.query('INSERT INTO users (name, email, user_role) VALUES (?, ?, ?)', [profile.displayName, profile.emails?.[0]?.value, 'user']);
-            // connect user_id with oauth_users make reference when user deletes account
-            console.log("New user created successfully!");
+      if (rows.length === 0) { // USER DOES NOT EXIST
+        // Check again with email
+        let userId;
+        const [existingEmail] = await pool.query('SELECT * FROM users where  email = ?', [profile.emails?.[0]?.value])
+
+        if(existingEmail.length === 0){
+          // create a user in the database
+          const [userResult] = await pool.query('INSERT INTO users (name, email, user_role, is_verified) VALUES (?, ?, ?, ?)', [profile.displayName, profile.emails?.[0]?.value, 'user', 1]);
+          userId = userResult.insertId; // if  not existed
+          console.log("New user created successfully!");
+        } else {
+          userId = existingEmail[0].id; // if existed
+        }
             
-            const userId = userResult.insertId;
-            await pool.query('INSERT INTO oauth_users (user_id, provider, subject) VALUES (?, ?, ?)', [userId, 'google', profile.id]);
+        await pool.query('INSERT INTO oauth_users (user_id, provider, subject) VALUES (?, ?, ?)', [userId, 'google', profile.id]);
 
-            const user = {
-                id: userId,
-                name: profile.displayName,
-                email: profile.emails?.[0]?.value,
-                role: 'user'
-            };
+        const user = {
+          id: userId,
+          name: profile.displayName,
+          email: profile.emails?.[0]?.value,
+          role: 'user'
+        };
 
-            return cb(null, user);
+        return cb(null, user);
 
-        } else { // IF USER EXISTS
-            console.log("User already exists in the database, logging in...");
+      } else { // IF USER EXISTS
+          console.log("User already exists in the database, logging in...");
 
-            const [[userRow]] = await pool.query('SELECT * FROM users WHERE id = ?', [rows[0].user_id]); // double array because we want to get the first row
-            const user = {
-                id: userRow.id,
-                name: userRow.name,
-                email: userRow.email,
-                role: userRow.role
-            };
+          const [[userRow]] = await pool.query('SELECT * FROM users WHERE id = ?', [rows[0].user_id]); // double array because its array and we must put 0 to access the user, not the whole array
+          const user = {
+            id: userRow.id,
+            name: userRow.name,
+            email: userRow.email,
+            role: userRow.role
+          };
 
-            return cb(null, user);
+          return cb(null, user);
         }
     } catch (error) {
-        console.error('Error during Google authentication:', error.message);
-        return cb(error);
+      console.error('Error during Google authentication:', error.message);
+      return cb(error);
     }
   }
 ));
@@ -69,13 +76,13 @@ router.get('/google',
 router.get('/google/callback', 
   passport.authenticate('google', { failureRedirect: '/login', session: false }), // if authentication fails, redirect to login
   function(req, res) {
-    const token = jwt.sign({ id: req.user.id, email: req.user.email, role: req.user.role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+    const token = jwt.sign({ id: req.user.id, email: req.user.email, role: req.user.role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
 
     res.cookie("token", token, {
       httpOnly: true,
       secure: false, // true in production with HTTPS
       sameSite: 'lax', // CSRF protection
-      maxAge: 900000 // 15 minutes
+      maxAge: 3600000 // 1 hour
     });
 
 

@@ -1,7 +1,7 @@
 import express from 'express';
 const router = express.Router();
 
-import { getOrders, getOrderById, createOrder, updateOrder, deleteOrder } from '../src/database.js';
+import { getOrders, getOrderById, createOrder, updateOrder, deleteOrder, pool } from '../src/database.js';
 import { authenticateToken } from '../middleware/JWT-Error-Logger-Roles.js';
 import { error } from 'console';
 
@@ -9,20 +9,21 @@ router.use(express.json());
 router.use(express.urlencoded({ extended: false }));
 
 
-// @GET all orders
+// @GET all orders from specific user on ejs page
 router.get('/orders', authenticateToken, async (req, res) => {
     try {
-        const orders = await getOrders();
-        if(!orders) {
-            return res.status(404).send({error: "Orders not found!"});
+        const userId = req.user.id;
+        const [orders] = await pool.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+        if (!orders || orders.length === 0) {
+            return res.status(404).render('orders', { orders: [], error: "No orders found." });
         }
-        res.status(200).send(orders);
 
+        res.render('orders', {orders, error: null}); // when render is called, express knows is ejs and search for views foulder where i setted in server.js
     } catch (error) {
         console.log('Error fetching orders: ', error.message);
         res.status(500).send({error: "Internal server error"})
     }
-})
+});
 
 
 // @GET a order by id
@@ -44,9 +45,10 @@ router.get('/orders/:id', authenticateToken, async (req, res) => {
 // @POST a order
 router.post('/createOrder', authenticateToken, async (req, res) => {
     const { sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying } = req.body;
+    const userId = req.user.id; // from jwt token
     try {
-        const newOrder = await createOrder(sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying);
-        console.log('Order created');
+        const newOrder = await createOrder(userId, sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying);
+        console.log('Order created: ');
         res.status(201).send('Order created');
     } catch (error) {
         console.log("Error while creating a order: ", error.message);

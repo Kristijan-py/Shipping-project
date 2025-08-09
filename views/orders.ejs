@@ -5,19 +5,19 @@
 </head>
 <body>
     <h1>All Orders</h1>
-
+    <div style="display: flex; margin-left: 400px">
+        <button><a href="/dashboard">Dashboard</a></button>
+    </div>
     <% if (error) { %>
         <p style="color: red;"><%= error %></p>
     <% } else if (orders.length === 0) { %>
         <p>No orders found.</p>
     <% } else { %>
-        <div style="display: flex; margin-left: 400px">
-            <button><a href="/dashboard">Dashboard</a></button>
-        </div>
         <ul>
+            <% let id = 1;%>
             <% orders.forEach(order => { %>
                 <li>
-                    <strong>ID:</strong> <%= order.id %><br>
+                    <strong>ID:</strong> <%= id++ %><br>
                     <strong>Sender Name:</strong> <%= order.sender_name %><br>
                     <strong>Sender Phone:</strong> <%= order.sender_phone %><br>
                     <strong>Buyer Name:</strong> <%= order.buyer_name %><br>

@@ -36,20 +36,4 @@ router.get('/createOrder', authenticateToken, (req, res) => {
 
 });
 
-
-// @GET view page ejs
-router.get('/orders', authenticateToken, async (req, res) => {
-    try {
-        const orders = await getOrders();
-        if (!orders || orders.length === 0) {
-            return res.status(404).render('orders', { orders: [], error: "No orders found." });
-        }
-
-        res.render('orders', {orders, error: null}); // when render is called, express knows is ejs and search for views foulder where i setted in server.js
-    } catch (error) {
-        console.log('Error fetching orders: ', error.message);
-        res.status(500).send({error: "Internal server error"})
-    }
-});
-
 export default router;

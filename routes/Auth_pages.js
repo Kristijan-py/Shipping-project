@@ -63,6 +63,8 @@ router.get('/reset-password', (req, res) => {
   }
 });
 
+
+// @GET verify email page
 router.get('/verify-email-page', (req, res) => {
   try {
     res.sendFile(path.join(__dirname, '..', 'public', 'verify-email-page.html'));

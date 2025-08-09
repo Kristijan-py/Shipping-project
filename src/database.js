@@ -31,7 +31,7 @@ export async function getUsers() {
         return rows;
 
     } catch (error) {
-        console.log('Erorr fetching ispiti: ', error.message);   
+        console.error('Erorr fetching ispiti: ', error.message);   
         return null;
     }
     
@@ -44,7 +44,7 @@ export async function getUserByEmail(email) {
         return rows[0];
 
     } catch (error) {
-        console.log('Error fetching the email: ' ,error.message);
+        console.error('Error fetching the email: ' ,error.message);
         return null;
     }
 }
@@ -56,7 +56,7 @@ export async function getUserById(id) {
         return rows[0];
 
     } catch (error) {
-        console.log("Error fetching data: " ,error.message);
+        console.error("Error fetching data: " ,error.message);
         return null;
     }
 }
@@ -76,8 +76,7 @@ export async function updateUser(id ,name, phone, email,  password_hash) {
     (`UPDATE users
     SET name = ?, phone = ?, email = ?, password_hash = ?
     WHERE id = ?` , [name, phone, email, password_hash, id]);
-    return getUserById(id);
-    
+    return;
 }
 
 // @DELETE user by phone number
@@ -128,17 +127,17 @@ export async function getOrderById(id) {
         return rows[0];
 
     } catch (error) {
-        console.log("Error fetching order: " , error.message);
+        console.error("Error fetching order: " , error.message);
         return null;
     }
 }
 
 // @POST order
-export async function createOrder(sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying) {
-    const [data] = await pool.query(`INSERT INTO orders (sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying]);
+export async function createOrder(user_id, sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying) {
+    const [data] = await pool.query(`INSERT INTO orders (user_id, sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [user_id, sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying]);
     const id = data.insertId;
-    return getOrderById(id); // call the get order by id to display all the info
+    return getOrderById(id);
 }
 
 
