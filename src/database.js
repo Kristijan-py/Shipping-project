@@ -14,7 +14,7 @@ dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 export const pool = createPool({
     host: process.env.MYSQL_HOST,
-    user: process.env.MYSQL_USER, // Using .env for best practice
+    user: process.env.MYSQL_USER, // Using .env for best practice and security
     password: process.env.MYSQL_PASSWORD,
     database: process.env.MYSQL_DATABASE,
     connectionLimit: 10
@@ -40,7 +40,7 @@ export async function getUsers() {
 // @POST find user by email
 export async function getUserByEmail(email) {
     try {
-        const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]); 
+        const [rows] = await pool.query('SELECT email FROM users WHERE email = ?', [email]); 
         return rows[0];
 
     } catch (error) {
@@ -52,7 +52,7 @@ export async function getUserByEmail(email) {
 // @GET user by id
 export async function getUserById(id) {
     try {
-        const [rows] = await pool.query('SELECT * FROM users WHERE id = ?', [id]); 
+        const [rows] = await pool.query('SELECT id FROM users WHERE id = ?', [id]); 
         return rows[0];
 
     } catch (error) {
@@ -63,11 +63,17 @@ export async function getUserById(id) {
 
 // @POST a user
 export async function createUser(name, phone, email, password_hash, user_role) {
-    const [data] = await pool.query
-    (`INSERT INTO users (name, phone, email, password_hash, user_role)
-    VALUES (?, ?, ?, ?, ?)` , [name, phone, email,  password_hash, user_role]);
-    const id = data.insertId;
-    return getUserById(id);
+    try {
+        const [data] = await pool.query
+        (`INSERT INTO users (name, phone, email, password_hash, user_role)
+        VALUES (?, ?, ?, ?, ?)` , [name, phone, email,  password_hash, user_role]);
+        const id = data.insertId;
+        return getUserById(id);
+        
+    } catch (error) {
+        console.error('Error creating user: ', error.message);
+        return null;
+    }
 }
 
 // @PUT user by id
@@ -123,7 +129,7 @@ export async function getOrders() {
 // @GET order by id
 export async function getOrderById(id) {
     try {
-        const [rows] = await pool.query('SELECT * FROM orders WHERE id = ?', [id]);
+        const [rows] = await pool.query('SELECT id FROM orders WHERE id = ?', [id]);
         return rows[0];
 
     } catch (error) {

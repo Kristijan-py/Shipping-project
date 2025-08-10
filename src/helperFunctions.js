@@ -1,10 +1,11 @@
 import validator from 'validator'; // for validating info
 import {pool} from './database.js'; // for database connection
 import nodemailer from 'nodemailer'; // for sending emails
+import fs from 'fs';
 
 
 
-
+// ADDING +389
 export function normalizePhoneNumber(phone) {
     if(!phone) {
         return "Phone number is required.";
@@ -97,11 +98,11 @@ export function validateUserInput({email, phone, password, confirm_password}) {
     return true;
 }
 
-
+// Checking user from database to see if it exists
 export async function ifUserExists(email, phone) {
     try {
         const normalizePhone = normalizePhoneNumber(phone); // to make +389....
-        const[rows] = await pool.query('SELECT * FROM users WHERE email = ? OR phone = ?', [email, normalizePhone]);
+        const [rows] = await pool.query('SELECT * FROM users WHERE email = ? OR phone = ?', [email, normalizePhone]);
         return rows.length > 0; // ITS BOOLEAN => if we found 1 user return true, otherwise false
     } catch (error) {
         console.error("Error checking if user exists:", error.message);
@@ -109,6 +110,7 @@ export async function ifUserExists(email, phone) {
     }
 }
 
+// Sending email to reset password
 export async function sendresetEmail(email, link) {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
@@ -138,6 +140,7 @@ export async function sendresetEmail(email, link) {
     
 }
 
+// Sending email for verification
 export async function verifyEmail(email, link) {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
@@ -164,4 +167,30 @@ export async function verifyEmail(email, link) {
         throw new Error("Failed to send verification email");
         
     }
+}
+
+// Cleans unverified users every 20m
+export function startCleanupInterval() {
+    setInterval(async () => {
+        try {
+        const [result] = await pool.query(`
+            DELETE FROM users
+            WHERE is_verified = 0
+            AND email_token is NOT NULL 
+            AND email_token_expires < NOW()
+        `);
+        const timestamp = new Date().toLocaleString('en-GB', { timeZone: 'Europe/Skopje' });
+        const logEntry = `Deleted ${result.affectedRows} unverified users - ${timestamp}\n `;
+            console.log(logEntry); // to see in the terminal when the interval passed
+
+        fs.appendFile('../SHIPPING_SOFTWARE/logs/delete.log', logEntry, (err) => {
+            if(err) {
+                console.error('Error writing to the file ', err.message);
+            }
+        });
+
+    } catch (error) {
+        console.error('Error cleaning the unverified users', error.message);
+    }
+    }, 1000 * 60  * 20); // Refresh every 20 minutes
 }

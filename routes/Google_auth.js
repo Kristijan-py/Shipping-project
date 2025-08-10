@@ -13,6 +13,8 @@ router.use(express.json());
 router.use(passport.initialize()); // must have for passport to work
 router.use(cookieParser()); 
 
+
+
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,

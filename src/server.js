@@ -2,19 +2,23 @@ import express from "express";
 import dotenv from 'dotenv' // loading env files
 import cookieParser from 'cookie-parser'; // needs to import here in main server file to use cookies into all routes
 dotenv.config();
+
+// OTHER FILES IMPORT
+import users from "../routes/Users_routes.js"; // users routes
+import orders from "../routes/orders_routes.js"; // orders routes
+import authPages from '../routes/Auth_pages.js'; // signup, login, forgetpass htmls
+import authApi from '../routes/Auth_api.js'; // authentication API
+import googleAuth from '../routes/Google_auth.js'; // Google OAuth authentication
+import protectedRoutes from '../routes/protected_pages.js'; // protected routes(dashboard page, profile page...)
+import { errorHandler, logger } from "../middleware/JWT-Error-Logger-Roles.js";
+import { startCleanupInterval } from './helperFunctions.js';
+
 import path from "path";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
-import users from "../routes/Users_routes.js";
-import orders from "../routes/orders_routes.js"; // orders routes
-import authPages from '../routes/Auth_pages.js';
-import authApi from '../routes/Auth_api.js'; // authentication routes
-import googleAuth from '../routes/Google_auth.js'; // Google OAuth authentication
-import protectedRoutes from '../routes/protected_pages.js'; // protected routes(dashboard page, profile page...)
-import { errorHandler, logger } from "../middleware/JWT-Error-Logger-Roles.js";
-import { startCleanupInterval } from './cleanup.js';
-
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 
 const app = express();
@@ -23,18 +27,17 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false})); // It is used to take data for rq.body.....
 app.use(cookieParser()); // to use cookies in all routes
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+
 
 app.set('view engine', 'ejs'); // setting view engine to show created orders
 app.set('views', path.join(__dirname, '..', 'views'));
 
-app.use(logger); // just for testing purposes
+app.use(logger);
 
 // STATIC FILES ==> to serve files like html, css, js...
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
-// INTERVAL ==> every 20m
+// INTERVAL ==> cleans unverified users every 20m
 startCleanupInterval();
 
 
@@ -59,4 +62,4 @@ app.listen(PORT, () => {
     console.log(`App listening on port ${PORT}`)
 })
 
-export default app; // exporting app for testing purposes
+export default app;
