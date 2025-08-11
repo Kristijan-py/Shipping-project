@@ -33,7 +33,18 @@ router.get('/createOrder', authenticateToken, (req, res) => {
     console.error('Error sending create orders page ', error.message);
     res.status(500).send("Internal Server Error");
   }
-
 });
+
+// @GET Create Orders page
+router.get('/updateOrder', authenticateToken, (req, res) => {
+  try {
+    res.sendFile(path.join(__dirname, '..', 'public', 'updateOrder.html'));
+  } catch (error) {
+    console.error('Error sending update orders page ', error.message);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+
 
 export default router;

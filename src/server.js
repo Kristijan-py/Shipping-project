@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from 'dotenv' // loading env files
 import cookieParser from 'cookie-parser'; // needs to import here in main server file to use cookies into all routes
+import rateLimit from "express-rate-limit";
 dotenv.config();
 
 // OTHER FILES IMPORT
@@ -12,6 +13,7 @@ import googleAuth from '../routes/Google_auth.js'; // Google OAuth authenticatio
 import protectedRoutes from '../routes/protected_pages.js'; // protected routes(dashboard page, profile page...)
 import { errorHandler, logger } from "../middleware/JWT-Error-Logger-Roles.js";
 import { startCleanupInterval } from './helperFunctions.js';
+
 
 import path from "path";
 import { fileURLToPath } from 'url';
@@ -27,7 +29,15 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false})); // It is used to take data for rq.body.....
 app.use(cookieParser()); // to use cookies in all routes
 
-
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    limit: 100, // 100 requests
+    standardHeaders: 'draft-8',
+    legacyHeaders: false,
+    ipv6Subnet: 56,
+    message: "Too many requests from this IP, try again later"
+});
+app.use(limiter);
 
 app.set('view engine', 'ejs'); // setting view engine to show created orders
 app.set('views', path.join(__dirname, '..', 'views'));

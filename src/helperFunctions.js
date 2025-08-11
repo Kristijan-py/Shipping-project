@@ -25,6 +25,10 @@ export function normalizePhoneNumber(phone) {
     }  
 };
 
+//VALIDATION FOR LETTER ONLY INPUTS
+export function isOnlyLetters(str){
+    return /^[a-zA-z]+$/.test(str);
+}
 
 // VALIDATION FOR PASSWORD
 export function validatePassword(password){
@@ -97,6 +101,57 @@ export function validateUserInput({email, phone, password, confirm_password}) {
 
     return true;
 }
+
+// Orders info validation
+export function validateOrderInfo(sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, price) {
+    const letterFields = [
+        {value: sender_name, field: 'Sender Name'},
+        {value: buyer_name, field: 'Buyer Name'},
+        {value: buyer_city, field: 'Buyer City'},
+        {value: buyer_village, field: 'Buyer Village'}
+    ];
+
+    for(const {value, field} of letterFields){
+        if(value && !isOnlyLetters(value)){ // ? is for safe checking if values is empty or not
+            return { valid: false , error: `${field} must contain only letters`}
+        }
+    }
+
+    // COMPARE PHONES
+    if(sender_phone === buyer_phone && sender_phone !== '' && buyer_phone !== ''){
+        return { valid: false , error: `Cannot have same phone numbers for sender and buyer`}
+    }
+
+
+    // PHONES
+    if(sender_phone !== ''){
+        const validateSenderPhone = validatePhoneNumber(sender_phone);
+        if(validateSenderPhone !== true) {
+            return { valid: false , error: validateSenderPhone}
+        }
+    }
+    if(buyer_phone !== ''){
+        const validateBuyerPhone = validatePhoneNumber(buyer_phone);
+        if(validateBuyerPhone !== true) {
+            return { valid: false , error: validateBuyerPhone}
+        }
+    }
+    // PRICE
+    if(price < 0 || isNaN(price)){
+        return { valid: false , error: 'price under 0 or not contain only numbers'}
+    }
+
+    return {valid: true};
+};
+
+
+export function validateOrderInfoArray(fieldsToUpdate) {
+    const { sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, price } = fieldsToUpdate;
+
+    return validateOrderInfo(sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, price);
+    
+};
+
 
 // Checking user from database to see if it exists
 export async function ifUserExists(email, phone) {

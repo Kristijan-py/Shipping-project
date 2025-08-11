@@ -64,7 +64,7 @@ router.get('/userByEmail', authenticateToken, authorizeAdmin, async (req, res) =
 });
 
 
-// @PUT a user (update)
+// @PUT a user (update)  --- NEED TO FIX
 router.put('/updateUser', authenticateToken, authorizeAdmin, async (req, res) => {
     const { id, name, phone, email, password } = req.body
     try {
@@ -89,7 +89,7 @@ router.put('/updateUser', authenticateToken, authorizeAdmin, async (req, res) =>
 })
 
 
-// @DELETE a user by phone number
+// @DELETE a user by phone number --- NEED TO FIX
 router.delete('/deleteUser', authenticateToken, authorizeAdmin, async (req, res) => {
     const success = await deleteUser(req.body.phone);
     if(!success) return res.status(404).send({error: "User not found with that phone number "});

@@ -40,7 +40,7 @@ export async function getUsers() {
 // @POST find user by email
 export async function getUserByEmail(email) {
     try {
-        const [rows] = await pool.query('SELECT email FROM users WHERE email = ?', [email]); 
+        const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]); 
         return rows[0];
 
     } catch (error) {
@@ -52,7 +52,7 @@ export async function getUserByEmail(email) {
 // @GET user by id
 export async function getUserById(id) {
     try {
-        const [rows] = await pool.query('SELECT id FROM users WHERE id = ?', [id]); 
+        const [rows] = await pool.query('SELECT * FROM users WHERE id = ?', [id]); 
         return rows[0];
 
     } catch (error) {
@@ -129,7 +129,7 @@ export async function getOrders() {
 // @GET order by id
 export async function getOrderById(id) {
     try {
-        const [rows] = await pool.query('SELECT id FROM orders WHERE id = ?', [id]);
+        const [rows] = await pool.query('SELECT * FROM orders WHERE id = ?', [id]);
         return rows[0];
 
     } catch (error) {
@@ -147,7 +147,7 @@ export async function createOrder(user_id, sender_name, sender_phone, buyer_name
 }
 
 
-// @PUT order
+// @PUT order  --- NEED TO FIX
 export async function updateOrder(id, sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying) {
     const [data] = await pool.query
     (`UPDATE orders

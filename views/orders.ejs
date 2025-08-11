@@ -18,6 +18,7 @@
             <% orders.forEach(order => { %>
                 <li>
                     <strong>ID:</strong> <%= id++ %><br>
+                    <strong>Order id:</strong> <%= order.id %><br>
                     <strong>Sender Name:</strong> <%= order.sender_name %><br>
                     <strong>Sender Phone:</strong> <%= order.sender_phone %><br>
                     <strong>Buyer Name:</strong> <%= order.buyer_name %><br>
@@ -29,8 +30,12 @@
                     <strong>Package Type:</strong> <%= order.package_type %><br>
                     <strong>Shipping Fee:</strong> <%= order.shipping_fee %><br>
                     <strong>Who's Paying:</strong> <%= order.whos_paying %><br>
-                    <br>
+                    <form action="/api/orders/<%= order.id %>/delete" method="POST" style="margin-top: 3px;">
+                        <button type="submit">Delete</button>
+                    </form>
                 </li>
+                <br>
+                <br>
             <% }) %>
         </ul>
     <% } %>

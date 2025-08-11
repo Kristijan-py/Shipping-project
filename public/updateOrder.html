@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Order</title>
+</head>
+<body>
+    <h1>Update Order</h1>
+    <form action="/api/updateOrder" method="POST">
+
+        <label for="id">ID:</label>
+        <input type="number" id="id" name="id" placeholder="Enter your order id" required>
+        <br>
+        <br>
+        <label for="sender_name">Sender name:</label>
+        <input type="text" id="sender_name" name="sender_name" >
+        <br>
+        <br>
+        <label for="sender_phone">Sender phone:</label>
+        <input type="tel" id="sender_phone" name="sender_phone" >
+        <br>
+        <br>
+        <label for="buyer_name">Buyer name:</label>
+        <input type="text" id="buyer_name" name="buyer_name" >
+        <br>
+        <br>
+        <label for="buyer_phone">Buyer phone:</label>
+        <input type="tel" id="buyer_phone" name="buyer_phone" >
+        <br>
+        <br>
+        <label for="buyer_city">Buyer city:</label>
+        <input type="text" id="buyer_city" name="buyer_city" >
+        <br>
+        <br>
+        <label for="buyer_village">Buyer village:</label>
+        <input type="text" id="buyer_village" name="buyer_village">
+        <br>
+        <br>
+        <label for="buyer_adress">Buyer adress:</label>
+        <input type="text" id="buyer_adress" name="buyer_adress">
+        <br>
+        <br>
+        <label for="price">Price:</label>
+        <input type="number" id="price" name="price" >
+        <br>
+        <br>
+        <label for="package_type">Package type:</label>
+        <select id="package_type" name="package_type" >
+            <option value="">Select</option>
+            <option value="small_package">Small package</option>
+            <option value="big_package">Big package</option>
+        </select>
+        <br>
+        <br>
+        <label for="whos_paying">Who is paying:</label>
+        <select id="whos_paying" name="whos_paying" >
+            <option value="">Select</option>
+            <option value="sender">Sender</option>
+            <option value="buyer">Buyer</option>
+        </select>
+        <br>
+        <br>
+        <br>
+        <button type="submit">Update Order</button>
+
+    </form>
+
+    <br>
+    <br>
+    <br>
+    <h3>Go back to Dashboard page when you finish</h3>
+    <button><a href="/dashboard">Dashboard</a></button>
+
+
+</body>
+</html>
