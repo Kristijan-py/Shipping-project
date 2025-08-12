@@ -9,6 +9,7 @@ dotenv.config();
 import { normalizePhoneNumber, validateUserInput, ifUserExists, sendresetEmail, validatePassword, verifyEmail } from '../src/helperFunctions.js';
 import { pool } from '../src/database.js'; // Database connection
 import {getUserByEmail, createUser} from '../src/database.js';
+import { loginRateLimit } from '../src/rateLimit.js';
 
 const router = express.Router();
 router.use(express.json());
@@ -68,7 +69,7 @@ router.post('/signup', async (req, res) => {
 
 
 // @POST a user LOGIN
-router.post('/login', async (req, res) => {
+router.post('/login', loginRateLimit, async (req, res) => {
     try {
         const user = await getUserByEmail(req.body.email);
         if(!user){
