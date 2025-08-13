@@ -17,6 +17,9 @@ router.use(express.urlencoded({ extended: false }));
 const upload = multer({
     dest: '../uploads/',
     limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max size
+    message: {
+        fileSize: 'File is too large'
+    },
     fileFilter: (req, file, cb) => { // Only CSV allowed
         const allowedFiles = ['.csv', '.CSV'];
         const ext = path.extname(file.originalname).toLowerCase();
