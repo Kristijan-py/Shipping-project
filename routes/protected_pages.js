@@ -45,6 +45,15 @@ router.get('/updateOrder', authenticateToken, (req, res) => {
   }
 });
 
+// @GET Upload Orders page 
+router.get('/uploadOrders', authenticateToken, (req, res) => {
+  try {
+    res.sendFile(path.join(__dirname, '..', 'public', 'uploadOrders.html'));
+  } catch (error) {
+    console.error('Error sending update orders page ', error.message);
+    res.status(500).send("Internal Server Error");
+  }
+});
 
 
 export default router;

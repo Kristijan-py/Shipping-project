@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Orders</title>
+</head>
+<body>  
+
+    <h1>File upload from excel</h1><br>
+    <form action="/api/uploadCsvFile" method="POST" enctype="multipart/form-data">
+        <label for="csvFile">Upload Excel/CSV file:</label>
+        <input type="file" id="csvFile" name="csvFile" accept=".csv" required>
+        <br><br>
+        <button type="submit">Upload</button>
+    </form>
+    <br>
+    <h4>NOTE: max 10MB per upload</h4>
+    <br><br>
+
+
+    <div style="display: flex; gap: 30px;">
+        <button><a href="/createOrder">Create Orders Page</a></button>
+        <button><a href="/dashboard">Dashboard</a></button>
+    </div>
+</body>
+</html>

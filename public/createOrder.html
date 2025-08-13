@@ -6,57 +6,65 @@
     <title>Create Order</title>
 </head>
 <body>
-    <h1>Create Order</h1>
+    
+    <div style="display: flex; align-items: center; gap: 400px;">
+        <h1>Create Order</h1>
+        <div style="display: flex; flex-direction: column; align-items: flex-start;">
+            <h1>File upload from excel</h1>
+            <button type="submit"><a href="/uploadOrders">Upload from Excel</a></button>
+            
+        </div>
+    </div>
+    
     <form action="/api/createOrder" method="POST">
         <label for="sender_name">Sender name:</label>
         <input type="text" id="sender_name" name="sender_name" required>
-        <br>
-        <br>
+        <br><br>
+        
         <label for="sender_phone">Sender phone:</label>
         <input type="tel" id="sender_phone" name="sender_phone" required>
-        <br>
-        <br>
+        <br><br>
+
         <label for="buyer_name">Buyer name:</label>
         <input type="text" id="buyer_name" name="buyer_name" required>
-        <br>
-        <br>
+        <br><br>
+        
         <label for="buyer_phone">Buyer phone:</label>
         <input type="tel" id="buyer_phone" name="buyer_phone" required>
-        <br>
-        <br>
+        <br><br>
+        
         <label for="buyer_city">Buyer city:</label>
         <input type="text" id="buyer_city" name="buyer_city" required>
-        <br>
-        <br>
+        <br><br>
+        
         <label for="buyer_village">Buyer village:</label>
         <input type="text" id="buyer_village" name="buyer_village">
-        <br>
-        <br>
+        <br><br>
+        
         <label for="buyer_adress">Buyer adress:</label>
         <input type="text" id="buyer_adress" name="buyer_adress">
-        <br>
-        <br>
+        <br><br>
+        
         <label for="price">Price:</label>
         <input type="number" id="price" name="price" required>
-        <br>
-        <br>
+        <br><br>
+        
         <label for="package_type">Package type:</label>
         <select id="package_type" name="package_type" required>
             <option value="">Select</option>
             <option value="small_package">Small package</option>
             <option value="big_package">Big package</option>
         </select>
-        <br>
-        <br>
+        <br><br>
+        
         <label for="whos_paying">Who is paying:</label>
         <select id="whos_paying" name="whos_paying" required>
             <option value="">Select</option>
             <option value="sender">Sender</option>
             <option value="buyer">Buyer</option>
         </select>
-        <br>
-        <br>
-        <br>
+        <br><br><br>
+
         <button type="submit">Create Order</button>
 
     </form>

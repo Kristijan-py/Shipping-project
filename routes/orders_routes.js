@@ -1,7 +1,7 @@
 import express from 'express';
 const router = express.Router();
 
-import { getOrders, getOrderById, createOrder, updateOrder, deleteOrder, pool } from '../src/database.js';
+import { getOrders, getOrderById, createOrder, deleteOrder, pool } from '../src/database.js';
 import { authenticateToken } from '../middleware/JWT-Error-Logger-Roles.js';
 import { validateOrderInfo, validateOrderInfoArray } from '../src/helperFunctions.js';
 import { error } from 'console';
@@ -62,6 +62,7 @@ router.post('/createOrder', authenticateToken, async (req, res) => {
         res.status(500).send({error: "Internal server error"});
     }
 })
+
 
 
 // UPDATE order 

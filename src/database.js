@@ -140,21 +140,27 @@ export async function getOrderById(id) {
 
 // @POST order
 export async function createOrder(user_id, sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying) {
-    const [data] = await pool.query(`INSERT INTO orders (user_id, sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [user_id, sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying]);
-    const id = data.insertId;
-    return getOrderById(id);
+    try {
+        const [data] = await pool.query(`INSERT INTO orders (user_id, sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [user_id, sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying]);
+        return data;
+    } catch (error) {
+        console.error("Error creating order: ", error.message);
+    }
 }
 
-
-// @PUT order  --- NEED TO FIX
-export async function updateOrder(id, sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying) {
-    const [data] = await pool.query
-    (`UPDATE orders
-    SET sender_name = ?, sender_phone = ?, buyer_phone = ?, buyer_city = ?, buyer_village = ?, buyer_adress = ?, price =?, package_type=?, whos_paying =?
-    WHERE id = ?` , [sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying, id]);
-    return getOrderById(id);
+// To see if the order is duplicate
+export async function duplicateOrderCheck(sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, price, package_type, whos_paying) {
+    try {
+        const [rows] = await pool.query(`SELECT * FROM orders WHERE sender_name = ? AND sender_phone = ? AND buyer_name = ? AND buyer_phone = ? AND buyer_city = ? AND buyer_village = ? AND price = ? AND package_type = ? AND whos_paying = ?`, 
+        [sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, price, package_type, whos_paying]);
+        return rows[0];
+    } catch (error) {
+        console.error("Error fetching order by details: ", error.message);
+        return null;
+    }
 }
+
 
 // @DELETE order
 export async function deleteOrder(id) {

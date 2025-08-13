@@ -9,7 +9,7 @@ dotenv.config();
 import { normalizePhoneNumber, validateUserInput, ifUserExists, sendresetEmail, validatePassword, verifyEmail } from '../src/helperFunctions.js';
 import { pool } from '../src/database.js'; // Database connection
 import {getUserByEmail, createUser} from '../src/database.js';
-import { loginRateLimit } from '../src/rateLimit.js';
+import { loginRateLimit } from '../middleware/rateLimit.js';
 
 const router = express.Router();
 router.use(express.json());
