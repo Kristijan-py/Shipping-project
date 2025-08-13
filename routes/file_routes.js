@@ -38,60 +38,58 @@ router.post('/uploadCsvFile', upload.single('csvFile'), authenticateToken, uploa
         let rowNumber = 0; // For easier error tracking
 
         // Read the file
-        const filePromises = [req.file].map(file => {
-            return new Promise((resolve, reject) => {
-                const parser = parse({columns: true, trim: true, skip_empty_lines: true});
-                const readStream = fs.createReadStream(file.path).pipe(parser);
-                const promises = [];
-    
-                readStream.on('data', (row) => { // synchronous
-                    rowNumber++;
-                    const currentRow = rowNumber;
-                    promises.push((async () => {
-                        
-                        const { sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying } = row;
-                        
-        
-                        // Validate the order
-                        const validateInput = validateOrderInfo(sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, price);
-                        if (validateInput.valid !== true) {
-                            stats.errors.push({ rowNumber: currentRow, error: validateInput.error });
-                            return;
-                        }
-        
-                        // Validate the duplicate order
-                        const existingOrder = await duplicateOrderCheck(sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, price, package_type, whos_paying);
-                        if (existingOrder) {
-                            stats.errors.push({ rowNumber: currentRow, error: "Duplicate order found" });
-                            return;
-                        }
-        
-                        // Create the order
-                        try {
-                            await createOrder(req.user.id, sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying);
-                            stats.created++;
-                        } catch (error) {
-                            console.error('Error creating order: ', error.message);
-                            stats.errors.push({ rowNumber: currentRow, error: "Internal server error" });
-                        }
-                    })()); // () between --> invoking the async function
-        
-                });
+        const parser = parse({columns: true, trim: true, skip_empty_lines: true});
+        const readStream = fs.createReadStream(req.file.path).pipe(parser);
+        const promises = [];
+
+        readStream.on('data', (row) => { // synchronous
+            rowNumber++;
+            const currentRow = rowNumber;
+            promises.push((async () => {
+                const { sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying } = row;
                 
-                readStream.on('end', async () => {
-                    await Promise.all(promises);
-                    resolve();
-                });
+                // Validate the order
+                const validateInput = validateOrderInfo(sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, price);
+                if (validateInput.valid !== true) {
+                    stats.errors.push({ rowNumber: currentRow, error: validateInput.error });
+                    return;
+                }
 
-                readStream.on('error', (error) => {
-                    reject(error);
-                })
+                // Validate the duplicate order
+                const existingOrder = await duplicateOrderCheck(sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, price, package_type, whos_paying);
+                if (existingOrder) {
+                    stats.errors.push({ rowNumber: currentRow, error: "Duplicate order found" });
+                    return;
+                }
 
-            });
+                // Create the order
+                try {
+                    await createOrder(req.user.id, sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying);
+                    stats.created++;
+                } catch (error) {
+                    console.error(`Row ${currentRow} creating error: `, error.message);
+                    stats.errors.push({ rowNumber: currentRow, error: "Internal server error" });
+                }
+            })()); // () between --> invoking the async function
 
         });
-        await Promise.all(filePromises);
-        res.send({ stats });
+        
+        readStream.on('end', async () => {
+            await Promise.all(promises);
+            // deleting the file
+            fs.unlink(req.file.path, (err) => {
+                if (err){
+                    console.error('Error deleting file: ', err.message);
+                }
+            })
+
+            res.status(200).send(stats);
+        });
+
+        readStream.on('error', (error) => {
+            console.error('Error reading CSV file: ', error.message);
+            res.status(500).send({ error: "Error reading CSV file" });
+        });
 
     } catch (error) {
         console.error('Error uploading the order: ', error.message);
