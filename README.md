@@ -1,7 +1,19 @@
 # Shipping-software
-Creating project with Node.js, Express, MySQL, HTML, Authentication and so on
+Created project with Node.js, Express, MySQL, HTML, Authentication, EJS
 
-For now, I only created signup login authentication with jwt, oauth, cookies, email verification 
+The softwares has:
+Signup and login section with authentication like JWT and Oauth, verification, reset and forgot pass, APIs processing to database.
+Built simple html forms to catch API actions.
+Built CRUD operations.
+Rate limit middlewares for differennt types of API (login, general and upload files).
+Intervals for auto delete.
+Connecting tables in DB to easier search.
+User roles, CSV file uploads, ejs, logger and so on.
 
-
-(Added verify email and fixed some bugs)
+Next things to do are:
+- Pagination
+- profile page
+- filtering, sorting, search
+- testing
+- caching
+- SSL
