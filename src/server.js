@@ -4,18 +4,18 @@ import cookieParser from 'cookie-parser'; // needs to import here in main server
 dotenv.config();
 
 // OTHER FILES IMPORT
-import users from "../routes/Users_routes.js"; // users routes
-import orders from "../routes/orders_routes.js"; // orders routes
-import fileUploads from "../routes/file_routes.js"; // file upload routes
-import authPages from '../routes/Auth_pages.js'; // signup, login, forgetpass htmls
-import authApi from '../routes/Auth_api.js'; // authentication API
-import googleAuth from '../routes/Google_auth.js'; // Google OAuth authentication
-import protectedRoutes from '../routes/protected_pages.js'; // protected routes(dashboard page, profile page...)
+import users from "./routes/Users_routes.js"; // users routes
+import orders from "./routes/orders_routes.js"; // orders routes
+import fileUploads from "./routes/file_routes.js"; // file upload routes
+import authPages from './routes/Auth_pages.js'; // signup, login, forgetpass htmls
+import authApi from './routes/Auth_api.js'; // authentication API
+import googleAuth from './routes/Google_auth.js'; // Google OAuth authentication
+import protectedPages from './routes/protected_pages.js'; // protected routes(dashboard page, profile page...)
 
 // MIDDLEWARE AND HELPER FUNCTIONS
-import { errorHandler, logger } from "../middleware/JWT-Error-Logger-Roles.js";
-import { startCleanupInterval } from './helperFunctions.js';
-import { generalRateLimit } from "../middleware/rateLimit.js";
+import { errorHandler, logger } from "./middleware/Error & Logger.js";
+import { startCleanupInterval } from './utils/helperFunctions.js';
+import { generalRateLimit } from "./middleware/rateLimit.js";
 import path from "path";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -50,7 +50,7 @@ app.use('/api', users); // Users routes
 app.use('/api', orders); // Orders routes
 app.use('/api', authApi); // Authentication routes
 app.use('/api', fileUploads); // File upload routes
-app.use('/', protectedRoutes);  // Protected pages (dashboard, profile...)
+app.use('/', protectedPages);  // Protected pages (dashboard, profile...)
 app.use('/', authPages); // Authentication pages (login, signup)
 
 
