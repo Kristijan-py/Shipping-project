@@ -4,11 +4,9 @@ Created project with Node.js, Express, MySQL, HTML, Authentication, EJS and so o
 The softwares has:
 Signup and login section with authentication like JWT and Oauth, verification, reset and forgot pass, APIs processing to database.
 Built simple html forms to catch API actions.
-Built CRUD operations.
-Profile Page
+Built CRUD operations and Profile Page.
 Rate limit middlewares for differennt types of API (login, general and upload files).
-Pagination
-Intervals for auto delete.
+Pagination, Custom AppError.
 Connecting tables in DB to easier search.
 User roles, CSV file uploads, ejs, logger and so on.
 
