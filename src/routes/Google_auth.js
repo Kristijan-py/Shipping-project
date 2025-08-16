@@ -44,7 +44,7 @@ passport.use(new GoogleStrategy({
           id: userId,
           name: profile.displayName,
           email: profile.emails?.[0]?.value,
-          role: 'user'
+          role: 'user' 
         };
 
         return cb(null, user);
@@ -57,7 +57,7 @@ passport.use(new GoogleStrategy({
             id: userRow.id,
             name: userRow.name,
             email: userRow.email,
-            role: userRow.role
+            role: userRow.user_role
           };
 
           return cb(null, user);
