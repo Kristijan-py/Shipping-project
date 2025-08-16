@@ -89,13 +89,19 @@ router.put('/updateUser', authenticateToken, authorizeAdmin, async (req, res) =>
 })
 
 
-// @DELETE a user by phone number --- NEED TO FIX
-router.delete('/deleteUser', authenticateToken, authorizeAdmin, async (req, res) => {
-    const success = await deleteUser(req.body.phone);
-    if(!success) return res.status(404).send({error: "User not found with that phone number "});
+// @DELETE a user by id
+router.delete('/deleteUser/:id', authenticateToken, async (req, res) => {
+    if(req.user.id !== parseInt(req.params.id)){ // check if user's id is the same as the one to delete
+        return res.status(403).send({error: "You are not allowed to delete this user"});
+    }
+    // Here we should add pop up for ask the user again is he sure about deleting his account(frontend)
 
-    res.status(200).send({msg: "User deleted! ✅"});
+    const success = await deleteUser(req.params.id);
+    if(!success) return res.status(404).send({error: "User not found with that id "});
+
+    res.redirect('/login'); 
 })
+
 
 
 

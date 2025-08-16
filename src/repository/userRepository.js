@@ -62,12 +62,12 @@ export async function updateUser(id ,name, phone, email,  password_hash) {
     return;
 }
 
-// @DELETE user by phone number
-export async function deleteUser(phone) {
+// @DELETE user by id
+export async function deleteUser(id) {
     try {
         const [data] = await pool.query
         (`DELETE FROM users
-        WHERE phone = ?` , [phone]);
+        WHERE id = ?` , [id]);
 
         if(data.affectedRows > 0) {
             console.log('User is deleted!✅');

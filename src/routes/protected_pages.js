@@ -1,7 +1,8 @@
 import express from 'express';
-import { pool } from '../config/database.js'; // connect to the database
+import { getUserById } from '../repository/userRepository.js';
 import path from 'path';    
 import { authenticateToken } from '../middleware/auth.js';
+import { paginateResults } from '../middleware/pagination.js';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -33,15 +34,13 @@ router.get('/createOrder', authenticateToken, (req, res) => {
 });
 
 // @GET all orders from specific user on ejs page
-router.get('/orders', authenticateToken, async (req, res) => {
+router.get('/orders', authenticateToken, paginateResults, async (req, res) => {
     try {
-        const userId = req.user.id;
-        const [orders] = await pool.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
-        if (!orders || orders.length === 0) {
-            return res.status(404).render('orders', { orders: [], error: "No orders found." });
+        if(!req.pagination || !req.pagination.results) { // Checking pagination
+          return res.status(404).render('orders', {orders: [], error: "No orders found."})
         }
 
-        res.render('orders', {orders, error: null}); // when render is called, express knows is ejs and search for views foulder where i setted in server.js
+        res.render('orders', {orders: req.pagination.results, pagination: req.pagination, error: null}); // we send the orders and pagination info
     } catch (error) {
         console.log('Error fetching orders: ', error.message);
         res.status(500).send({error: "Internal server error"})
@@ -66,6 +65,21 @@ router.get('/uploadOrders', authenticateToken, (req, res) => {
     console.error('Error sending update orders page ', error.message);
     res.status(500).send("Internal Server Error");
   }
+});
+
+// @GET Profile page
+router.get('/profilePage', authenticateToken, async (req, res) => {
+  try {
+    const info = await getUserById(req.user.id);
+    if (!info) {
+      return res.status(404).render('profilePage', { user: null, error: "User not found." });
+    }
+
+    res.render('profilePage', {user: info, error: null}); // when render is called, express knows is ejs and search for views foulder where i setted in server.js
+  } catch (error) {
+      console.log('Error fetching user: ', error.message);
+      res.status(500).send({error: "Internal server error"})
+    }
 });
 
 

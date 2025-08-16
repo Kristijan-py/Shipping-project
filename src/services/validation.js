@@ -175,10 +175,10 @@ export async function ifUserExists(email, phone) {
 
 
 // To see if the order is duplicate
-export async function duplicateOrderCheck(sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, price, package_type, whos_paying) {
+export async function duplicateOrderCheck(sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, price, package_type, whos_paying, user_id) {
     try {
-        const [rows] = await pool.query(`SELECT * FROM orders WHERE sender_name = ? AND sender_phone = ? AND buyer_name = ? AND buyer_phone = ? AND buyer_city = ? AND buyer_village = ? AND price = ? AND package_type = ? AND whos_paying = ?`, 
-        [sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, price, package_type, whos_paying]);
+        const [rows] = await pool.query(`SELECT * FROM orders WHERE sender_name = ? AND sender_phone = ? AND buyer_name = ? AND buyer_phone = ? AND buyer_city = ? AND buyer_village = ? AND price = ? AND package_type = ? AND whos_paying = ? AND user_id = ?`, 
+        [sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, price, package_type, whos_paying, user_id]);
         return rows[0];
     } catch (error) {
         console.error("Error fetching order by details: ", error.message);

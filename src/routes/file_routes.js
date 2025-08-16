@@ -60,7 +60,7 @@ router.post('/uploadCsvFile', upload.single('csvFile'), authenticateToken, uploa
                 }
 
                 // Validate the duplicate order
-                const existingOrder = await duplicateOrderCheck(sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, price, package_type, whos_paying);
+                const existingOrder = await duplicateOrderCheck(sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, price, package_type, whos_paying, req.user.id);
                 if (existingOrder) {
                     stats.errors.push({ rowNumber: currentRow, error: "Duplicate order found" });
                     return;

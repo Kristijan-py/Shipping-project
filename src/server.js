@@ -16,6 +16,8 @@ import protectedPages from './routes/protected_pages.js'; // protected routes(da
 import { errorHandler, logger } from "./middleware/Error & Logger.js";
 import { startCleanupInterval } from './utils/helperFunctions.js';
 import { generalRateLimit } from "./middleware/rateLimit.js";
+
+import methodOverride from 'method-override';
 import path from "path";
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -29,6 +31,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({extended: false})); // It is used to take data for rq.body.....
 app.use(cookieParser()); // to use cookies in all routes
+app.use(methodOverride('_method'));
 app.use('/api', generalRateLimit); // use rate limit only for api
 
 

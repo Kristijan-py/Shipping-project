@@ -7,7 +7,10 @@
 </head>
 <body>
     <h1>Welcome to the Dashboard</h1>
-    <p>This is the main page of the application.</p>
+    <div style="display: flex; gap: 800px;">
+        <p>This is the main page of the application.</p>
+        <button style="padding: 10px 20px;"><a href="/profilePage">View Profile</a></button>
+    </div>
     <br>
     <br>
     <div style="display: flex; gap: 40px">
@@ -20,9 +23,6 @@
     </div>
     <br>
     <br>
-    <form action="/api/logout" method="POST">
-        <button type="submit">Logout</button>
-    </form>
 
 
     <script>

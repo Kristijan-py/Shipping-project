@@ -14,10 +14,8 @@
         <p>No orders found.</p>
     <% } else { %>
         <ul>
-            <% let id = 1;%>
             <% orders.forEach(order => { %>
                 <li>
-                    <strong>ID:</strong> <%= id++ %><br>
                     <strong>Order id:</strong> <%= order.id %><br>
                     <strong>Sender Name:</strong> <%= order.sender_name %><br>
                     <strong>Sender Phone:</strong> <%= order.sender_phone %><br>
@@ -38,6 +36,32 @@
                 <br>
             <% }) %>
         </ul>
+        <!-- Pagination -->
+        <div style="display: flex; justify-content: center; margin-bottom: 30px;">
+            <% if (pagination && pagination.totalPages > 1) { %> 
+                <div style="display: flex; gap: 20px;">
+                    <% if (pagination.currentPage > 1) { %>
+                        <a href="/orders?page=<%= 1 %>&limit=<%= pagination.pageLimit %>">
+                            <button>First</button>
+                        </a>
+                        <a href="/orders?page=<%= pagination.currentPage - 1 %>&limit=<%= pagination.pageLimit %>">
+                            <button>Prev</button>
+                        </a>
+                    <% } %>
+                    <span>Page <%= pagination.currentPage %> of <%= pagination.totalPages %></span>
+
+                    <% if (pagination.currentPage < pagination.totalPages) { %>
+                        <a href="/orders?page=<%= pagination.currentPage + 1 %>&limit=<%= pagination.pageLimit %>">
+                            <button>Next</button>
+                        </a>
+                        <a href="/orders?page=<%= pagination.totalPages %>&limit=<%= pagination.pageLimit %>">
+                            <button>Last</button>
+                        </a>
+                    <% } %>
+                </div>
+            <% } %>
+        </div>
+
     <% } %>
 </body>
 </html>

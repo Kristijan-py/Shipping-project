@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page`</title>
+</head>
+<body>
+    <h1>Profile Page</h1>
+    <p>Your profile info:</p>
+    <div style="display: flex; margin-left: 400px">
+        <button><a href="/dashboard">Dashboard</a></button>
+    </div>
+    <ul>
+        <li>Name: <%= user.name %></li>
+        <li>Phone: <%= user.phone %></li>
+        <li>Email: <%= user.email %></li>
+        <li>Role: <%= user.user_role %></li>
+    </ul>
+    <form action="/api/logout" method="POST">
+        <button type="submit">Logout</button>
+    </form>
+    <br><br>
+    <form action="api/deleteUser/<%= user.id %>?_method=DELETE" method="POST">
+        <button type="submit">Delete account</button>
+    </form>
+</body>
+</html>

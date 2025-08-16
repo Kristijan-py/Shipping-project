@@ -18,7 +18,7 @@ export function startCleanupInterval() {
         const logEntry = `Deleted ${result.affectedRows} unverified users - ${timestamp}\n `;
             console.log(logEntry); // to see in the terminal when the interval passed
 
-        fs.appendFile('../../SHIPPING_SOFTWARE/logs/delete.log', logEntry, (err) => {
+        fs.appendFile('../SHIPPING_SOFTWARE/logs/delete.log', logEntry, (err) => {
             if(err) {
                 console.error('Error writing to the file ', err.message);
             }
