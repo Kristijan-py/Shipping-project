@@ -11,6 +11,7 @@ import { sendresetEmail, verifyEmail } from '../services/emailService.js'; // Em
 import { pool } from '../config/database.js'; // Database connection
 import { getUserByEmail, createUser } from '../repository/userRepository.js';
 import { loginRateLimit } from '../middleware/rateLimit.js';
+import { AppError } from '../utils/AppError.js';
 
 const router = express.Router();
 router.use(express.json());
@@ -63,8 +64,7 @@ router.post('/signup', async (req, res) => {
         res.redirect('/login'); // redirect to login page after signup
 
     } catch (error) {
-        console.log("Error while creating a user: ", error.message);
-        return false;
+        throw new AppError(`Error while creating a user: ${error.message}`, 500);
     }
 });
 
@@ -102,33 +102,37 @@ router.post('/login', loginRateLimit, async (req, res) => {
         return res.redirect('/dashboard'); // redirect to dashboard page after login
 
     } catch (error) {
-        console.log("Error while logging a user: ", error.message);
-        res.status(500).send({error: "Internal server error"});
+        throw new AppError(`Error while logging in: ${error.message}`, 500);
     }
 })
 
 
 // @GET verify email
 router.get('/verify-email', async (req, res) => {
-    const { token, email } = req.query;
-    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
-
-    // Find a user with that info that sign up 
-    const [users] = await pool.query('SELECT * FROM users WHERE email = ? AND email_token = ? AND email_token_expires > NOW()', 
-        [email, hashedToken]
-    );
-    // Check that user if exist
-    if(users.length === 0) {
-        return res.status(400).send({error: 'Invalid or expired token'});
-    };
-
-    // If exists in DATABASE, verify it
-    await pool.query(
-        'UPDATE users SET is_verified = 1, email_token = NULL, email_token_expires = NULL WHERE email = ?',
-        [email]
-    );
-
-    res.redirect('/verify-email-page');
+    try {
+        const { token, email } = req.query;
+        const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+    
+        // Find a user with that info that sign up 
+        const [users] = await pool.query('SELECT * FROM users WHERE email = ? AND email_token = ? AND email_token_expires > NOW()', 
+            [email, hashedToken]
+        );
+        // Check that user if exist
+        if(users.length === 0) {
+            return res.status(400).send({error: 'Invalid or expired token'});
+        };
+    
+        // If exists in DATABASE, verify it
+        await pool.query(
+            'UPDATE users SET is_verified = 1, email_token = NULL, email_token_expires = NULL WHERE email = ?',
+            [email]
+        );
+    
+        res.redirect('/verify-email-page');
+        
+    } catch (error) {
+        throw new AppError(`Error while verifying email: ${error.message}`, 500);
+    }
 
 })
 
@@ -155,8 +159,7 @@ router.post('/forgotPassword', async (req, res) => {
         return res.status(200).send({message: "Password reset link sent to your email!"});
 
     } catch (error) {
-        console.log("Error while processing forgot password: ", error.message);
-        res.status(500).send({error: "Internal server error"});
+        throw new AppError(`Error while processing forgot password: ${error.message}`, 500);
     }
 })
 
@@ -194,23 +197,27 @@ router.post('/reset-password', async (req, res) => {
         res.status(200).send({success: "Password reset succsessfully !"});
 
     } catch (error) {
-        console.log("Error while resetting password: ", error.message);
-        res.status(500).send({error: "Internal server error"});
+        throw new AppError(`Error while resetting password: ${error.message}`, 500);
     }
 });
 
 
 // @POST logout
 router.post('/logout', (req, res) => {
-    // Clear the cookie
-    res.clearCookie("token", {
-        httpOnly: true,
-        secure: false, // true in production with HTTPS
-        sameSite: 'strict'   // LAX for CSRF protection and strict for same-site requests
-    }); 
-
-    console.log("Logged out successfully ✅");
-    return res.redirect('/login');
+    try {
+        // Clear the cookie
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: false, // true in production with HTTPS
+            sameSite: 'strict'   // LAX for CSRF protection and strict for same-site requests
+        }); 
+    
+        console.log("Logged out successfully ✅");
+        return res.redirect('/login');
+        
+    } catch (error) {
+        throw new AppError(`Error while logging out: ${error.message}`, 500);
+    }
 });
 
 export default router;

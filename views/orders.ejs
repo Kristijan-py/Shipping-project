@@ -37,30 +37,35 @@
             <% }) %>
         </ul>
         <!-- Pagination -->
-        <div style="display: flex; justify-content: center; margin-bottom: 30px;">
+        <footer style="position: fixed; width: 100%; bottom: 0;">
+            <div style="display: flex; justify-content: center; margin-bottom: 30px;">
             <% if (pagination && pagination.totalPages > 1) { %> 
-                <div style="display: flex; gap: 20px;">
-                    <% if (pagination.currentPage > 1) { %>
-                        <a href="/orders?page=<%= 1 %>&limit=<%= pagination.pageLimit %>">
-                            <button>First</button>
-                        </a>
-                        <a href="/orders?page=<%= pagination.currentPage - 1 %>&limit=<%= pagination.pageLimit %>">
-                            <button>Prev</button>
-                        </a>
-                    <% } %>
+                <div style="display: flex; gap: 20px; align-items: center;">
+                    <!-- First and Prev -->
+                    <a href="/orders?page=<%= 1 %>&limit=<%= pagination.pageLimit %>">
+                        <button style="<%= pagination.currentPage === 1 ? 'visibility: hidden;' : '' %>">First</button>
+                    </a>
+
+                    <a href="/orders?page=<%= pagination.currentPage - 1 %>&limit=<%= pagination.pageLimit %>">
+                        <button style="<%= pagination.currentPage === 1 ? 'visibility: hidden;' : '' %>">Prev</button>
+                    </a>
+                    <!-- Message -->
                     <span>Page <%= pagination.currentPage %> of <%= pagination.totalPages %></span>
 
-                    <% if (pagination.currentPage < pagination.totalPages) { %>
-                        <a href="/orders?page=<%= pagination.currentPage + 1 %>&limit=<%= pagination.pageLimit %>">
-                            <button>Next</button>
-                        </a>
-                        <a href="/orders?page=<%= pagination.totalPages %>&limit=<%= pagination.pageLimit %>">
-                            <button>Last</button>
-                        </a>
-                    <% } %>
+                    <!-- Last and Next -->
+                    <a href="/orders?page=<%= pagination.currentPage + 1 %>&limit=<%= pagination.pageLimit %>">
+                        <button style="<%= pagination.currentPage === pagination.totalPages ? 'visibility: hidden;' : '' %>">Next</button>
+                    </a>
+
+                    <a href="/orders?page=<%= pagination.totalPages %>&limit=<%= pagination.pageLimit %>">
+                        <button style="<%= pagination.currentPage === pagination.totalPages ? 'visibility: hidden;' : '' %>">Last</button>
+                    </a>
+                    
                 </div>
             <% } %>
-        </div>
+            </div>
+        </footer>
+        
 
     <% } %>
 </body>

@@ -8,7 +8,7 @@ export async function getOrders() {
         return rows;
     } catch (error) {
         console.log('Error fetching orders: ', error.message);
-        return null;
+        throw error;
     }
 }
 
@@ -20,7 +20,7 @@ export async function getOrderById(id) {
 
     } catch (error) {
         console.error("Error fetching order: " , error.message);
-        return null;
+        throw error;
     }
 }
 
@@ -32,6 +32,7 @@ export async function createOrder(user_id, sender_name, sender_phone, buyer_name
         return data;
     } catch (error) {
         console.error("Error creating order: ", error.message);
+        throw error;
     }
 }
 

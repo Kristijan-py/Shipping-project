@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { AppError } from '../utils/AppError.js';
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -26,11 +27,13 @@ export function logger(req, res, next) {
 }
 
 // CUSTOM ERROR HANDLER
-export function errorHandler(err, req, res, next) {
-    if(res.headersSent) {
-        return next(err);
+export function errorHandler(err, req, res, next) { // no "next" parameter because is in the bottom, no more middlewares
+    console.error('Error:', err.message);
+
+    if(err instanceof AppError) {
+        return res.status(err.statusCode).json({error: err.message});
     }
 
-    res.status(err.status || 500).json({ error: err.message || "Internal Server Error"});
+    res.status(500).json({ error: "Internal Server Error"});
 }
 

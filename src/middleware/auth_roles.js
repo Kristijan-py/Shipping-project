@@ -13,7 +13,7 @@ export function authenticateToken(req, res, next) {
         if (err) return res.redirect('/login');
         req.user = user;
         next();
-    }); 
+    });
 }
 
 // Redirect to dashboard if authenticated, otherwise next()

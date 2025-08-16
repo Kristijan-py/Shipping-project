@@ -8,8 +8,8 @@ export async function getUsers() {
         return rows;
 
     } catch (error) {
-        console.error('Erorr fetching ispiti: ', error.message);   
-        return null;
+        console.error('Error fetching users: ', error.message);
+        throw error;
     }
     
 };
@@ -22,7 +22,7 @@ export async function getUserByEmail(email) {
 
     } catch (error) {
         console.error('Error fetching the email: ', error.message);
-        return null;
+        throw error;
     }
 }
 
@@ -34,7 +34,7 @@ export async function getUserById(id) {
 
     } catch (error) {
         console.error("Error fetching data: " ,error.message);
-        return null;
+        throw error;
     }
 }
 
@@ -49,17 +49,23 @@ export async function createUser(name, phone, email, password_hash, user_role) {
         
     } catch (error) {
         console.error('Error creating user: ', error.message);
-        return null;
+        throw error;
     }
 }
 
 // @PUT user by id
 export async function updateUser(id ,name, phone, email,  password_hash) {
-    const [data] = await pool.query
-    (`UPDATE users
-    SET name = ?, phone = ?, email = ?, password_hash = ?
-    WHERE id = ?` , [name, phone, email, password_hash, id]);
-    return;
+    try {
+        const [data] = await pool.query
+        (`UPDATE users
+        SET name = ?, phone = ?, email = ?, password_hash = ?
+        WHERE id = ?` , [name, phone, email, password_hash, id]);
+        return getUserById(id);
+        
+    } catch (error) {
+        console.error('Error updating user: ', error.message);
+        throw error;
+    }
 }
 
 // @DELETE user by id

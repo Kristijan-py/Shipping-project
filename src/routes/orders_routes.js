@@ -3,9 +3,10 @@ const router = express.Router();
 
 import { pool } from '../config/database.js'; // connect to the database
 import { getOrders, getOrderById, createOrder, deleteOrder } from '../repository/orderRepository.js';
-import { authenticateToken } from '../middleware/auth.js';
+import { authenticateToken } from '../middleware/auth_roles.js';
 import { validateOrderInfo, validateOrderInfoArray } from '../services/validation.js';
 import { error } from 'console';
+import { AppError } from '../utils/AppError.js';
 
 router.use(express.json());
 router.use(express.urlencoded({ extended: false }));
@@ -22,8 +23,7 @@ router.get('/orders/:id', authenticateToken, async (req, res) => {
         res.status(200).send(order);
 
     } catch (error) {
-        console.log('Error fetching order: ', error.message);
-        res.status(500).send({error: "Internal server error"})
+        throw new AppError(`Error fetching order: ${error.message}`, 500);
     }
 })
 
@@ -42,8 +42,7 @@ router.post('/createOrder', authenticateToken, async (req, res) => {
         const newOrder = await createOrder(userId, sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying);
         res.redirect('/dashboard');
     } catch (error) {
-        console.log("Error while creating a order: ", error.message);
-        res.status(500).send({error: "Internal server error"});
+        throw new AppError(`Error while creating an order: ${error.message}`, 500);
     }
 })
 
@@ -69,7 +68,8 @@ router.post('/updateOrder', authenticateToken, async (req, res) => {
     }
 
     values.push(id); // last for WHERE id = ?
-    
+    values.push(req.user.id); // user_id for security check(Avoiding another users to update other orders)
+
     // CHECKING VALIDATION
     const validateInfo = validateOrderInfoArray(fieldsToUpdate);
     if(validateInfo.valid !== true){
@@ -78,7 +78,7 @@ router.post('/updateOrder', authenticateToken, async (req, res) => {
 
 
     try {
-        const SQLFunction = `UPDATE orders SET ${updates.join(', ')} WHERE id = ?`;
+        const SQLFunction = `UPDATE orders SET ${updates.join(', ')} WHERE id = ? AND user_id = ?`;
         const [result] = await pool.query(SQLFunction, values);
     
         if(result.affectedRows === 0){
@@ -88,8 +88,7 @@ router.post('/updateOrder', authenticateToken, async (req, res) => {
         res.redirect('/dashboard');
 
     } catch (error) {
-        console.error('Error updating the user: ', error.message);
-        res.sendStatus(500);
+        throw new AppError(`Error updating the user: ${error.message}`, 500);
     }
 });
 
@@ -103,8 +102,7 @@ router.post('/orders/:id/delete', authenticateToken, async (req, res) => {
         res.status(200).send({msg: "Order deleted! ✅"});
         
     } catch (error) {
-        console.error('Error with deleting the order: ', error.message);
-        res.sendStatus(500);
+        throw new AppError(`Error with deleting the order: ${error.message}`, 500);
     }
 })
 

@@ -2,12 +2,14 @@ import express from 'express';
 import bcrypt from "bcrypt"; // hashing passwords
 import dotenv from 'dotenv';
 dotenv.config();
-import { authenticateToken, authorizeAdmin } from '../middleware/auth.js'; // To protect the routes
+import { authenticateToken, authorizeAdmin } from '../middleware/auth_roles.js'; // To protect the routes
 
-const router = express.Router();
+
 import { getUsers, getUserById, getUserByEmail, updateUser, deleteUser } from '../repository/userRepository.js';
 import { validateUserInput } from '../services/validation.js';
+import { AppError } from '../utils/AppError.js';
 
+const router = express.Router();
 router.use(express.json());
 
 
@@ -25,8 +27,7 @@ router.get('/users', authenticateToken, authorizeAdmin, async (req, res) => {
 
         res.status(200).send(users);
     } catch (error) {
-        console.log('Error fetching users: ', error.message);
-        res.status(500).send({error: "Internal server error"})
+        throw new AppError(`Error fetching users: ${error.message}`, 500);
     }
 });
 
@@ -42,8 +43,7 @@ router.get('/users/:id', authenticateToken, authorizeAdmin, async (req, res) => 
         res.status(200).send(user);
 
     } catch (error) {
-        console.log('Error fetching user: ', error.message);
-        res.status(500).send({error: "Internal server error"})
+        throw new AppError(`Error fetching user: ${error.message}`, 500);
     }
 })
 
@@ -58,8 +58,7 @@ router.get('/userByEmail', authenticateToken, authorizeAdmin, async (req, res) =
         }
         res.status(200).send(user);
     } catch (error) {
-        console.log('Error fetching user by email: ', error.message);
-        res.status(500).send({error: "Internal server error"});
+        throw new AppError(`Error fetching user by email: ${error.message}`, 500);
     }
 });
 
@@ -83,23 +82,27 @@ router.put('/updateUser', authenticateToken, authorizeAdmin, async (req, res) =>
         }
         res.status(200).send(updatedUser);
     } catch (error) {
-        console.log("Error while updating a user: ", error.message);
-        res.status(500).send({error: "Internal server error"});
+        throw new AppError(`Error while updating a user: ${error.message}`, 500);
     }
 })
 
 
 // @DELETE a user by id
 router.delete('/deleteUser/:id', authenticateToken, async (req, res) => {
-    if(req.user.id !== parseInt(req.params.id)){ // check if user's id is the same as the one to delete
-        return res.status(403).send({error: "You are not allowed to delete this user"});
+    try {
+        if(req.user.id !== parseInt(req.params.id)){ // check if user's id is the same as the one to delete
+            return res.status(403).send({error: "You are not allowed to delete this user"});
+        }
+        // Here we should add pop up for ask the user again is he sure about deleting his account(frontend)
+    
+        const success = await deleteUser(req.params.id);
+        if(!success) return res.status(404).send({error: "User not found with that id "});
+    
+        res.redirect('/login'); 
+        
+    } catch (error) {
+        throw new AppError(`Error deleting user: ${error.message}`, 500);
     }
-    // Here we should add pop up for ask the user again is he sure about deleting his account(frontend)
-
-    const success = await deleteUser(req.params.id);
-    if(!success) return res.status(404).send({error: "User not found with that id "});
-
-    res.redirect('/login'); 
 })
 
 
