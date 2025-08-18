@@ -12,6 +12,17 @@ export async function getOrders() {
     }
 }
 
+// @Get orders by user_id
+export async function getOrdersByUserId(userId) {
+    try {
+        const [rows] = await pool.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
+        return rows;
+    } catch (error) {
+        console.log('Error fetching orders: ', error.message);
+        throw error;
+    }
+}
+
 // @GET order by id
 export async function getOrderById(id) {
     try {

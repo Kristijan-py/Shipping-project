@@ -7,11 +7,16 @@ Built simple html forms to catch API actions.
 Built CRUD operations and Profile Page.
 Rate limit middlewares for differennt types of API (login, general and upload files).
 Pagination, Custom AppError.
+Caching with Redis
 Connecting tables in DB to easier search.
 User roles, CSV file uploads, ejs, logger and so on.
 
 Next things to do are:
 - filtering, sorting, search
 - testing
-- caching
 - SSL
+- ORM
+- EDIT PROFILE PAGE
+- ADDING CAPTCHA
+- COMPRESSION
+- LAZY LOAD

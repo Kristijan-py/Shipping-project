@@ -8,24 +8,36 @@ import { authenticateToken, authorizeAdmin } from '../middleware/auth_roles.js';
 import { getUsers, getUserById, getUserByEmail, updateUser, deleteUser } from '../repository/userRepository.js';
 import { validateUserInput } from '../services/validation.js';
 import { AppError } from '../utils/AppError.js';
+import redisClient from '../config/redis.js'; // Redis client for caching
 
 const router = express.Router();
 router.use(express.json());
 
 
-
+const defaultTTL = 3600; // for cache expiration
 
 
 
 // @GET all the users
 router.get('/users', authenticateToken, authorizeAdmin, async (req, res) => {
     try {
+        const cachedUsers = await redisClient.get('users');
+        // Check if users are cached
+        if(cachedUsers) {
+            console.log('Cache hit');
+            return res.status(200).send(JSON.parse(cachedUsers));
+        }
+        // If not cached, fetch from DB
         const users = await getUsers();
         if (!users || users.length === 0) {
             return res.status(404).send({error: "Users not found"});
         }
-
+        console.log('Cache miss');
         res.status(200).send(users);
+
+        // Cache the users
+        await redisClient.setEx('users', defaultTTL, JSON.stringify(users));
+
     } catch (error) {
         throw new AppError(`Error fetching users: ${error.message}`, 500);
     }
@@ -36,29 +48,23 @@ router.get('/users', authenticateToken, authorizeAdmin, async (req, res) => {
 router.get('/users/:id', authenticateToken, authorizeAdmin, async (req, res) => {
     try {
         const id = parseInt(req.params.id);
+        const cachedUsers = await redisClient.get(`users:${id}`);
+        if(cachedUsers) {
+            console.log('Cache hit');
+            return res.status(200).send(JSON.parse(cachedUsers));
+        }
+
         const user = await getUserById(id);
         if(!user) {
             return res.status(404).send({error: "User not found!"});
         }
+        console.log('Cache miss');
         res.status(200).send(user);
+
+        await redisClient.setEx(`users:${id}`, defaultTTL, JSON.stringify(user));
 
     } catch (error) {
         throw new AppError(`Error fetching user: ${error.message}`, 500);
-    }
-})
-
-
-// @GET a user by email
-router.get('/userByEmail', authenticateToken, authorizeAdmin, async (req, res) => {
-    try {
-        const email = req.body.email;
-        const user = await getUserByEmail(email);
-        if(!user) {
-            return res.status(404).send({error: "User not found!"});
-        }
-        res.status(200).send(user);
-    } catch (error) {
-        throw new AppError(`Error fetching user by email: ${error.message}`, 500);
     }
 });
 
@@ -97,7 +103,10 @@ router.delete('/deleteUser/:id', authenticateToken, async (req, res) => {
     
         const success = await deleteUser(req.params.id);
         if(!success) return res.status(404).send({error: "User not found with that id "});
-    
+
+        await redisClient.del(`users:${req.params.id}`);
+        await redisClient.del('users');
+
         res.redirect('/login'); 
         
     } catch (error) {

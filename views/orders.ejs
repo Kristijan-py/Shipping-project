@@ -39,8 +39,8 @@
         <!-- Pagination -->
         <% 
             const totalPaginationSize = 5;
-            const currentPagination = Math.floor((pagination.currentPage - 1) / totalPaginationSize);
-            const startPage = currentPagination * totalPaginationSize + 1;
+            const currentPaginationSize = Math.floor((pagination.currentPage - 1) / totalPaginationSize);
+            const startPage = currentPaginationSize * totalPaginationSize + 1;
             let endPage = startPage + totalPaginationSize - 1;
             if(endPage > pagination.totalPages) {
                 endPage = pagination.totalPages;
@@ -51,13 +51,18 @@
             <% if (pagination && pagination.totalPages > 1) { %> 
                 <div style="display: flex; gap: 20px; align-items: center;">
                     <!-- First and Prev -->
-                    <a href="/orders?page=<%= 1 %>&limit=<%= pagination.pageLimit %>">
-                        <button style="<%= pagination.currentPage === 1 ? 'visibility: hidden;' : '' %>">First</button>
-                    </a>
-
-                    <a href="/orders?page=<%= pagination.currentPage - 1 %>&limit=<%= pagination.pageLimit %>">
-                        <button style="<%= pagination.currentPage === 1 ? 'visibility: hidden;' : '' %>">Prev</button>
-                    </a>
+                     <% if(pagination.currentPage > 1) { %>
+                        <a href="/orders?page=<%= 1 %>&limit=<%= pagination.pageLimit %>">
+                            <button>First</button>
+                        </a>
+    
+                        <a href="/orders?page=<%= pagination.currentPage - 1 %>&limit=<%= pagination.pageLimit %>">
+                            <button>Prev</button>
+                        </a>
+                    <% } else { %>
+                        <button disabled>Prev</button>
+                        <button disabled>First</button>
+                    <% } %>
 
                     <!-- Pagination numbers -->
                     <% for (let i= startPage; i <= endPage; i++) { %>
@@ -70,13 +75,18 @@
                     <% } %>
 
                     <!-- Last and Next -->
-                    <a href="/orders?page=<%= pagination.currentPage + 1 %>&limit=<%= pagination.pageLimit %>">
-                        <button style="<%= pagination.currentPage === pagination.totalPages ? 'visibility: hidden;' : '' %>">Next</button>
-                    </a>
-
-                    <a href="/orders?page=<%= pagination.totalPages %>&limit=<%= pagination.pageLimit %>">
-                        <button style="<%= pagination.currentPage === pagination.totalPages ? 'visibility: hidden;' : '' %>">Last</button>
-                    </a>
+                     <% if(pagination.currentPage < pagination.totalPages) { %>
+                        <a href="/orders?page=<%= pagination.currentPage + 1 %>&limit=<%= pagination.pageLimit %>">
+                            <button>Next</button>
+                        </a>
+    
+                        <a href="/orders?page=<%= pagination.totalPages %>&limit=<%= pagination.pageLimit %>">
+                            <button>Last</button>
+                        </a>
+                    <% } else { %>
+                        <button disabled>Next</button>
+                        <button disabled>Last</button>
+                    <% } %>
 
                 </div>
             <% } %>
