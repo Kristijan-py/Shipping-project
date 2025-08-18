@@ -37,6 +37,15 @@
             <% }) %>
         </ul>
         <!-- Pagination -->
+        <% 
+            const totalPaginationSize = 5;
+            const currentPagination = Math.floor((pagination.currentPage - 1) / totalPaginationSize);
+            const startPage = currentPagination * totalPaginationSize + 1;
+            let endPage = startPage + totalPaginationSize - 1;
+            if(endPage > pagination.totalPages) {
+                endPage = pagination.totalPages;
+            }
+        %>
         <footer style="position: fixed; width: 100%; bottom: 0;">
             <div style="display: flex; justify-content: center; margin-bottom: 30px;">
             <% if (pagination && pagination.totalPages > 1) { %> 
@@ -49,8 +58,16 @@
                     <a href="/orders?page=<%= pagination.currentPage - 1 %>&limit=<%= pagination.pageLimit %>">
                         <button style="<%= pagination.currentPage === 1 ? 'visibility: hidden;' : '' %>">Prev</button>
                     </a>
-                    <!-- Message -->
-                    <span>Page <%= pagination.currentPage %> of <%= pagination.totalPages %></span>
+
+                    <!-- Pagination numbers -->
+                    <% for (let i= startPage; i <= endPage; i++) { %>
+                        <a href="/orders?page=<%= i %>&limit=<%= pagination.pageLimit %>">
+                            <!-- Bold the number and put background if we are on that current page-->
+                            <button style="<%= pagination.currentPage === i ? 'font-weight: bold; background-color: lightgray;' : '' %>">
+                                <%= i %>
+                            </button>
+                        </a>
+                    <% } %>
 
                     <!-- Last and Next -->
                     <a href="/orders?page=<%= pagination.currentPage + 1 %>&limit=<%= pagination.pageLimit %>">
@@ -60,7 +77,7 @@
                     <a href="/orders?page=<%= pagination.totalPages %>&limit=<%= pagination.pageLimit %>">
                         <button style="<%= pagination.currentPage === pagination.totalPages ? 'visibility: hidden;' : '' %>">Last</button>
                     </a>
-                    
+
                 </div>
             <% } %>
             </div>

@@ -80,19 +80,13 @@ router.post('/uploadCsvFile', upload.single('csvFile'), authenticateToken, uploa
         
         readStream.on('end', async () => {
             await Promise.all(promises);
-            // deleting the file
-            fs.unlink(req.file.path, (err) => {
-                if (err){
-                    console.error('Error deleting file: ', err.message);
-                }
-            })
 
             res.status(200).send(stats);
         });
 
         readStream.on('error', (error) => {
             console.error('Error reading CSV file: ', error.message);
-            res.status(500).send({ error: "Error reading CSV file" });
+            res.sendStatus(500);
         });
 
     } catch (error) {

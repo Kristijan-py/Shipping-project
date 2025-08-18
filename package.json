@@ -5,9 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon src/server.js",
-    "test": "nodemon src/test.js",
-    "test2": "nodemon src/test2.js",
-    "test3": "nodemon src/test3.js"
+    "start-redis": "wsl sudo service redis-server start"
   },
   "keywords": [],
   "author": "",
@@ -30,6 +28,7 @@
     "nodemailer": "^7.0.5",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
+    "redis": "^5.8.1",
     "validator": "^13.15.15"
   },
   "devDependencies": {
