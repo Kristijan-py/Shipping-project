@@ -7,7 +7,8 @@ import { authenticateToken, authorizeAdmin } from '../middleware/auth_roles.js';
 import { validateOrderInfo, validateOrderInfoArray } from '../services/validation.js';
 import { error } from 'console';
 import { AppError } from '../utils/AppError.js';
-import redisClient from '../config/redis.js'; // Redis client for caching
+import { getOrSetCache } from '../utils/caching.js'; // Helper function for caching
+import redisClient from '../config/redis.js';
 
 router.use(express.json());
 router.use(express.urlencoded({ extended: false }));
@@ -18,22 +19,12 @@ const defaultTTL = 3600; // for cache expiration
 router.get('/orders', authenticateToken, authorizeAdmin, async (req, res) => {
     try {
         // Check Redis cache
-        const cachedOrders = await redisClient.get('orders');
-        if(cachedOrders) {
-            console.log('Cache hit');
-            return res.status(200).send(JSON.parse(cachedOrders));
-        }
-        // If no cache, make new DB call
-        const orders = await getOrders();
+        const orders = await getOrSetCache('orders', getOrders, defaultTTL);
         if(!orders || orders.length === 0) {
             return res.status(404).send({error: "No orders found!"});
         }
-        console.log('Cache miss');
+
         res.status(200).send(orders);
-
-        // Save to Redis
-        await redisClient.setEx('orders', defaultTTL, JSON.stringify(orders));
-
     } catch (error) {
         throw new AppError(`Error fetching orders: ${error.message}`, 500);
     }
@@ -44,24 +35,14 @@ router.get('/orders/user/:userId', authenticateToken, authorizeAdmin, async (req
     try {
         const userId = req.params.userId;
         // Check Redis cache
-        const cachedOrders = await redisClient.get(`orders:user:${userId}`);
-        if(cachedOrders) {
-            console.log('Cache hit');
-            return res.status(200).send(JSON.parse(cachedOrders));
-        }
-        // If no cache, make new DB call
-        const orders = await getOrdersByUserId(userId);
+        const orders = await getOrSetCache(`orders:user:${userId}`, getOrdersByUserId.bind(null, userId), defaultTTL); // we use bind to add a argument to the function
         if(!orders || orders.length === 0) {
             return res.status(404).send({error: "No orders found!"});
         }
-        console.log('Cache miss');
+        
         res.status(200).send(orders);
-
-        // Save to Redis
-        await redisClient.setEx(`orders:user:${userId}`, defaultTTL, JSON.stringify(orders));
-
     } catch (error) {
-        throw new AppError(`Error fetching orders: ${error.message}`, 500);
+        throw new AppError(`Error fetching user orders: ${error.message}`, 500);
     }
 })
 
@@ -71,29 +52,23 @@ router.get('/orders/:id', authenticateToken, authorizeAdmin, async (req, res) =>
     try {
         const id = parseInt(req.params.id);
         // Check Redis cache
-        const cachedOrder = await redisClient.get(`orders:${id}`);
-        if (cachedOrder) {
-            console.log('Cache hit');
-            return res.status(200).send(JSON.parse(cachedOrder));
+        const orders = await getOrSetCache(`orders:${id}`, getOrderById.bind(null, id), defaultTTL);
+        if(!orders || orders.length === 0) {
+            return res.status(404).send({error: "No order found!"});
         }
-        // If no cache, make new DB call
-        const order = await getOrderById(id);
-        if(!order) {
-            return res.status(404).send({error: "Order not found!"});
-        }
-        console.log('Cache miss');
-        res.status(200).send(order);
-
-        // Save to Redis
-        await redisClient.setEx(`orders:${id}`, defaultTTL, JSON.stringify(order));
+        
+        res.status(200).send(orders);
 
     } catch (error) {
-        throw new AppError(`Error fetching order: ${error.message}`, 500);
+        throw new AppError(`Error fetching orders by ID: ${error.message}`, 500);
     }
 });
 
 // @POST a order
 router.post('/createOrder', authenticateToken, async (req, res) => {
+    if(req.user.id !== parseInt(req.body.userId)){ // check if the user is the owner
+        return res.status(403).send({error: "You are not authorized to create this order."});
+    }
     const { sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying } = req.body;
     const userId = req.user.id; // from jwt token
 
@@ -149,11 +124,12 @@ router.post('/updateOrder', authenticateToken, async (req, res) => {
         if(result.affectedRows === 0){
             return res.status(404).send({error: 'Order not found'});
         }
-    
+        // Delete cache from Redis
+        await redisClient.del(`orders:${id}`);
         res.redirect('/dashboard');
 
     } catch (error) {
-        throw new AppError(`Error updating the user: ${error.message}`, 500);
+        throw new AppError(`Error updating the order: ${error.message}`, 500);
     }
 });
 
@@ -161,7 +137,7 @@ router.post('/updateOrder', authenticateToken, async (req, res) => {
 // @DELETE a order by ID
 router.post('/orders/:id/delete', authenticateToken, async (req, res) => {
     try {
-        const success = await deleteOrder(req.params.id);
+        const success = await deleteOrder(req.params.id, req.user.id); // pass user id for security check
         if(!success) return res.status(404).send({error: "Order not found with that ID "});
         // Delete cache from Redis
         await redisClient.del(`orders:${req.params.id}`);

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon src/server.js",
-    "start-redis": "wsl sudo service redis-server start"
+    "redis": "wsl sudo service redis-server start"
   },
   "keywords": [],
   "author": "",

@@ -8,6 +8,7 @@ import { authenticateToken, authorizeAdmin } from '../middleware/auth_roles.js';
 import { getUsers, getUserById, getUserByEmail, updateUser, deleteUser } from '../repository/userRepository.js';
 import { validateUserInput } from '../services/validation.js';
 import { AppError } from '../utils/AppError.js';
+import { getOrSetCache } from '../utils/caching.js'; // Helper function for caching
 import redisClient from '../config/redis.js'; // Redis client for caching
 
 const router = express.Router();
@@ -21,23 +22,13 @@ const defaultTTL = 3600; // for cache expiration
 // @GET all the users
 router.get('/users', authenticateToken, authorizeAdmin, async (req, res) => {
     try {
-        const cachedUsers = await redisClient.get('users');
-        // Check if users are cached
-        if(cachedUsers) {
-            console.log('Cache hit');
-            return res.status(200).send(JSON.parse(cachedUsers));
+        // Check Redis cache
+        const users = await getOrSetCache('users', getUsers, defaultTTL);
+        if(!users || users.length === 0) {
+            return res.status(404).send({error: "No users found!"});
         }
-        // If not cached, fetch from DB
-        const users = await getUsers();
-        if (!users || users.length === 0) {
-            return res.status(404).send({error: "Users not found"});
-        }
-        console.log('Cache miss');
+
         res.status(200).send(users);
-
-        // Cache the users
-        await redisClient.setEx('users', defaultTTL, JSON.stringify(users));
-
     } catch (error) {
         throw new AppError(`Error fetching users: ${error.message}`, 500);
     }
@@ -47,22 +38,14 @@ router.get('/users', authenticateToken, authorizeAdmin, async (req, res) => {
 // @GET a user by id
 router.get('/users/:id', authenticateToken, authorizeAdmin, async (req, res) => {
     try {
-        const id = parseInt(req.params.id);
-        const cachedUsers = await redisClient.get(`users:${id}`);
-        if(cachedUsers) {
-            console.log('Cache hit');
-            return res.status(200).send(JSON.parse(cachedUsers));
+        const id = req.params.id;
+        // Check Redis cache
+        const user = await getOrSetCache(`users:${id}`, getUserById.bind(null, id), defaultTTL);
+        if(!user || user.length === 0) {
+            return res.status(404).send({error: "No user found!"});
         }
 
-        const user = await getUserById(id);
-        if(!user) {
-            return res.status(404).send({error: "User not found!"});
-        }
-        console.log('Cache miss');
         res.status(200).send(user);
-
-        await redisClient.setEx(`users:${id}`, defaultTTL, JSON.stringify(user));
-
     } catch (error) {
         throw new AppError(`Error fetching user: ${error.message}`, 500);
     }
@@ -104,6 +87,7 @@ router.delete('/deleteUser/:id', authenticateToken, async (req, res) => {
         const success = await deleteUser(req.params.id);
         if(!success) return res.status(404).send({error: "User not found with that id "});
 
+        // Delete the cache also
         await redisClient.del(`users:${req.params.id}`);
         await redisClient.del('users');
 

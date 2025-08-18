@@ -76,6 +76,12 @@ router.post('/login', loginRateLimit, async (req, res) => {
         if(!user){
             return res.status(404).send({error: "Email not found"});
         }
+        // Check if it has password, sometimes we dont because of Google login
+        if(user.password_hash === null || user.password_hash === undefined) {
+            // If no password hash, it means user is logging in with Google
+            // Here you can implement the logic for Google login
+            return res.status(200).send({message: "No password set due to Google login, signup required."});
+        };
     
         const passCheck = await bcrypt.compare(req.body.password, user.password_hash);
         if(!passCheck) {

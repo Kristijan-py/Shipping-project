@@ -49,14 +49,14 @@ export async function createOrder(user_id, sender_name, sender_phone, buyer_name
 
 
 // @DELETE order
-export async function deleteOrder(id) {
+export async function deleteOrder(id, userId) {
     try {
-        const [data] = await pool.query('DELETE FROM orders WHERE id =?', [id]);
+        const [data] = await pool.query('DELETE FROM orders WHERE id =? AND user_id = ?', [id, userId]);
         if(data.affectedRows > 0) {
             console.log('Order deleted successfully! ✅');
             return true;
         } else {
-            console.log('Order not found ❌');
+            console.log('Order not found or not yours❌');
             return false;
         }
     } catch (error) {
