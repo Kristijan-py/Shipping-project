@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from 'dotenv' // loading env files
 import cookieParser from 'cookie-parser'; // needs to import here in main server file to use cookies into all routes
 dotenv.config();
+import redisClient from "./config/redis.js";
 
 // OTHER FILES IMPORT
 import users from "./routes/Users_routes.js"; // users routes
@@ -35,7 +36,7 @@ app.use(methodOverride('_method'));
 app.use('/api', generalRateLimit); // use rate limit only for api
 
 
-app.set('view engine', 'ejs'); // setting view engine to show created orders
+app.set('view engine', 'ejs'); // setting view engine to show views
 app.set('views', path.join(__dirname, '..', 'views'));
 
 app.use(logger);

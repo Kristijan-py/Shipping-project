@@ -8,7 +8,7 @@ import path from 'path';
 import { uploadRateLimit } from '../middleware/rateLimit.js';
 import { authenticateToken } from '../middleware/auth_roles.js';
 import { validateOrderInfo } from '../services/validation.js';
-import { createOrder } from '../repository/orderRepository.js';
+import { createOrder } from '../models/orderModels.js';
 import { duplicateOrderCheck } from '../services/validation.js';
 
 router.use(express.json());

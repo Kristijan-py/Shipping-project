@@ -91,4 +91,6 @@ router.get('/google/callback',
     res.redirect('/dashboard');
 });
 
+// We should add facebook next
+
 export default router;

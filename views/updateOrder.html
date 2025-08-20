@@ -7,7 +7,8 @@
 </head>
 <body>
     <h1>Update Order</h1>
-    <form action="/api/updateOrder" method="POST">
+    <form action="/api/updateOrder?_method=PUT" method="POST">
+        <input type="hidden" name="_method" value="PUT"> <!-- This tells to treat the method as PUT -->
 
         <label for="id">ID:</label>
         <input type="number" id="id" name="id" placeholder="Enter your order id" required>

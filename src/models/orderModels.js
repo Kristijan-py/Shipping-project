@@ -1,4 +1,5 @@
 import pool from "../config/database.js";
+import { AppError } from "../utils/AppError.js";
 
 // ORDERS TABLE
 // @GET all orders
@@ -7,8 +8,7 @@ export async function getOrders() {
         const [rows] = await pool.query('SELECT * FROM orders');
         return rows;
     } catch (error) {
-        console.log('Error fetching orders: ', error.message);
-        throw error;
+        throw new AppError(`Error fetching orders: ${error.message}`, 500);
     }
 }
 
@@ -18,8 +18,7 @@ export async function getOrdersByUserId(userId) {
         const [rows] = await pool.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
         return rows;
     } catch (error) {
-        console.log('Error fetching orders: ', error.message);
-        throw error;
+        throw new AppError(`Error fetching orders: ${error.message}`, 500);
     }
 }
 
@@ -30,8 +29,7 @@ export async function getOrderById(id) {
         return rows[0];
 
     } catch (error) {
-        console.error("Error fetching order: " , error.message);
-        throw error;
+        throw new AppError(`Error fetching order: ${error.message}`, 500);
     }
 }
 
@@ -42,8 +40,7 @@ export async function createOrder(user_id, sender_name, sender_phone, buyer_name
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [user_id, sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying]);
         return data;
     } catch (error) {
-        console.error("Error creating order: ", error.message);
-        throw error;
+        throw new AppError(`Error creating order: ${error.message}`, 500);
     }
 }
 
@@ -60,7 +57,6 @@ export async function deleteOrder(id, userId) {
             return false;
         }
     } catch (error) {
-        console.error("Error deleting order: ", error.message);
-        throw error;
+        throw new AppError(`Error deleting order: ${error.message}`, 500);
     }
 }

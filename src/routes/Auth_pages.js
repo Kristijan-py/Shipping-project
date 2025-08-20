@@ -15,7 +15,7 @@ router.use(express.json());
 // @GET redirect to dashboard page if token is present
 router.get('/', redirectIfAuthenticated, (req, res) => {
    try {
-    res.sendFile(path.join(__dirname, '..', '..', 'public', 'login.html'));
+    res.sendFile(path.join(__dirname, '..', '..', 'views', 'login.html'));
   } catch (error) {
     throw new AppError(`Error sending login page: ${error.message}`, 500);
   }
@@ -25,7 +25,7 @@ router.get('/', redirectIfAuthenticated, (req, res) => {
 // @GET login page
 router.get('/login', (req, res) => {
   try {
-    res.sendFile(path.join(__dirname, '..', '..', 'public', 'login.html'));
+    res.sendFile(path.join(__dirname, '..', '..', 'views', 'login.html'));
   } catch (error) {
     throw new AppError(`Error sending login page: ${error.message}`, 500);
   }
@@ -34,7 +34,7 @@ router.get('/login', (req, res) => {
 // @GET signup page
 router.get('/signup', (req, res) => {
   try {
-    res.sendFile(path.join(__dirname, '..', '..', 'public', 'signup.html'));
+    res.sendFile(path.join(__dirname, '..', '..', 'views', 'signup.html'));
   } catch (error) {
     throw new AppError(`Error sending signup page: ${error.message}`, 500);
   }
@@ -43,7 +43,7 @@ router.get('/signup', (req, res) => {
 // @GET forgot password page
 router.get('/forgot-password', (req, res) => {
   try {
-    res.sendFile(path.join(__dirname, '..', '..', 'public', 'forgot-password.html'));
+    res.sendFile(path.join(__dirname, '..', '..', 'views', 'forgot-password.html'));
   } catch (error) {
     throw new AppError(`Error sending forgot password page: ${error.message}`, 500);
   }
@@ -52,7 +52,7 @@ router.get('/forgot-password', (req, res) => {
 // @GET reset password page
 router.get('/reset-password', (req, res) => {
   try {
-    res.sendFile(path.join(__dirname, '..', '..', 'public', 'reset-password.html'));
+    res.sendFile(path.join(__dirname, '..', '..', 'views', 'reset-password.html'));
   } catch (error) {
     throw new AppError(`Error sending reset password page: ${error.message}`, 500);
   }
@@ -62,7 +62,7 @@ router.get('/reset-password', (req, res) => {
 // @GET verify email page
 router.get('/verify-email-page', (req, res) => {
   try {
-    res.sendFile(path.join(__dirname, '..', '..', 'public', 'verify-email-page.html'));
+    res.sendFile(path.join(__dirname, '..', '..', 'views', 'verify-email-page.html'));
   } catch (error) {
     throw new AppError(`Error sending verification success page: ${error.message}`, 500);
   }

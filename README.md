@@ -5,6 +5,7 @@ The softwares has:
 Signup and login section with authentication like JWT and Oauth, verification, reset and forgot pass, APIs processing to database.
 Built simple html forms to catch API actions.
 Built CRUD operations and Profile Page.
+CLean MVC pattern
 Rate limit middlewares for differennt types of API (login, general and upload files).
 Pagination, Custom AppError.
 Caching with Redis
