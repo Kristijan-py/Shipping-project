@@ -88,7 +88,6 @@ export async function updateOrderController(req, res, next) {
 
     const { id, ...fieldsToUpdate } = req.body;  // ...somename --> create array with that name
     if(!id) return res.status(400).send({error: 'Order ID is required'});
-    console.log(fieldsToUpdate)
     const updates =[];
     const values = [];
 
@@ -120,6 +119,7 @@ export async function updateOrderController(req, res, next) {
         if(result.affectedRows === 0){
             return res.status(404).send({error: 'Order not found'});
         }
+        console.log(`Order updated: ${id}`);
         // Delete cache from Redis
         await redisClient.del(`orders:${id}`);
         res.redirect('/dashboard');

@@ -3,6 +3,7 @@ import dotenv from 'dotenv' // loading env files
 import cookieParser from 'cookie-parser'; // needs to import here in main server file to use cookies into all routes
 dotenv.config();
 import redisClient from "./config/redis.js";
+import { logger } from './config/logger.js'; // logger
 
 // OTHER FILES IMPORT
 import users from "./routes/Users_routes.js"; // users routes
@@ -14,7 +15,7 @@ import googleAuth from './routes/Google_auth.js'; // Google OAuth authentication
 import protectedPages from './routes/protected_pages.js'; // protected routes(dashboard page, profile page...)
 
 // MIDDLEWARE AND HELPER FUNCTIONS
-import { errorHandler, logger } from "./middleware/Error & Logger.js";
+import { errorHandler } from "./middleware/Error & Logger.js";
 import { startCleanupInterval } from './utils/helperFunctions.js';
 import { generalRateLimit } from "./middleware/rateLimit.js";
 
@@ -26,6 +27,9 @@ import { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+console.log = (...args) => logger.info(args.join(' ')); // to capture all console.logs for logger
+console.error = (...args) => logger.error(args.join(' '));
+console.warn = (...args) => logger.warn(args.join(' '));
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -39,7 +43,10 @@ app.use('/api', generalRateLimit); // use rate limit only for api
 app.set('view engine', 'ejs'); // setting view engine to show views
 app.set('views', path.join(__dirname, '..', 'views'));
 
-app.use(logger);
+app.use((req, res, next) => {
+  logger.info(`${req.method} ${req.url}`);
+  next();
+});
 
 // STATIC FILES ==> to serve files like html, css, js...
 app.use(express.static(path.join(__dirname, '..', 'public')));
@@ -62,6 +69,7 @@ app.use('/', authPages); // Authentication pages (login, signup)
 
 // ERROR HANDLING
 app.use((req, res, next) => {
+  logger.error(`404 Not Found - ${req.method} ${req.originalUrl}`);
   res.status(404).send({error: "route not found"});
 })
 app.use(errorHandler) // custom middleware
