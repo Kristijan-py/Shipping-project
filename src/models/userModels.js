@@ -76,10 +76,10 @@ export async function deleteUser(id) {
         WHERE id = ?` , [id]);
 
         if(data.affectedRows > 0) {
-            console.log('User is deleted!✅');
+            console.log(`User ${id} is deleted!✅`);
             return true;
         } else {
-            console.log('User not found ❌');
+            console.log(`User ${id} not found ❌`);
             return false;
         }
         

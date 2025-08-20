@@ -50,10 +50,10 @@ export async function deleteOrder(id, userId) {
     try {
         const [data] = await pool.query('DELETE FROM orders WHERE id =? AND user_id = ?', [id, userId]);
         if(data.affectedRows > 0) {
-            console.log('Order deleted successfully! ✅');
+            console.log(`Order ${id} deleted successfully! ✅`);
             return true;
         } else {
-            console.log('Order not found or not yours❌');
+            console.log(`Order ${id} not found or not yours❌`);
             return false;
         }
     } catch (error) {

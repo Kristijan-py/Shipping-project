@@ -31,8 +31,6 @@ export function logger(req, res, next) {
 
 // CUSTOM ERROR HANDLER
 export function errorHandler(err, req, res, next) { // no "next" parameter because is in the bottom, no more middlewares
-    console.error('Error:', err.message);
-
     if(err instanceof AppError) {
         logger.warn(`${err.message}`,{ status: err.statusCode || 500, method: req.method, url: req.originalUrl });
         return res.status(err.statusCode).json({error: err.message});
