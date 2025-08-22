@@ -5,6 +5,7 @@ import GoogleStrategy from 'passport-google-oauth20'; // Google OAuth strategy
 import { pool } from '../config/database.js'; // connect to the database
 import cookieParser from 'cookie-parser'; // to use cookies in all routes
 import dotenv from 'dotenv';
+import { generateAccessToken, generateRefreshToken } from '../utils/helperFunctions.js';
 
 dotenv.config();
 
@@ -77,14 +78,26 @@ router.get('/google',
 
 router.get('/google/callback', 
   passport.authenticate('google', { failureRedirect: '/login', session: false }), // if authentication fails, redirect to login
-  function(req, res) {
-    const token = jwt.sign({ id: req.user.id, email: req.user.email, role: req.user.role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+  async function(req, res) {
 
-    res.cookie("token", token, {
+    const payload = { id: req.user.id, email: req.user.email, role: req.user.role };
+    const accessToken = await generateAccessToken(payload);
+    const refreshToken = await generateRefreshToken(payload);
+
+    // Access token
+    res.cookie("accessToken", accessToken, {
       httpOnly: true,
       secure: false, // true in production with HTTPS
       sameSite: 'lax', // CSRF protection
-      maxAge: 3600000 // 1 hour
+      maxAge: 15 * 60 * 1000 // 15 minutes
+    });
+
+    // Refresh token
+    res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: false,       // true in production with HTTPS
+        sameSite: 'lax',  // With lax I can use it on redirects
+        maxAge: 15 * 24 * 60 * 60 * 1000 // 15 days
     });
 
 

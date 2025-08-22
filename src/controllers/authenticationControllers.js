@@ -8,8 +8,9 @@ dotenv.config();
 import { normalizePhoneNumber, validateUserInput, ifUserExists,  validatePassword } from '../services/validation.js';
 import { sendresetEmail, verifyEmail } from '../services/emailService.js'; // Email service for sending verification and reset emails
 import { getUserByEmail, createUser } from '../models/userModels.js';
-import { insertUserEmailToken, findUserByEmailToken, verifyUserEmail, insertUserResetToken, findUserByResetToken, updateUserPassword } from '../models/authenticationModels.js'; // Model for updating user email token
+import { insertUserEmailToken, findUserByEmailToken, verifyUserEmail, insertUserResetToken, findUserByResetToken, updateUserPassword, removeTokenWhenLogout } from '../models/authenticationModels.js'; // Model for updating user email token
 import { AppError } from '../utils/AppError.js';
+import { generateAccessToken, generateRefreshToken } from "../utils/helperFunctions.js";
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -87,12 +88,25 @@ export async function loginController(req, res, next) {
 
 
         // JWT
-        const accessToken = jwt.sign({id: user.id, email: user.email, role: user.user_role}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '1h'}); // create token with user id and email, expires in 15 minutes
-        res.cookie("token", accessToken, {
-            httpOnly: true,      // JS can't access it
+        const payload = { id: user.id, email: user.email, role: user.user_role }; 
+
+        const accessToken = await generateAccessToken(payload);
+        const refreshToken = await generateRefreshToken(payload);
+
+        // Access token
+        res.cookie("accessToken", accessToken, {
+            httpOnly: true,    
             secure: false,       // true in production with HTTPS
-            sameSite: 'lax',  // CSRF protection
-            maxAge: 3600000       // 1 hour
+            sameSite: 'lax',  // With lax I can use it on redirects
+            maxAge: 15 * 60 * 1000       // 15 minutes
+        });
+
+        // Refresh token
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: false,       // true in production with HTTPS
+            sameSite: 'lax',  // With lax I can use it on redirects
+            maxAge: 15 * 24 * 60 * 60 * 1000 // 15 days
         });
         
         console.log("Logged in successfully ✅");
@@ -195,13 +209,15 @@ export async function resetPasswordController(req, res, next) {
 // @POST logout
 export async function logoutController(req, res, next) {
     try {
+        await removeTokenWhenLogout(req.user.email); // removing tokens from DB
+
         // Clear the cookie
-        res.clearCookie("token", {
+        res.clearCookie("accessToken", {
             httpOnly: true,
             secure: false, // true in production with HTTPS
             sameSite: 'strict'   // LAX for CSRF protection and strict for same-site requests
         }); 
-    
+
         console.log("Logged out successfully ✅");
         return res.redirect('/login');
         

@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { pool } from '../config/database.js'; // Database connection
-
+import jwt from 'jsonwebtoken';
 
 
 
@@ -28,4 +28,31 @@ export function startCleanupInterval() {
         console.error('Error cleaning the unverified users', error.message);
     }
     }, 1000 * 60  * 20); // Refresh every 20 minutes
+}
+
+// TOKEN GENERATION
+export async function generateAccessToken(payload) {
+    return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15s' });
+}
+
+export async function generateRefreshToken(payload) {
+    return jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '15d' });
+}
+
+
+export async function verifyAccessToken(token) {
+    try {
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        return decoded;
+    } catch (error) {
+        return null;
+    }
+}
+export async function verifyRefreshToken(token) {
+    try {
+        const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+        return decoded;
+    } catch (error) {
+        return null;
+    }
 }

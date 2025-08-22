@@ -8,7 +8,7 @@ router.use(express.json());
 router.use(express.urlencoded({ extended: false }));
 
 
-router.get('/orders', authenticateToken, authorizeAdmin, getOrdersController);
+router.get('/allOrders', authenticateToken, authorizeAdmin, getOrdersController);
 router.get('/orders/user/:userId', authenticateToken, authorizeAdmin, getOrdersByUserIdController);
 router.get('/orders/:id', authenticateToken, authorizeAdmin, getOrderByIdController);
 router.post('/createOrder', authenticateToken, createOrderController);

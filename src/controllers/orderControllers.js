@@ -14,7 +14,7 @@ const defaultTTL = 3600; // for cache expiration
 export async function getOrdersController(req, res, next) {
     try {
         // Check Redis cache
-        const orders = await getOrSetCache('orders', getOrders, defaultTTL);
+        const orders = await getOrSetCache('allOrders', getOrders, defaultTTL);
         if(!orders || orders.length === 0) {
             return res.status(404).send({error: "No orders found!"});
         }
