@@ -211,12 +211,18 @@ export async function logoutController(req, res, next) {
     try {
         await removeTokenWhenLogout(req.user.email); // removing tokens from DB
 
-        // Clear the cookie
+        // Clear the cookies
         res.clearCookie("accessToken", {
             httpOnly: true,
             secure: false, // true in production with HTTPS
             sameSite: 'strict'   // LAX for CSRF protection and strict for same-site requests
         }); 
+
+        res.clearCookie("refreshToken", {
+            httpOnly: true,
+            secure: false, // true in production with HTTPS
+            sameSite: 'strict'   // LAX for CSRF protection and strict for same-site requests
+        });
 
         console.log("Logged out successfully ✅");
         return res.redirect('/login');
@@ -225,4 +231,3 @@ export async function logoutController(req, res, next) {
         next(new AppError(`Error while logging out: ${error.message}`, 500));
     }
 };
-

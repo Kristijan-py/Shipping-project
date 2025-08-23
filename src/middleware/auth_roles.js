@@ -7,11 +7,23 @@ dotenv.config();
 // Authenticate token
 export function authenticateToken(req, res, next) {
     const accessToken = req.cookies?.accessToken;
-    if (!accessToken) return authenticateRefreshToken(req, res, next); 
+    const refreshToken = req.cookies?.refreshToken;
+
+    if (!accessToken) {
+        if(!refreshToken) {
+            return res.redirect('/login'); // No token
+        }
+        return authenticateRefreshToken(req, res, next);   
+    } 
 
     // Verify the token
     jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-        if (err) return authenticateRefreshToken(req, res, next); 
+        if (err) {
+            if(!refreshToken) {
+                return res.redirect('/login'); // expired
+            }
+            return authenticateRefreshToken(req, res, next);
+        } 
         req.user = user;
         next();
     });

@@ -32,7 +32,7 @@ export function startCleanupInterval() {
 
 // TOKEN GENERATION
 export async function generateAccessToken(payload) {
-    return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15s' });
+    return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
 }
 
 export async function generateRefreshToken(payload) {
