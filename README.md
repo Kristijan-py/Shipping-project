@@ -12,12 +12,3 @@ Caching with Redis
 Connecting tables in DB to easier search.
 User roles, CSV file uploads, ejs, logger and so on.
 
-Next things to do are:
-- FILTERING, SORTING, SEARCH
-- TESTING
-- SSL
-- ORM
-- EDIT PROFILE PAGE
-- ADDING CAPTCHA
-- COMPRESSION
-- LAZY LOAD
