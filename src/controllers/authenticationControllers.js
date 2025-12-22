@@ -52,7 +52,7 @@ export async function signupController(req, res, next) {
 
         await insertUserEmailToken(hashedToken, expires, req.body.email); // insert user email token, expiration and the email
 
-        const link = `${req.protocol}://${req.get('host')}/api/verify-email?token=${emailToken}&email=${req.body.email}`;
+        const link = `${process.env.BASE_URL}/api/verify-email?token=${emailToken}&email=${req.body.email}`;
         await verifyEmail(req.body.email, link); // sendimg a mail to the user
 
         res.redirect('/login'); // redirect to login page after signup
@@ -134,9 +134,9 @@ export async function verifyEmailController(req, res, next) {
         };
     
         // If exists in DATABASE, verify it
-        await verifyUserEmail(email);
+        verifyUserEmail(email);
     
-        res.redirect('/verify-email-page');
+        res.redirect('/login?is_verified=true'); // redirect to login page after verification
         
     } catch (error) {
         next(new AppError(`Error while verifying email: ${error.message}`, 500));
@@ -161,7 +161,7 @@ export async function forgotPasswordController(req, res, next) {
 
         await insertUserResetToken(resetTokenHash, resetTokenExpiration, user.email);
 
-        const link = `${req.protocol}://${req.get('host')}/reset-password?resetToken=${resetToken}&email=${user.email}`; // link to reset password
+        const link = `${process.env.BASE_URL}/reset-password?resetToken=${resetToken}&email=${user.email}`; // link to reset password
         console.log(link);
         await sendresetEmail(user.email, link); // send the reset link to the user's email for verification if the user is in our database
         return res.status(200).send({message: "Password reset link sent to your email!"});

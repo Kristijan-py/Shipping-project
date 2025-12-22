@@ -65,7 +65,7 @@ export function validateEmail(email) {
 export function validateUserInput({name, phone, email, password, confirm_password}) {
     //Check name
     if(!isOnlyLetters(name)){
-        return "Name must have only letters ❌";
+        return "Name must have only letters and no spaces ❌";
     }
     if(name.length < 3) {
         return "Name must be at least 3 characters long ❌";

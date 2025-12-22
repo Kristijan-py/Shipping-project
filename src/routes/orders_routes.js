@@ -12,7 +12,7 @@ router.get('/allOrders', authenticateToken, authorizeAdmin, getOrdersController)
 router.get('/orders/user/:userId', authenticateToken, authorizeAdmin, getOrdersByUserIdController);
 router.get('/orders/:id', authenticateToken, authorizeAdmin, getOrderByIdController);
 router.post('/createOrder', authenticateToken, createOrderController);
-router.put('/updateOrder', authenticateToken, updateOrderController); // we should change this to PUT and DELETE with method override
+router.put('/updateOrder', authenticateToken, updateOrderController);
 router.delete('/orders/:id', authenticateToken, deleteOrderController);
 
 

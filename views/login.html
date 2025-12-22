@@ -3,33 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/global.css">
+    <link rel="stylesheet" href="/css/login.css">
+    <link rel="icon" type="image/png" href="/images/delivery_favicon.png"> <!--FAVICON-->
+    <script src="https://kit.fontawesome.com/5c1a15adf2.js" crossorigin="anonymous"></script> <!--ICONS-->
     <title>Login</title>
 </head>
 <body>
-    <h1>Login</h1>
-    <form action="/api/login" method="POST">
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
-        <br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <br>
-        <button type="submit">Login</button>
-        <br>
-        <h3>Forgot your password?</h3>
-        <button><a href="/forgot-password">Forgot Password</a></button>
-        <br>
-        <h3>Don't have an account?</h3>
-        <button><a href="/signup">Signup</a></button>
-        <br>
-    </form>
+    <div class="wrapper">
+        <!-- About Us Section -->
+        <div class="about_us">
+            <h1>Brza Pratka</h1>
+            <p id="caption">Fast delivery</p>
+            <p>Brza Pratka is a modern delivery and cargo company dedicated to fast, reliable, and affordable logistics solutions. 
+                With a strong focus on customer satisfaction, Brza Pratka offers flexible shipping options for individuals and businesses, 
+                ensuring parcels arrive safely and on time. Utilizing advanced tracking technology, 
+                customers can monitor their shipments in real time from pickup to delivery.
+            </p>
+            <div class="social_container">
+                <a class="social_button" href="https://www.instagram.com/brza_pratka_makedonija/" target="_blank">
+                    <i class="fa-brands fa-instagram fa-xl"></i>
+                    Instagram
+                </a>
+                <a class="social_button" href="https://www.facebook.com/brza.pratka1" target="_blank">
+                    <i class="fa-brands fa-facebook-f fa-xl"></i>
+                    Facebook
+                </a>
+            </div>  
+        </div>
 
-    <h2>Or login with Google</h2>
-    <a href="/auth/google" style="text-decoration: none;">
-        <button style="padding: 10px 20px; background: white; border: 1px solid #ccc; cursor: pointer;">
-            <img src="https://developers.google.com/identity/images/g-logo.png" style="width: 20px; margin-right: 10px;" />
-            Sign in with Google
-        </button>
-    </a>
+        <!-- Login Form -->
+        <div class="login_form">
+            <form action="/api/login" method="POST">
+                <h1>Sign in</h1>
+
+                <div class="input_group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email..." required>
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div class="input_group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password..." required>
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+
+                <div class="rememberMe_container">
+                    <label for="rememberMe_input">
+                        Remember me
+                        <input type="checkbox" name="rememberMe" id="rememberMe_input">
+                    </label>
+                    <a id="forgot_password" href="/forgot-password">Forgot Password</a>
+                </div>
+                
+                <button id="sign_in" type="submit">Sign in</button>
+
+                <div class="divider">
+                    <span>Or sign in with</span>
+                </div>
+            </form>
+
+            <div class="buttons">
+                <a class="button" href="/auth/google">
+                    <img src="https://developers.google.com/identity/images/g-logo.png" style="width: 20px;" />
+                    Google
+                </a>
+                <a class="button" href="#">
+                    <i class="fa-brands fa-facebook-f fa-lg" style="color: #1877f2;"></i>
+                    Facebook
+                </a>
+            </div>
+            
+            <p>Don't have an account? <a id="sign_up" href="/signup">Sign up</a></p>
+            
+        </div>
+    </div>
 </body>
 </html>

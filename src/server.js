@@ -1,4 +1,6 @@
 import express from "express";
+import https from 'https';
+import fs from 'fs';
 import dotenv from 'dotenv' // loading env files
 dotenv.config();
 import cookieParser from 'cookie-parser'; // needs to import here in main server file to use cookies into all routes
@@ -8,7 +10,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
 
-// OTHER FILES IMPORT
+// ROUTES FILES IMPORT
 import users from "./routes/Users_routes.js"; // users routes
 import orders from "./routes/orders_routes.js"; // orders routes
 import fileUploads from "./routes/file_routes.js"; // file upload routes
@@ -52,8 +54,8 @@ app.use((req, res, next) => {
   next();
 });
 
-// STATIC FILES ==> to serve files like html, css, js...
-app.use(express.static(path.join(__dirname, '..', 'views')));
+// STATIC FILES ==> to serve files like css, js...
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // INTERVAL ==> cleans unverified users every 20m
 startCleanupInterval();
@@ -79,6 +81,13 @@ app.use((req, res, next) => {
 
 app.use(errorHandler) // custom middleware
 
+
+// HTTPS configuration
+// const options = {
+//   key: fs.readFileSync('../SHIPPING_SOFTWARE/certs/key.pem'),
+//   cert: fs.readFileSync('../SHIPPING_SOFTWARE/certs/cert.pem')
+// }
+// const server = https.createServer(options, app);
 
 app.listen(PORT, () => {
     console.log(`App listening on port ${PORT}`)

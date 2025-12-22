@@ -1,0 +1,233 @@
+/* DIVS */
+.wrapper{
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    margin: auto ;
+}
+
+
+/* FORM */
+.login_form{
+    width: 100%;
+    max-width: 480px;
+    background-color: white;
+    padding: 10px 40px;
+    border: none;
+    border-radius: 0 10px 10px 0;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+form h1{
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+form label{
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+.input_group{
+    position: relative;
+}
+.input_group i{
+    position: absolute;
+    top: 35px;
+    left: 12px;
+    pointer-events: none;
+}
+form input{
+    width: 100%;
+    padding: 10px 10px 10px 40px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+
+/* REMEMBER ME */
+.rememberMe_container{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+
+}
+.rememberMe_container label{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.rememberMe_container input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+}
+
+
+/* LINKS */
+#forgot_password{
+    text-decoration: none;
+    color: #555;
+    font-size: 12x;
+    transition: color 0.3s;
+}
+#forgot_password:hover{
+    color: #000000;
+    text-decoration: underline;
+}
+#sign_up{
+    text-decoration: none;
+    border: none;
+    color: black;
+    cursor: pointer;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+#sign_up:hover{
+    text-decoration: underline;
+    color: #1b1b1b;
+
+}
+
+
+/* BUTTON */
+#sign_in{
+    width: 100%;
+    font-size: 16px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #333;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+#sign_in:hover{
+    background-color: #1b1b1b;
+}
+.buttons{
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 30px;
+}
+.button{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 10px 40px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 150px;
+    gap: 10px;
+    transition: color 0.3s, border 0.3s;
+}
+.button:hover{
+    border: 1px solid #333;
+    color: black;
+}
+
+
+/* DIVIDER */
+.divider{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    margin: 30px 0px;
+    width: 100%;
+    line-height: 0;
+}
+.divider::before,
+.divider::after{
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid #ccc;
+}
+.divider:not(:empty)::before {
+    margin-right: 20px;
+}
+
+.divider:not(:empty)::after {
+    margin-left: 20px;
+}
+.divider span {
+    font-size: 14px;
+    color: #555;
+}
+
+
+/* TEXT */
+p{
+    color: #555;
+    text-align: center;
+}
+
+
+/* ABOUTS US */
+.about_us{
+    width: 100%;
+    max-width: 480px;
+    background-color: #1b1b1b;
+    padding: 10px 40px;
+    border: none;
+    border-radius: 10px 0 0 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+.about_us h1{
+    color: white;
+    text-align: center;
+    margin-bottom: 5px;
+}
+.about_us #caption{
+    margin: 0px 0px 30px 0px;
+    color: #f9a727;
+    text-align: center;
+}
+.about_us p{
+    color: white;
+    text-align: center;
+    line-height: 1.6;
+}
+
+
+/* SOCIAL MEDIA */
+.social_container{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    margin: 3rem 0 1rem 0;
+}
+.social_button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 150px;
+    color: white;
+    font-size: 14px;
+    border: 1px solid white;
+    border-radius: 5px;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 15px 40px;
+    gap: 5px;
+    transition: color 0.3s, border 0.3s;
+}
+.social_button p{
+    font-size: 16px;
+}
+.about_us a:hover{
+    color: #f9a727;
+    border: 1px solid #f9a727;
+}
+.about_us a i{
+    color: white;
+    margin-right: 5px;
+    transition: transform 0.3s;
+}
+.about_us a:hover i{
+    transform: scale(1.1);
+}
