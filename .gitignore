@@ -2,6 +2,7 @@ node_modules/
 **/.env
 logs/
 certs/
+vscode/
 
 to_do.txt
 tests/

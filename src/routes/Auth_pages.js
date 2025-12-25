@@ -15,7 +15,7 @@ router.use(express.json());
 // @GET redirect to dashboard page if token is present
 router.get('/', redirectIfAuthenticated, (req, res) => {
    try {
-    res.sendFile(path.join(__dirname, '..', '..', 'views', 'login.html'));
+    res.sendFile(path.join(__dirname, '..', '..', 'views', 'Before_Login', 'homepage.html'));
   } catch (error) {
     throw new AppError(`Error sending login page: ${error.message}`, 500);
   }
