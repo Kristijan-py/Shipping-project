@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/output.css"> <!-- Tailwind CSS -->
+    <link rel="icon" type="image/png" href="/images/brza_pratka_logo.svg"> <!--FAVICON-->
+    <script src="https://kit.fontawesome.com/5c1a15adf2.js" crossorigin="anonymous"></script> <!--ICONS-->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <title>Brza Pratka | Fast Delivery Service</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; }
+        .hero-gradient {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #9333ea 100%);
+        }
+        .feature-card {
+            transition: all 0.35s ease;
+            transform: translateY(0);
+        }
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 24px 44px rgba(0, 0, 0, 0.12);
+        }
+        .stat-counter {
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.06) 100%);
+            backdrop-filter: blur(10px);
+        }
+        .stat-counter:hover {
+            background: linear-gradient(135deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.10) 100%);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1);
+        }
+        .nav-scrolled {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 5px 24px rgba(0, 0, 0, 0.1);
+        }
+        /* Reveal on scroll(sections appearing on screen) */
+        .reveal { opacity: 0; transform: translateY(16px); transition: opacity .6s ease, transform .6s ease; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        /* Subtle shimmering highlight on hoverable CTAs */
+        .btn-shine { position: relative; overflow: hidden; }
+        .btn-shine::after {
+            content: '';
+            position: absolute;
+            top: -150%;
+            left: -50%;
+            width: 40%;
+            height: 400%;
+            transform: rotate(25deg);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
+            transition: transform .6s ease;
+        }
+        .btn-shine:hover::after { transform: translateX(250%) rotate(25deg); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased" x-data="{ mobileMenuOpen: false, navScrolled: false, showTop: false }" 
+      @scroll.window="navScrolled = window.scrollY > 50; showTop = window.scrollY > 1200;">
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 transition-all duration-300" :class="navScrolled ? 'nav-scrolled' : 'bg-transparent'">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="#top" class="flex items-center space-x-2">
+                        <span class="text-2xl font-extrabold text-indigo-600 tracking-tight" :class="navScrolled ? 'text-indigo-600' : 'text-white'">Brza Pratka</span>
+                    </a>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="#top" class="text-slate-700 hover:text-indigo-600 font-medium transition-colors duration-200" :class="navScrolled ? 'text-slate-700' : 'text-white hover:text-yellow-400'">Home</a>
+                        <a href="#our_services" class="text-slate-700 hover:text-indigo-600 font-medium transition-colors duration-200" :class="navScrolled ? 'text-slate-700' : 'text-white hover:text-yellow-400'">Our Services</a>
+                        <a href="#about_us" class="text-slate-700 hover:text-indigo-600 font-medium transition-colors duration-200" :class="navScrolled ? 'text-slate-700' : 'text-white hover:text-yellow-400'">About Us</a>
+                        <a href="/pages/pricing.html" class="text-slate-700 hover:text-indigo-600 font-medium transition-colors duration-200" :class="navScrolled ? 'text-slate-700' : 'text-white hover:text-yellow-400'">Pricing</a>
+                        <a href="#contact" class="text-slate-700 hover:text-indigo-600 font-medium transition-colors duration-200" :class="navScrolled ? 'text-slate-700' : 'text-white hover:text-yellow-400'">Contact</a>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <a href="login" class="btn-shine bg-indigo-600 text-white px-5 sm:px-6 py-2.5 rounded-lg font-semibold hover:bg-indigo-700 transition-all duration-300 transform hover:scale-[1.03] shadow-lg">
+                        Sign in
+                    </a>
+                    
+                    <!-- Mobile menu button -->
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" :aria-expanded="mobileMenuOpen" aria-controls="mobileMenu"
+                            class="md:hidden text-slate-600 hover:text-indigo-600" :class="navScrolled ? 'text-slate-600 hover:text-indigo-600' : 'text-white hover:text-yellow-400'">
+                        <span class="sr-only">Toggle navigation</span>
+                        <i class="fas" :class="mobileMenuOpen ? 'fa-times' : 'fa-bars'"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Menu -->
+            <div id="mobileMenu" x-show="mobileMenuOpen" x-transition:enter="transition ease-out duration-200" 
+                 x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                 x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" 
+                 x-transition:leave-end="opacity-0 scale-95" class="md:hidden bg-white rounded-lg shadow-xl p-4 mt-2 mb-4">
+                <div class="flex flex-col space-y-4">
+                    <a @click="mobileMenuOpen=false" href="#top" class="text-slate-700 hover:text-indigo-600 font-medium transition-colors">Home</a>
+                    <a @click="mobileMenuOpen=false" href="#our_services" class="text-slate-700 hover:text-indigo-600 font-medium transition-colors">Our Services</a>
+                    <a @click="mobileMenuOpen=false" href="#about_us" class="text-slate-700 hover:text-indigo-600 font-medium transition-colors">About Us</a>
+                    <a @click="mobileMenuOpen=false" href="/pages/pricing.html" class="text-slate-700 hover:text-indigo-600 font-medium transition-colors">Pricing</a>
+                    <a @click="mobileMenuOpen=false" href="#contact" class="text-slate-700 hover:text-indigo-600 font-medium transition-colors">Contact</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Hero Section -->
+    <section id="top" class="relative hero-gradient text-white min-h-screen flex items-center justify-center">
+        <div class="relative max-w-7xl px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="max-w-2xl">
+                    <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-tight">
+                        Fast Delivery Service
+                        <span class="text-yellow-300 block">For 24 Hours</span>
+                    </h1>
+                    <p class="text-lg md:text-xl mb-8 text-indigo-100 leading-relaxed">
+                        Elevate your logistics experience with our reliable cargo service. 
+                        Track every shipment in real time and ensure safe, timely deliveries across the country and beyond.
+                    </p>
+                    <div class="flex flex-col text-center sm:flex-row gap-4">
+                        <a href="#our_services" class="btn-shine bg-yellow-400 text-slate-900 px-8 py-4 rounded-xl font-bold text-lg hover:bg-yellow-300 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                            More About Our Services
+                        </a>
+                        <a href="signup" class="border-2 border-white text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-white hover:text-indigo-700 transition-all duration-300">
+                            <i class="fas fa-user mr-2"></i><span>Sign Up For Free</span>
+                        </a>
+                    </div>
+                    <!-- Trust badges -->
+                    <div class="mt-8 flex items-center gap-6 text-indigo-100">
+                        <div class="flex items-center"><i class="fas fa-award text-yellow-300 mr-2"></i><span>Top-rated company</span></div>
+                        <div class="sm:flex items-center "><i class="fas fa-user-check text-yellow-300 mr-2"></i><span>10k+ clients</span></div>
+                    </div>
+                </div>
+
+                <div class="relative">
+                    <div class="relative rounded-2xl overflow-hidden shadow-2xl transform hover:rotate-0 hover:scale-[1.01] transition-all duration-500">
+                        <img src="/images/hero_section_image.jpg" 
+                             alt="Photographer taking a shot outdoors with a DSLR" 
+                             class="w-full h-auto object-cover" loading="eager" fetchpriority="high">
+                        <div class="absolute inset-0 bg-gradient-to-t from-indigo-900/30 via-transparent to-transparent"></div>
+                    </div>
+                    <!-- Floating info chip -->
+                    <div class="absolute -bottom-6 left-6 bg-white/90 text-slate-800 backdrop-blur rounded-xl px-4 py-3 shadow-xl border border-white/50 sm:flex items-center gap-3">
+                        <i class="fas fa-tag text-indigo-600 text-xl"></i>
+                        <span class="text-sm font-semibold">50% OFF on first order for new clients</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Scroll indicator -->
+        <a href="#features" class="absolute bottom-8 left-1/2 -translate-x-1/2">
+            <i class="fas fa-chevron-down text-white text-2xl animate-bounce"></i>
+            <span class="sr-only">Scroll to About Us</span>
+        </a>
+    </section>
+
+
+    <!-- Our Services Section -->
+    <section id="our_services" class="py-20 bg-white scroll-mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4">Our Services</h2>
+                <p class="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto">
+                    Discover how we streamline your logistics with our comprehensive delivery solutions.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="feature-card bg-white p-8 rounded-2xl border border-slate-200 shadow-lg reveal">
+                    <div class="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-truck text-2xl text-indigo-600" aria-hidden="true"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-3">Fast Ground Transport</h3>
+                    <p class="text-slate-600 mb-6">
+                        Reliable road cargo services ensuring safe and on-time delivery across regions.
+                    </p>
+                    <div class="overflow-hidden rounded-xl">
+                        <img src="/images/transport.jpg"
+                             alt="Ground transport truck"
+                             class="w-full h-48 object-cover hover:scale-105 transition-transform duration-500" loading="lazy">
+                    </div>
+                </div>
+                
+                <div class="feature-card bg-white p-8 rounded-2xl border border-slate-200 shadow-lg reveal">
+                    <div class="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-warehouse text-2xl text-purple-600" aria-hidden="true"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-3">Secure Warehousing</h3>
+                    <p class="text-slate-600 mb-6">
+                        Modern storage facilities with full inventory control and cargo protection.
+                    </p>
+                    <div class="overflow-hidden rounded-xl">
+                        <img src="/images/warehouse.jpg"
+                             alt="Secure warehouse facility"
+                             class="w-full h-48 object-cover hover:scale-105 transition-transform duration-500" loading="lazy">
+                    </div>
+                </div>
+                
+                <div class="feature-card bg-white p-8 rounded-2xl border border-slate-200 shadow-lg reveal">
+                    <div class="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-route text-2xl text-yellow-600" aria-hidden="true"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-3">Shipment Tracking</h3>
+                    <p class="text-slate-600 mb-6">
+                        Real-time tracking and transparent updates from pickup to final delivery.
+                    </p>
+                    <div class="overflow-hidden rounded-xl">
+                        <img src="/images/shipment_tracking.jpg"
+                             alt="Shipment tracking interface"
+                             class="w-full h-48 object-cover hover:scale-105 transition-transform duration-500" loading="lazy">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Stats Section -->
+    <section id="stats" class="py-20 bg-indigo-600 text-white relative overflow-hidden scroll-mt-16">
+        <div class="absolute inset-0 bg-black/10"></div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+                <div class="stat-counter p-8 rounded-2xl text-center border border-indigo-500/30 reveal">
+                    <div class="text-4xl md:text-5xl font-extrabold mb-3 text-yellow-300">10k+</div>
+                    <div class="text-indigo-100 font-medium">Clients Enrolled</div>
+                </div>
+                <div class="stat-counter p-8 rounded-2xl text-center border border-indigo-500/30 reveal">
+                    <div class="text-4xl md:text-5xl font-extrabold mb-3 text-yellow-300">98%</div>
+                    <div class="text-indigo-100 font-medium">Success Rate</div>
+                </div>
+                <div class="stat-counter p-8 rounded-2xl text-center border border-indigo-500/30 reveal">
+                    <div class="text-4xl md:text-5xl font-extrabold mb-3 text-yellow-300">20+</div>
+                    <div class="text-indigo-100 font-medium">Warehouses</div>
+                </div>
+                <div class="stat-counter p-8 rounded-2xl text-center border border-indigo-500/30 reveal">
+                    <div class="text-4xl md:text-5xl font-extrabold mb-3 text-yellow-300">24/7</div>
+                    <div class="text-indigo-100 font-medium">Lifetime Access</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Abouts Us Section -->
+    <section id="about_us" class="py-20 bg-white scroll-mt-16 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div>
+                <h2 class="text-3xl text-center md:text-4xl font-extrabold text-slate-900">More About Us</h2>
+                <p class="text-slate-600 text-center mt-2">A logistic company that started in the late 1998 year. 28 years of experience in the field of logistics and transportation.</p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 pt-16 gap-8 reveal">
+                <div class="px-6">
+                    <h3 class="text-xl md:text-2xl text-center font-bold text-slate-900 mb-4">Our Story</h3>
+                    <p class="text-slate-600 text-md lg:text-lg leading-7 lg:leading-8 tracking-wide text-justify md:text-left">Brza Pratka is a well-established logistics and delivery company founded in 1998, built on reliability, speed, and continuous growth. 
+                                                Over the years, the company has earned the trust of more than 50,000 clients by delivering consistent, high-quality courier and cargo services. 
+                                                Brza Pratka operates across 100% of North Macedonia, ensuring full national coverage, while also providing cross-border shipping to selected regions in Albania, Kosovo, Serbia, and Bulgaria. 
+                                                With a strong logistics network and experienced team, the company focuses on secure handling, timely deliveries, and customer satisfaction. 
+                                                By combining local expertise with regional reach, Brza Pratka continues to expand its services and strengthen its position as a leading logistics partner in the region.
+                    </p>
+                </div>
+                <!-- Maps -->
+                <div class="px-4 md:px-6">
+                    <h3 class="text-xl md:text-2xl text-center font-bold text-slate-900 mb-4">Our Location</h3>
+                    <div class="w-full h-64 sm:h-80 md:h-[450px]">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2976.837143996119!2d22.188119476556487!3d41.74560547369863!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1355dd84214e8575%3A0x870bfbac09b96deb!2sBrza%20Pratka!5e0!3m2!1sen!2smk!4v1767612375294!5m2!1sen!2smk"
+                                class="w-full h-full rounded-xl"  allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- CTA Section -->
+    <section id="enroll" class="py-20 bg-gradient-to-br from-purple-500 to-indigo-600 text-white relative overflow-hidden scroll-mt-16">
+        <div class="absolute inset-0 bg-black/10"></div>
+        <div class="relative max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl md:text-5xl font-extrabold mb-6">Ready to move your shipments faster?</h2>
+            <p class="text-lg md:text-xl mb-8 text-purple-100 max-w-2xl mx-auto">
+                Join thousands of businesses and individuals who trust our reliable logistics and delivery services every day.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4 mb-6">
+                <a href="login" class="btn-shine bg-yellow-400 text-slate-900 px-8 py-4 rounded-xl font-bold text-lg hover:bg-yellow-300 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    <i class="fas fa-rocket mr-2"></i>Enroll Now - Free
+                </a>
+                <a href="signup" class="border-2 border-white text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-white hover:text-indigo-700 transition-all duration-300">
+                    <i class="fas fa-user mr-2"></i>Create a Free Account
+                </a>
+            </div>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-6 text-purple-100">
+                <div class="flex items-center">
+                    <i class="fas fa-percent mr-2"></i>
+                    <span>50% off on your first order</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-infinity mr-2"></i>
+                    <span>Lifetime access</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-box mr-2"></i>
+                    <span>Free returns</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="py-20 bg-white scroll-mt-16"  x-data="{ current: 0, total: 3, intervalId: null }">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12 reveal">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900">What People Say</h2>
+                <p class="text-slate-600 mt-2">Real stories from our clients who trust us.</p>
+            </div>
+            <div class="relative bg-slate-50 border border-slate-200 rounded-3xl p-8 md:p-10 reveal overflow-hidden">
+                <div class="absolute -top-10 -left-10 w-40 h-40 bg-indigo-100 rounded-full opacity-50"></div>
+                <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-purple-100 rounded-full opacity-50"></div>
+
+                <!-- Template -->
+                <template x-for="(t, i) in [
+                    {name:'Kristijan N.', role:'Business man', quote:'The delivery efficiency alone was worth it. Our shipment handling improved immediately.', img:'https://images.unsplash.com/photo-1598367886186-71a4e6afc589?crop=faces&fit=crop&w=200&h=200&ixlib=rb-4.1.0&q=80'},
+                    {name:'Marija S.', role:'Professor', quote:'Loved the workflow. Clear, practical, and full of processes we could apply right away.', img:'https://images.unsplash.com/photo-1758600587811-e9a20851cf7d?crop=faces&fit=crop&w=200&h=200&ixlib=rb-4.1.0&q=80'},
+                    {name:'Luka A.', role:'Online store', quote:'The tracking and coordination systems are top-notch. Our deliveries now feel professional and well-managed.', img:'https://images.unsplash.com/photo-1741601457599-8b466da785f3?crop=faces&fit=crop&w=200&h=200&ixlib=rb-4.1.0&q=80'}
+                ]" :key="i">
+                    <div x-show="current===i" x-transition.opacity x-transition.duration.500ms class="grid md:grid-cols-12 gap-6 items-center">
+                        <div class="md:col-span-3 flex justify-center">
+                            <img :src="t.img" :alt='`Portrait of ${t.name}`' class="w-24 h-24 rounded-full ring-4 ring-white shadow-lg object-cover">
+                        </div>
+                        <div class="md:col-span-9">
+                            <div class="flex text-yellow-400 text-lg mb-3" aria-hidden="true">
+                                <i class="fas fa-star"></i><i class="fas fa-star ml-1"></i><i class="fas fa-star ml-1"></i><i class="fas fa-star ml-1"></i><i class="fas fa-star ml-1"></i>
+                            </div>
+                            <p class="text-lg md:text-xl text-slate-800 font-medium">“<span x-text="t.quote"></span>”</p>
+                            <div class="mt-4 text-slate-600"><span class="font-semibold text-slate-800" x-text="t.name"></span> • <span x-text="t.role"></span></div>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Controls -->
+                <div class="mt-6 flex items-center justify-center gap-3">
+                    <button @click="current = (current + total - 1) % total" class="w-9 h-9 rounded-full border border-slate-300 hover:bg-white shadow-sm flex items-center justify-center">
+                        <span class="sr-only">Previous</span><i class="fas fa-chevron-left text-slate-600"></i>
+                    </button>
+                    <template x-for="i in [...Array(total).keys()]">
+                        <button @click="current = i" :class="current===i ? 'bg-indigo-600' : 'bg-slate-300/60'" class="w-2.5 h-2.5 rounded-full transition-colors"></button>
+                    </template>
+                    <button @click="current = (current + 1) % total" class="w-9 h-9 rounded-full border border-slate-300 hover:bg-white shadow-sm flex items-center justify-center">
+                        <span class="sr-only">Next</span><i class="fas fa-chevron-right text-slate-600"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Warehouses Section -->
+    <section id="warehouse" class="py-20 bg-gradient-to-br from-purple-500 to-indigo-600 text-white relative overflow-hidden scroll-mt-16">
+        <div class="absolute inset-0 bg-black/10"></div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl md:text-5xl text-center font-extrabold mb-12">All Warehouse locations</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+                <a href="https://maps.app.goo.gl/n8daCMoFeRQw14di9" target="_blank" class="stat-counter p-6 rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
+                    <div class="text-3xl md:text-4xl font-extrabold mb-3 text-yellow-300">Skopje</div>
+                    <div class="text-indigo-100 font-medium"><i class="fas fa-location-arrow mr-2 text-white"></i>Blagoja Stevkovski 34</div>
+                </a>
+                <a href="https://maps.app.goo.gl/2QS6Up2SMLAAB5q78" target="_blank" class="stat-counter p-6 rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
+                    <div class="text-3xl md:text-4xl font-extrabold mb-3 text-yellow-300">Stip</div>
+                    <div class="text-indigo-100 font-medium"><i class="fas fa-location-arrow mr-2 text-white"></i>Bulevar JNA 8</div>
+                </a>
+                <a href="https://maps.app.goo.gl/zTca9DAs9ySpFEhN7" target="_blank" class="stat-counter p-6 rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
+                    <div class="text-3xl md:text-4xl font-extrabold mb-3 text-yellow-300">Kumanovo</div>
+                    <div class="text-indigo-100 font-medium"><i class="fas fa-location-arrow mr-2 text-white"></i>Bul. 3ta Mk brigada 120</div>
+                </a>
+                <a href="https://maps.app.goo.gl/s9CWHntP2LzwKNmC8" target="_blank" class="stat-counter p-6 rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
+                    <div class="text-3xl md:text-4xl font-extrabold mb-3 text-yellow-300">Ohrid</div>
+                    <div class="text-indigo-100 font-medium"><i class="fas fa-location-arrow mr-2 text-white"></i>Stiv Naumov 30A</div>
+                </a>
+                <a href="https://maps.app.goo.gl/bBwLLXTxjoFFuCbi8" target="_blank" class="stat-counter p-6 rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
+                    <div class="text-3xl md:text-4xl font-extrabold mb-3 text-yellow-300">Prilep</div>
+                    <div class="text-indigo-100 font-medium"><i class="fas fa-location-arrow mr-2 text-white"></i>Bul. Dimo Narednikot 49</div>
+                </a>
+                <a href="https://maps.app.goo.gl/WC7nXNMWTBfYrFBCA" target="_blank" class="stat-counter p-6 rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
+                    <div class="text-3xl md:text-4xl font-extrabold mb-3 text-yellow-300">Gostivar</div>
+                    <div class="text-indigo-100 font-medium"><i class="fas fa-location-arrow mr-2 text-white"></i>Brakja Ginovski 207</div>
+                </a>
+                <a href="https://maps.app.goo.gl/yetNWSukj1VysDaA6" target="_blank" class="stat-counter p-6 rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
+                    <div class="text-3xl md:text-4xl font-extrabold mb-3 text-yellow-300">Kavadarci</div>
+                    <div class="text-indigo-100 font-medium"><i class="fas fa-location-arrow mr-2 text-white"></i>Mito Hadzivasilev 91</div>
+                </a>
+                <a href="https://maps.app.goo.gl/y3j3896oQqeE1zbb6" target="_blank" class="stat-counter p-6 rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
+                    <div class="text-3xl md:text-4xl font-extrabold mb-3 text-yellow-300">Tetovo</div>
+                    <div class="text-indigo-100 font-medium"><i class="fas fa-location-arrow mr-2 text-white"></i>Lubo Bozinovski Pis 93</div>
+                </a>
+                <a href="https://maps.app.goo.gl/hhN9xkVKvgftT5Dc7" target="_blank" class="stat-counter p-6 rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
+                    <div class="text-3xl md:text-4xl font-extrabold mb-3 text-yellow-300">Veles</div>
+                    <div class="text-indigo-100 font-medium"><i class="fas fa-location-arrow mr-2 text-white"></i>8-ma Veleska brigada 4</div>
+                </a>
+                <a href="https://maps.app.goo.gl/KwstiTYM8qVg9mcMA" target="_blank" class="stat-counter p-6 rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
+                    <div class="text-3xl md:text-4xl font-extrabold mb-3 text-yellow-300">Strumica</div>
+                    <div class="text-indigo-100 font-medium"><i class="fas fa-location-arrow mr-2 text-white"></i>Marsal Tito 131</div>
+                </a>
+                <a href="https://maps.app.goo.gl/g3HCjRc2vxQmh1J27" target="_blank" class="stat-counter p-6 rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
+                    <div class="text-3xl md:text-4xl font-extrabold mb-3 text-yellow-300">Struga</div>
+                    <div class="text-indigo-100 font-medium"><i class="fas fa-location-arrow mr-2 text-white"></i>Naum Naumovski 14</div>
+                </a>
+                <a href="https://maps.app.goo.gl/sbHJiEpEVaDa6Um28" target="_blank" class="stat-counter p-6 rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
+                    <div class="text-3xl md:text-4xl font-extrabold mb-3 text-yellow-300">Bitola</div>
+                    <div class="text-indigo-100 font-medium"><i class="fas fa-location-arrow mr-2 text-white"></i>4ti Noemvri 1</div>
+                </a>
+            </div>
+        </div>
+    </section>
+    
+
+    <!-- FAQ -->
+    <section id="faq" class="py-20 bg-white scroll-mt-16">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-10 reveal">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900">Frequently Asked Questions</h2>
+                <p class="text-slate-600 mt-2">All the details you might be wondering about.</p>
+            </div>
+            <div class="space-y-4">
+                <div x-data="{ open: false }" class="border border-slate-200 rounded-xl p-5 reveal">
+                    <button @click="open=!open" class="w-full flex items-center justify-between text-left">
+                        <span class="font-semibold text-slate-900">Do you offer international cargo and freight services?</span>
+                        <i class="fas" :class="open ? 'fa-minus' : 'fa-plus'"></i>
+                    </button>
+                    <div x-show="open" x-transition class="mt-3 text-slate-600">
+                        Yes. We provide both domestic and international cargo and freight services through trusted transport partners.
+                    </div>
+                </div>
+                <div x-data="{ open: false }" class="border border-slate-200 rounded-xl p-5 reveal">
+                    <button @click="open=!open" class="w-full flex items-center justify-between text-left">
+                        <span class="font-semibold text-slate-900">How long does delivery usually take?</span>
+                        <i class="fas" :class="open ? 'fa-minus' : 'fa-plus'"></i>
+                    </button>
+                    <div x-show="open" x-transition class="mt-3 text-slate-600">
+                        Delivery time depends on the destination and service type, but most shipments arrive within standard regional or international transit times.
+                    </div>
+                </div>
+                <div x-data="{ open: false }" class="border border-slate-200 rounded-xl p-5 reveal">
+                    <button @click="open=!open" class="w-full flex items-center justify-between text-left">
+                        <span class="font-semibold text-slate-900">What types of packages and cargo can you transport?</span>
+                        <i class="fas" :class="open ? 'fa-minus' : 'fa-plus'"></i>
+                    </button>
+                    <div x-show="open" x-transition class="mt-3 text-slate-600">
+                        We transport documents, parcels, pallets, and commercial cargo, with flexible options for different sizes and weights.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Footer -->
+    <div id="footer"></div>
+
+
+    <!-- Back to top button -->
+    <button x-show="showTop" x-transition.opacity x-transition.duration.300ms @click="window.scrollTo({top:0, behavior:'smooth'})"
+            class="fixed bottom-6 right-6 z-50 bg-white text-slate-700 border border-slate-200 shadow-lg rounded-full p-3 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-400">
+        <span class="sr-only">Back to top</span>
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+
+    <script>
+        // Scroll reveal script
+        (function(){
+            const els = document.querySelectorAll('.reveal');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.15 });
+            els.forEach(el => observer.observe(el));
+        })();
+
+
+        // Load footer
+        fetch('pages/template/footer.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('footer').innerHTML = data;
+            })
+            .catch(error => console.error("Footer load error:", error));
+    </script>
+</body>
+</html>

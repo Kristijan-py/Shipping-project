@@ -3,14 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/signup.css">
+    <link rel="stylesheet" href="/css/output.css"> <!-- Tailwind CSS -->
     <link rel="stylesheet" href="/css/global.css">
-    <link rel="icon" type="image/png" href="/images/delivery_favicon.png"> <!--FAVICON-->
+    <link rel="stylesheet" href="/css/signup.css">
+    <link rel="icon" type="image/png" href="/images/brza_pratka_logo.svg"> <!--FAVICON-->
     <script src="https://kit.fontawesome.com/5c1a15adf2.js" crossorigin="anonymous"></script> <!--ICONS-->
-    <title>Signup</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> <!--ICONS-->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+
+    <title>Sign up | Brza Pratka</title>
 </head>
 <body>
-    <div class="wrapper">
+    <!-- Header -->
+    <div id="header"></div>
+
+    <div class="wrapper my-30">
         <form action="/api/signup" method="POST">
             <h1>Sign up</h1>
             <div class="input_group">
@@ -64,5 +73,27 @@
             <p>Already have an account? <a id="sign_in" href="/login">Sign in</a></p>
         </form>
     </div>
+
+    <!-- FOOTER -->
+    <div id="footer"></div>
+
+    <script>
+        // Header
+        fetch('/pages/template/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header').innerHTML = data;
+            })
+            .catch(error => console.error("Header load error:", error));
+            
+        // Footer
+        fetch('/pages/template/footer.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('footer').innerHTML = data;
+            })
+            .catch(error => console.error("Footer load error:", error));
+        
+    </script>
 </body>
 </html>

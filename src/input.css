@@ -1,2 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=BBH+Bogle&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Jersey+10&family=Roboto:ital,wght@0,100..900;1,100..900&family=Sekuya&display=swap');
+
 @import "tailwindcss";
-@source "../views/Before_Login/homepage.html";
+
+@theme  {
+  --font-inter: 'Inter', sans-serif;
+  --font-roboto: 'Roboto', sans-serif;
+  --font-sekuya: 'Sekuya', sans-serif;
+  --font-jersey10: 'Jersey 10', sans-serif;
+  --font-bbh-bogle: 'BBH Bogle', sans-serif;
+}

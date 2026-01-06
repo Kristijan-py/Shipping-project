@@ -1,3 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', sans-serif; }
+
+/* HEADER */
+.nav-scrolled {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 5px 24px rgba(0, 0, 0, 0.1);
+}
+/* Reveal on scroll(sections appearing on screen) */
+.reveal { opacity: 0; transform: translateY(16px); transition: opacity .6s ease, transform .6s ease; }
+.reveal.active { opacity: 1; transform: translateY(0); }
+/* Subtle shimmering highlight on hoverable CTAs */
+.btn-shine { position: relative; overflow: hidden; }
+.btn-shine::after {
+    content: '';
+    position: absolute;
+    top: -150%;
+    left: -50%;
+    width: 40%;
+    height: 400%;
+    transform: rotate(25deg);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
+    transition: transform .6s ease;
+}
+.btn-shine:hover::after { transform: translateX(250%) rotate(25deg); }
+
+
 /* DIVS */
 .wrapper{
     display: flex;
@@ -159,12 +188,6 @@ form input{
     color: #555;
 }
 
-
-/* TEXT */
-p{
-    color: #555;
-    text-align: center;
-}
 
 
 /* ABOUTS US */
