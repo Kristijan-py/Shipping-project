@@ -4,18 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/output.css"> <!-- Tailwind CSS -->
+    <link rel="stylesheet" href="/css/template/header.css"> <!-- Header customs css -->
     <link rel="icon" type="image/png" href="/images/brza_pratka_logo.svg"> <!--FAVICON-->
     <script src="https://kit.fontawesome.com/5c1a15adf2.js" crossorigin="anonymous"></script> <!--ICONS-->
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script> <!-- ALPINE.js -->
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <title>Brza Pratka | Fast Delivery Service</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-        html { scroll-behavior: smooth; }
-        body { font-family: 'Inter', sans-serif; }
         .hero-gradient {
             background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #9333ea 100%);
         }
@@ -35,28 +32,9 @@
             background: linear-gradient(135deg, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0.10) 100%);
             box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1);
         }
-        .nav-scrolled {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 5px 24px rgba(0, 0, 0, 0.1);
-        }
         /* Reveal on scroll(sections appearing on screen) */
         .reveal { opacity: 0; transform: translateY(16px); transition: opacity .6s ease, transform .6s ease; }
         .reveal.active { opacity: 1; transform: translateY(0); }
-        /* Subtle shimmering highlight on hoverable CTAs */
-        .btn-shine { position: relative; overflow: hidden; }
-        .btn-shine::after {
-            content: '';
-            position: absolute;
-            top: -150%;
-            left: -50%;
-            width: 40%;
-            height: 400%;
-            transform: rotate(25deg);
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
-            transition: transform .6s ease;
-        }
-        .btn-shine:hover::after { transform: translateX(250%) rotate(25deg); }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased" x-data="{ mobileMenuOpen: false, navScrolled: false, showTop: false }" 
@@ -73,7 +51,7 @@
                 
                 <!-- Desktop Menu -->
                 <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-8">
+                    <div class="ml-10 flex items-baseline space-x-4 md:space-x-6 lg:space-x-8 text-bold">
                         <a href="#top" class="text-slate-700 hover:text-indigo-600 font-medium transition-colors duration-200" :class="navScrolled ? 'text-slate-700' : 'text-white hover:text-yellow-400'">Home</a>
                         <a href="#our_services" class="text-slate-700 hover:text-indigo-600 font-medium transition-colors duration-200" :class="navScrolled ? 'text-slate-700' : 'text-white hover:text-yellow-400'">Our Services</a>
                         <a href="#about_us" class="text-slate-700 hover:text-indigo-600 font-medium transition-colors duration-200" :class="navScrolled ? 'text-slate-700' : 'text-white hover:text-yellow-400'">About Us</a>
@@ -149,7 +127,7 @@
                         <div class="absolute inset-0 bg-gradient-to-t from-indigo-900/30 via-transparent to-transparent"></div>
                     </div>
                     <!-- Floating info chip -->
-                    <div class="absolute -bottom-6 left-6 bg-white/90 text-slate-800 backdrop-blur rounded-xl px-4 py-3 shadow-xl border border-white/50 sm:flex items-center gap-3">
+                    <div class="hidden lg:flex absolute gap-3 -bottom-6 left-6 bg-white/90 text-slate-800 backdrop-blur rounded-xl px-4 py-3 shadow-xl border border-white/50">
                         <i class="fas fa-tag text-indigo-600 text-xl"></i>
                         <span class="text-sm font-semibold">50% OFF on first order for new clients</span>
                     </div>
@@ -174,8 +152,8 @@
                 </p>
             </div>
             
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="feature-card bg-white p-8 rounded-2xl border border-slate-200 shadow-lg reveal">
+            <div class="grid lg:grid-cols-3 gap-8">
+                <div class="flex flex-col feature-card bg-white p-8 rounded-2xl border border-slate-200 shadow-lg reveal">
                     <div class="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mb-6">
                         <i class="fas fa-truck text-2xl text-indigo-600" aria-hidden="true"></i>
                     </div>
@@ -183,14 +161,14 @@
                     <p class="text-slate-600 mb-6">
                         Reliable road cargo services ensuring safe and on-time delivery across regions.
                     </p>
-                    <div class="overflow-hidden rounded-xl">
+                    <div class="overflow-hidden rounded-xl mt-auto">
                         <img src="/images/transport.jpg"
                              alt="Ground transport truck"
-                             class="w-full h-48 object-cover hover:scale-105 transition-transform duration-500" loading="lazy">
+                             class="w-full h-80 lg:h-48 object-cover hover:scale-105 transition-transform duration-500" loading="lazy">
                     </div>
                 </div>
                 
-                <div class="feature-card bg-white p-8 rounded-2xl border border-slate-200 shadow-lg reveal">
+                <div class="flex flex-col feature-card bg-white p-8 rounded-2xl border border-slate-200 shadow-lg reveal">
                     <div class="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mb-6">
                         <i class="fas fa-warehouse text-2xl text-purple-600" aria-hidden="true"></i>
                     </div>
@@ -198,14 +176,14 @@
                     <p class="text-slate-600 mb-6">
                         Modern storage facilities with full inventory control and cargo protection.
                     </p>
-                    <div class="overflow-hidden rounded-xl">
+                    <div class="overflow-hidden rounded-xl mt-auto">
                         <img src="/images/warehouse.jpg"
                              alt="Secure warehouse facility"
-                             class="w-full h-48 object-cover hover:scale-105 transition-transform duration-500" loading="lazy">
+                             class="w-full h-80 lg:h-48 object-cover hover:scale-105 transition-transform duration-500" loading="lazy">
                     </div>
                 </div>
                 
-                <div class="feature-card bg-white p-8 rounded-2xl border border-slate-200 shadow-lg reveal">
+                <div class="flex flex-col feature-card bg-white p-8 rounded-2xl border border-slate-200 shadow-lg reveal">
                     <div class="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center mb-6">
                         <i class="fas fa-route text-2xl text-yellow-600" aria-hidden="true"></i>
                     </div>
@@ -213,10 +191,10 @@
                     <p class="text-slate-600 mb-6">
                         Real-time tracking and transparent updates from pickup to final delivery.
                     </p>
-                    <div class="overflow-hidden rounded-xl">
+                    <div class="overflow-hidden rounded-xl mt-auto">
                         <img src="/images/shipment_tracking.jpg"
                              alt="Shipment tracking interface"
-                             class="w-full h-48 object-cover hover:scale-105 transition-transform duration-500" loading="lazy">
+                             class="w-full h-80 lg:h-48 object-cover hover:scale-105 transition-transform duration-500" loading="lazy">
                     </div>
                 </div>
             </div>
@@ -367,55 +345,55 @@
     <section id="warehouse" class="py-20 bg-gradient-to-br from-purple-500 to-indigo-600 text-white relative overflow-hidden scroll-mt-16">
         <div class="absolute inset-0 bg-black/10"></div>
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-4xl md:text-5xl text-center font-extrabold mb-12">All Warehouse locations</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-                <a href="https://maps.app.goo.gl/n8daCMoFeRQw14di9" target="_blank" class="stat-counter p-6 rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
-                    <div class="text-3xl md:text-4xl font-extrabold mb-3 text-yellow-300">Skopje</div>
-                    <div class="text-indigo-100 font-medium"><i class="fas fa-location-arrow mr-2 text-white"></i>Blagoja Stevkovski 34</div>
+            <h2 class="text-4xl md:text-5xl text-center font-extrabold mb-12">Our Warehouse locations</h2>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-8">
+                <a href="https://maps.app.goo.gl/n8daCMoFeRQw14di9" target="_blank" class="stat-counter py-6 px-auto rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
+                    <div class="text-3xl lg:text-4xl font-extrabold mb-3 text-yellow-300">Skopje</div>
+                    <div class="text-indigo-100 text-md sm:text-lg font-medium mr-2"><i class="fas fa-location-arrow mx-2 text-white"></i>Blagoja Stevkovski 34</div>
                 </a>
-                <a href="https://maps.app.goo.gl/2QS6Up2SMLAAB5q78" target="_blank" class="stat-counter p-6 rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
-                    <div class="text-3xl md:text-4xl font-extrabold mb-3 text-yellow-300">Stip</div>
-                    <div class="text-indigo-100 font-medium"><i class="fas fa-location-arrow mr-2 text-white"></i>Bulevar JNA 8</div>
+                <a href="https://maps.app.goo.gl/2QS6Up2SMLAAB5q78" target="_blank" class="stat-counter py-6 px-auto rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
+                    <div class="text-3xl lg:text-4xl font-extrabold mb-3 text-yellow-300">Stip</div>
+                    <div class="text-indigo-100 text-md sm:text-lg font-medium mr-2"><i class="fas fa-location-arrow mx-2 text-white"></i>Bulevar JNA 8</div>
                 </a>
-                <a href="https://maps.app.goo.gl/zTca9DAs9ySpFEhN7" target="_blank" class="stat-counter p-6 rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
-                    <div class="text-3xl md:text-4xl font-extrabold mb-3 text-yellow-300">Kumanovo</div>
-                    <div class="text-indigo-100 font-medium"><i class="fas fa-location-arrow mr-2 text-white"></i>Bul. 3ta Mk brigada 120</div>
+                <a href="https://maps.app.goo.gl/zTca9DAs9ySpFEhN7" target="_blank" class="stat-counter py-6 px-auto rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
+                    <div class="text-3xl lg:text-4xl font-extrabold mb-3 text-yellow-300">Kumanovo</div>
+                    <div class="text-indigo-100 text-md sm:text-lg font-medium mr-2"><i class="fas fa-location-arrow mx-2 text-white"></i>Bul. 3ta Mk brigada 120</div>
                 </a>
-                <a href="https://maps.app.goo.gl/s9CWHntP2LzwKNmC8" target="_blank" class="stat-counter p-6 rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
-                    <div class="text-3xl md:text-4xl font-extrabold mb-3 text-yellow-300">Ohrid</div>
-                    <div class="text-indigo-100 font-medium"><i class="fas fa-location-arrow mr-2 text-white"></i>Stiv Naumov 30A</div>
+                <a href="https://maps.app.goo.gl/s9CWHntP2LzwKNmC8" target="_blank" class="stat-counter py-6 px-auto rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
+                    <div class="text-3xl lg:text-4xl font-extrabold mb-3 text-yellow-300">Ohrid</div>
+                    <div class="text-indigo-100 text-md sm:text-lg font-medium mr-2"><i class="fas fa-location-arrow mx-2 text-white"></i>Stiv Naumov 30A</div>
                 </a>
-                <a href="https://maps.app.goo.gl/bBwLLXTxjoFFuCbi8" target="_blank" class="stat-counter p-6 rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
-                    <div class="text-3xl md:text-4xl font-extrabold mb-3 text-yellow-300">Prilep</div>
-                    <div class="text-indigo-100 font-medium"><i class="fas fa-location-arrow mr-2 text-white"></i>Bul. Dimo Narednikot 49</div>
+                <a href="https://maps.app.goo.gl/bBwLLXTxjoFFuCbi8" target="_blank" class="stat-counter py-6 px-auto rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
+                    <div class="text-3xl lg:text-4xl font-extrabold mb-3 text-yellow-300">Prilep</div>
+                    <div class="text-indigo-100 text-md sm:text-lg font-medium mr-2"><i class="fas fa-location-arrow mx-2 text-white"></i>Bul. Dimo Narednikot 49</div>
                 </a>
-                <a href="https://maps.app.goo.gl/WC7nXNMWTBfYrFBCA" target="_blank" class="stat-counter p-6 rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
-                    <div class="text-3xl md:text-4xl font-extrabold mb-3 text-yellow-300">Gostivar</div>
-                    <div class="text-indigo-100 font-medium"><i class="fas fa-location-arrow mr-2 text-white"></i>Brakja Ginovski 207</div>
+                <a href="https://maps.app.goo.gl/WC7nXNMWTBfYrFBCA" target="_blank" class="stat-counter py-6 px-auto rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
+                    <div class="text-3xl lg:text-4xl font-extrabold mb-3 text-yellow-300">Gostivar</div>
+                    <div class="text-indigo-100 text-md sm:text-lg font-medium mr-2"><i class="fas fa-location-arrow mx-2 text-white"></i>Brakja Ginovski 207</div>
                 </a>
-                <a href="https://maps.app.goo.gl/yetNWSukj1VysDaA6" target="_blank" class="stat-counter p-6 rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
-                    <div class="text-3xl md:text-4xl font-extrabold mb-3 text-yellow-300">Kavadarci</div>
-                    <div class="text-indigo-100 font-medium"><i class="fas fa-location-arrow mr-2 text-white"></i>Mito Hadzivasilev 91</div>
+                <a href="https://maps.app.goo.gl/yetNWSukj1VysDaA6" target="_blank" class="stat-counter py-6 px-auto rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
+                    <div class="text-3xl lg:text-4xl font-extrabold mb-3 text-yellow-300">Kavadarci</div>
+                    <div class="text-indigo-100 text-md sm:text-lg font-medium mr-2"><i class="fas fa-location-arrow mx-2 text-white"></i>Mito Hadzivasilev 91</div>
                 </a>
-                <a href="https://maps.app.goo.gl/y3j3896oQqeE1zbb6" target="_blank" class="stat-counter p-6 rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
-                    <div class="text-3xl md:text-4xl font-extrabold mb-3 text-yellow-300">Tetovo</div>
-                    <div class="text-indigo-100 font-medium"><i class="fas fa-location-arrow mr-2 text-white"></i>Lubo Bozinovski Pis 93</div>
+                <a href="https://maps.app.goo.gl/y3j3896oQqeE1zbb6" target="_blank" class="stat-counter py-6 px-auto rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
+                    <div class="text-3xl lg:text-4xl font-extrabold mb-3 text-yellow-300">Tetovo</div>
+                    <div class="text-indigo-100 text-md sm:text-lg font-medium mr-2"><i class="fas fa-location-arrow mx-2 text-white"></i>Lubo Bozinovski Pis 93</div>
                 </a>
-                <a href="https://maps.app.goo.gl/hhN9xkVKvgftT5Dc7" target="_blank" class="stat-counter p-6 rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
-                    <div class="text-3xl md:text-4xl font-extrabold mb-3 text-yellow-300">Veles</div>
-                    <div class="text-indigo-100 font-medium"><i class="fas fa-location-arrow mr-2 text-white"></i>8-ma Veleska brigada 4</div>
+                <a href="https://maps.app.goo.gl/hhN9xkVKvgftT5Dc7" target="_blank" class="stat-counter py-6 px-auto rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
+                    <div class="text-3xl lg:text-4xl font-extrabold mb-3 text-yellow-300">Veles</div>
+                    <div class="text-indigo-100 text-md sm:text-lg font-medium mr-2"><i class="fas fa-location-arrow mx-2 text-white"></i>8-ma Veleska brigada 4</div>
                 </a>
-                <a href="https://maps.app.goo.gl/KwstiTYM8qVg9mcMA" target="_blank" class="stat-counter p-6 rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
-                    <div class="text-3xl md:text-4xl font-extrabold mb-3 text-yellow-300">Strumica</div>
-                    <div class="text-indigo-100 font-medium"><i class="fas fa-location-arrow mr-2 text-white"></i>Marsal Tito 131</div>
+                <a href="https://maps.app.goo.gl/KwstiTYM8qVg9mcMA" target="_blank" class="stat-counter py-6 px-auto rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
+                    <div class="text-3xl lg:text-4xl font-extrabold mb-3 text-yellow-300">Strumica</div>
+                    <div class="text-indigo-100 text-md sm:text-lg font-medium mr-2"><i class="fas fa-location-arrow mx-2 text-white"></i>Marsal Tito 131</div>
                 </a>
-                <a href="https://maps.app.goo.gl/g3HCjRc2vxQmh1J27" target="_blank" class="stat-counter p-6 rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
-                    <div class="text-3xl md:text-4xl font-extrabold mb-3 text-yellow-300">Struga</div>
-                    <div class="text-indigo-100 font-medium"><i class="fas fa-location-arrow mr-2 text-white"></i>Naum Naumovski 14</div>
+                <a href="https://maps.app.goo.gl/g3HCjRc2vxQmh1J27" target="_blank" class="stat-counter py-6 px-auto rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
+                    <div class="text-3xl lg:text-4xl font-extrabold mb-3 text-yellow-300">Struga</div>
+                    <div class="text-indigo-100 text-md sm:text-lg font-medium mr-2"><i class="fas fa-location-arrow mx-2 text-white"></i>Naum Naumovski 14</div>
                 </a>
-                <a href="https://maps.app.goo.gl/sbHJiEpEVaDa6Um28" target="_blank" class="stat-counter p-6 rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
-                    <div class="text-3xl md:text-4xl font-extrabold mb-3 text-yellow-300">Bitola</div>
-                    <div class="text-indigo-100 font-medium"><i class="fas fa-location-arrow mr-2 text-white"></i>4ti Noemvri 1</div>
+                <a href="https://maps.app.goo.gl/sbHJiEpEVaDa6Um28" target="_blank" class="stat-counter py-6 px-auto rounded-2xl text-center border border-indigo-500/30  hover:border-white reveal">
+                    <div class="text-3xl lg:text-4xl font-extrabold mb-3 text-yellow-300">Bitola</div>
+                    <div class="text-indigo-100 text-md sm:text-lg font-medium mr-2"><i class="fas fa-location-arrow mx-2 text-white"></i>4ti Noemvri 1</div>
                 </a>
             </div>
         </div>
@@ -463,7 +441,83 @@
 
 
     <!-- Footer -->
-    <div id="footer"></div>
+    <footer id="contact" class="bg-slate-900 text-slate-400 pt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid sm:grid-cols-2 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-white text-2xl font-extrabold mb-4">Brza Pratka</h3>
+                    <p class="mb-6 leading-relaxed">
+                        Turning every shipment into a promise delivered with precision, care, and absolute reliability.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="https://www.facebook.com/brza.pratka1" target="_blank" class="text-slate-400 hover:text-white transition-colors" aria-label="Facebook">
+                            <i class="fab fa-facebook-f text-xl"></i>
+                        </a>
+                        <a href="https://www.instagram.com/brzapratka.shtip/" target="_blank" class="text-slate-400 hover:text-white transition-colors" aria-label="Instagram">
+                            <i class="fab fa-instagram text-xl"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/in/brza-pratka-bb51b3123/" target="_blank" class="text-slate-400 hover:text-white transition-colors" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin-in text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-3">
+                        <li><a href="/#enroll" class="hover:text-white transition-colors duration-200 flex items-center">
+                            <i class="fas fa-chevron-right text-xs mr-2 text-indigo-400"></i>Enroll
+                        </a></li>
+                        <li><a href="/#stats" class="hover:text-white transition-colors duration-200 flex items-center">
+                            <i class="fas fa-chevron-right text-xs mr-2 text-indigo-400"></i>Our Sucess
+                        </a></li>
+                        <li><a href="/#testimonials" class="hover:text-white transition-colors duration-200 flex items-center">
+                            <i class="fas fa-chevron-right text-xs mr-2 text-indigo-400"></i>Testimonials
+                        </a></li>
+                        <li><a href="/#warehouse" class="hover:text-white transition-colors duration-200 flex items-center">
+                            <i class="fas fa-chevron-right text-xs mr-2 text-indigo-400"></i>Warehouses
+                        </a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Support</h4>
+                    <ul class="space-y-3">
+                        <li><a href="/#faq" class="hover:text-white transition-colors duration-200 flex items-center">
+                            <i class="fas fa-chevron-right text-xs mr-2 text-indigo-400"></i>FAQs
+                        </a></li>
+                        <li><a href="/pages/privacy_policy.html" target="_blank" class="hover:text-white transition-colors duration-200 flex items-center">
+                            <i class="fas fa-chevron-right text-xs mr-2 text-indigo-400"></i>Privacy Policy
+                        </a></li>
+                        <li><a href="/pages/terms_of_service.html" target="_blank" class="hover:text-white transition-colors duration-200 flex items-center">
+                            <i class="fas fa-chevron-right text-xs mr-2 text-indigo-400"></i>Terms of Service
+                        </a></li>
+                        <li><a href="/pages/forgot-password.html" class="hover:text-white transition-colors duration-200 flex items-center">
+                            <i class="fas fa-chevron-right text-xs mr-2 text-indigo-400"></i>Forgot password ?
+                        </a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-yellow-400 font-semibold mb-4">Contact</h4>
+                    <div class="space-y-3">
+                        <div class="flex items-center">
+                            <i class="fas fa-envelope text-indigo-400 mr-3"></i>
+                            <a href="mailto:contact@brzapratka.com" class="hover:text-white break-all transition-colors duration-200">contact@brzapratka.com</a>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-phone text-indigo-400 mr-3"></i>
+                            <a href="tel:+38972123456" class="hover:text-white transition-colors duration-200">+389 72 123 456</a>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-map-marker-alt text-indigo-400 mr-3"></i>
+                            <a href="https://maps.app.goo.gl/1aGiq42reCTwTohx6" target="_blank" class="hover:text-white transition-colors duration-200">Bulevar JNA 8, Štip 2000</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-slate-800 mt-12 py-4 text-center">
+                <p class="text-slate-500">&copy; 2026 Brza Pratka. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 
 
     <!-- Back to top button -->
@@ -489,14 +543,6 @@
             els.forEach(el => observer.observe(el));
         })();
 
-
-        // Load footer
-        fetch('pages/template/footer.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('footer').innerHTML = data;
-            })
-            .catch(error => console.error("Footer load error:", error));
     </script>
 </body>
 </html>
