@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/output.css"> <!-- Tailwind CSS -->
-    <link rel="stylesheet" href="/css/template/header.css"> <!-- Header customs css -->
+    <link rel="stylesheet" href="/css/global.css">
     <link rel="icon" type="image/png" href="/images/brza_pratka_logo.svg"> <!--FAVICON-->
     <script src="https://kit.fontawesome.com/5c1a15adf2.js" crossorigin="anonymous"></script> <!--ICONS-->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script> <!-- ALPINE.js -->
@@ -13,11 +13,11 @@
 
     <title>Sign up | Brza Pratka</title>
 </head>
-<body class="flex flex-col">
+<body>
     <!-- Header -->
     <div id="header"></div>
 
-    <div class="flex justify-center my-20 px-4 min-h-screen">
+    <div class="min-h-screen flex justify-center items-center my-10 lg:my-20 px-4">
         <form action="/api/signup" method="POST"
               class="w-full max-w-[480px] bg-white p-8 rounded-xl shadow-lg">
 
