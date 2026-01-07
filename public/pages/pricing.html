@@ -5,25 +5,129 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/output.css"> <!-- Tailwind CSS -->
     <link rel="stylesheet" href="/css/template/header.css"> <!-- Header customs css -->
-    <link rel="stylesheet" href="/css/global.css">
     <link rel="icon" type="image/png" href="/images/brza_pratka_logo.svg"> <!--FAVICON-->
     <script src="https://kit.fontawesome.com/5c1a15adf2.js" crossorigin="anonymous"></script> <!--ICONS-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> <!--ICONS-->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-
     <title>Shipment Pricing | Brza Pratka</title>
+
 </head>
 <body>
+    <!-- Header -->
     <div id="header"></div>
 
-    <section class="py-30">
-        <table>
-            
-        </table>
+    <section class="min-h-screen flex flex-col items-start lg:items-center justify-center px-4 py-30 text-center">
+        <div class="max-w-6xl bg-white shadow-md overflow-hidden">
+
+            <!-- Table -->
+            <div class="overflow-x-auto">
+                <table class="min-w-[900px] lg:min-w-full border border-gray-300 text-sm">
+                    <caption class="caption-top bg-gradient-to-r from-purple-500 to-indigo-600 text-white border border-transparent py-4">
+                        <div class="text-lg font-bold">
+                            CURRENT PRICE LIST - BRZA PRATKA
+                        </div>
+
+                        <div class="text-sm text-gray-100 mt-1">
+                            Tel: 070 123 456, 075 987 654 |
+                            Email: <span>contact@brzapratka.com</span>
+                        </div>
+                    </caption>
+
+                    <tr>
+                        <th colspan="2" rowspan="2" class="border px-4 py-2 bg-gray-100">Price or package weight and volume</th>
+                        <th colspan="3" class="border px-4 py-2 bg-gray-100">Zone 1 & Zone 2</th>
+                        <th class="border px-4 py-2 bg-gray-100">Zone 1 delivery details</th>
+                        <th class="border px-4 py-2 bg-gray-100">Zone 2 delivery details</th>
+                    </tr>
+
+                    <tr>
+                        <th colspan="3" class="border px-4 py-2 bg-gray-100">Price in denars with TAX</th>
+                        <td rowspan="6" class="border px-4 py-2 w-60">
+                            Delivery 6 days per week, Monday to Saturday. Zones include major cities like Skopje, Ohrid, Struga, Kichevo, 
+                            Gostivar, Tetovo, Bitola, Prilep, Kavadarci, Negotino, Veles, Strumica, Gevgelija, Radovis, Kochani, Mak.Kamenica, 
+                            Vinica, Pehcevo, Delcevo, Berovo, Shtip, Sv.Nikole, Kumanovo, Valandovo, Bogdani, Demir Kapija, 
+                            Novo Selo, Probishtip, Zletovo, Kriva Palanka, Rankovce, Kratovo, Rosoman, Bociilovo.
+                        </td>
+                        <td rowspan="6" class="border px-4 py-2 w-50">
+                            Smaller populated areas = Zone 2 prices. Delivery 2-4 times weekly. Includes places like Vevchani, 
+                            Debar, Mavrovo, Mak.Brod, Demir Hisar, Krivogastani, Resen, Demir Kapija.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="border px-4 py-2 bg-gray-50">Kilogram (kg)</th>
+                        <th class="border px-4 py-2 bg-gray-50">Volume (m³)</th>
+                        <th class="border px-8 py-2 bg-gray-50">Base - Base</th>
+                        <th class="border px-8 py-2 bg-gray-50">Base - Door</th>
+                        <th class="border px-8 py-2 bg-gray-50">Door - Door</th>
+                    </tr>
+
+                    <tr class="border-t">
+                        <td class="border px-4 py-2">up to 1 kg</td>
+                        <td class="border px-4 py-2">up to 0.02</td>
+                        <td class="border px-4 py-2">100 ден</td>
+                        <td class="border px-4 py-2">120 ден</td>
+                        <td class="border px-4 py-2">170 ден</td>
+                    </tr>
+
+                    <tr class="border-t">
+                        <td class="border px-4 py-2">1 to 3 kg</td>
+                        <td class="border px-4 py-2">up to 0.05</td>
+                        <td class="border px-4 py-2">100 ден</td>
+                        <td class="border px-4 py-2">130 ден</td>
+                        <td class="border px-4 py-2">180 ден</td>
+                    </tr>
+
+                    <tr class="border-t">
+                        <td class="border px-4 py-2">4 to 6 kg</td>
+                        <td class="border px-4 py-2">up to 0.09</td>
+                        <td class="border px-4 py-2">120 ден</td>
+                        <td class="border px-4 py-2">150 ден</td>
+                        <td class="border px-4 py-2">200 ден</td>
+                    </tr>
+
+                    <tr class="border-t">
+                        <td class="border px-4 py-2">7 to 9 kg</td>
+                        <td class="border px-4 py-2">up to 0.15</td>
+                        <td class="border px-4 py-2">140 ден</td>
+                        <td class="border px-4 py-2">170 ден</td>
+                        <td class="border px-4 py-2">220 ден</td>
+                    </tr>
+
+                    <tr class="border-t">
+                        <td class="border px-4 py-2">10 to 15 kg</td>
+                        <td class="border px-4 py-2">up to 0.2</td>
+                        <td class="border px-4 py-2">150 ден</td>
+                        <td class="border px-4 py-2">200 ден</td>
+                        <td class="border px-4 py-2">250 ден</td>
+                        <th colspan="2" class="border px-4 py-2 bg-gray-100">Zone 3 delivery details</th>
+                    </tr>
+
+                    <tr class="border-t">
+                        <td class="border px-4 py-2">Above 16 kg</td>
+                        <td class="border px-4 py-2">up to 10</td>
+                        <td class="border px-4 py-2">150 ден +9 ден per kg</td>
+                        <td class="border px-4 py-2">200 ден +10 ден per kg</td>
+                        <td class="border px-4 py-2">250 ден +10 ден per kg</td>
+                        <td  colspan="2" class="border px-4 py-2">
+                            It covers the more remote villages, where only 2% of the population of North Macedonia lives.
+                            The prices are listed in the table. If the customer insists on delivery from today for tomorrow when
+                            it is not scheduled, an additional 300 MKD will be charged.
+                        </td>
+                    </tr>
+
+                    <tfoot class="bg-gray-100 text-sm font-semibold">
+                        <tr>
+                            <td class="border px-4 py-2" colspan="7">1 m³ = 1500 ден</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
     </section>
-    
+
 
     <script>
         // Header
