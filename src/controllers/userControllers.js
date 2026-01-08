@@ -4,6 +4,7 @@ import { validateUserInput } from '../services/validation.js';
 import { AppError } from '../utils/AppError.js';
 import { getOrSetCache } from '../utils/caching.js'; // Helper function for caching
 import redisClient from '../config/redis.js'; // Redis client for caching
+import { removeTokenWhenLogout } from "../models/authenticationModels.js";
 
 
 const defaultTTL = 3600; // for cache expiration
@@ -68,10 +69,37 @@ export async function updateUserController(req, res, next) {
 };
 
 
+// @POST logout
+export async function logoutController(req, res, next) {
+    try {
+        await removeTokenWhenLogout(req.user.email); // removing tokens from DB
+
+        // Clear the cookies
+        res.clearCookie("accessToken", {
+            httpOnly: true,
+            secure: false, // true in production with HTTPS
+            sameSite: 'strict'   // LAX for CSRF protection and strict for same-site requests
+        }); 
+
+        res.clearCookie("refreshToken", {
+            httpOnly: true,
+            secure: false, // true in production with HTTPS
+            sameSite: 'strict'   // LAX for CSRF protection and strict for same-site requests
+        });
+
+        console.log("Logged out successfully ✅");
+        return res.redirect('/login');
+        
+    } catch (error) {
+        next(new AppError(`Error while logging out: ${error.message}`, 500));
+    }
+};
+
+
 // @DELETE a user by id
 export async function deleteUserController(req, res, next) {
     try {
-        if(req.user.id !== parseInt(req.params.id)){ // check if user's id is the same as the one to delete
+        if(req.user.id !== parseInt(req.params.id)){ // check if user's id is the same as the one to delete(to prevent deleting other users from tab)
             return res.status(403).send({error: "You are not allowed to delete this user"});
         }
         // Here we should add pop up for ask the user again is he sure about deleting his account(frontend)
@@ -82,6 +110,20 @@ export async function deleteUserController(req, res, next) {
         // Delete the cache also
         await redisClient.del(`users:${req.params.id}`);
         await redisClient.del('users');
+
+        // Delete cookies
+        res.clearCookie("accessToken", {
+            httpOnly: true,
+            secure: false,
+            sameSite: 'strict'
+        });
+
+        res.clearCookie("refreshToken", {
+            httpOnly: true,
+            secure: false,
+            sameSite: 'strict'
+        });
+
 
         res.redirect('/login'); 
         

@@ -13,7 +13,7 @@ export const generalRateLimit = rateLimit({
 // Rate limit for logging 
 export const loginRateLimit = rateLimit({
     windowMs: 10 * 60 * 1000, // 10 minutes
-    limit: 5,
+    limit: 10,
     standardHeaders: 'draft-8',
     legacyHeaders: false,
     ipv6Subnet: 56,

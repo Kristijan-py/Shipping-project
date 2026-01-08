@@ -59,14 +59,4 @@ router.get('/reset-password', (req, res) => {
 });
 
 
-// @GET verify email page
-router.get('/verify-email-page', (req, res) => {
-  try {
-    res.sendFile(path.join(__dirname, '..', '..', 'public', 'pages', 'verify-email-page.html'));
-  } catch (error) {
-    throw new AppError(`Error sending verification success page: ${error.message}`, 500);
-  }
-});
-
-
 export default router;

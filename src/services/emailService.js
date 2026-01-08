@@ -24,7 +24,7 @@ export function emailTemplate({ title, message, buttonText, link }) {
             <a href="${link}" style="
                 display:inline-block;
                 padding:12px 24px;
-                background:#1877f2;
+                background:#4f46e5;
                 color:#ffffff;
                 text-decoration:none;
                 border-radius:5px;

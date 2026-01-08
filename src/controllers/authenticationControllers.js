@@ -175,7 +175,6 @@ export async function forgotPasswordController(req, res, next) {
 export async function resetPasswordController(req, res, next) {
     try {
         const { resetToken, email, newPassword, confirmPassword } = req.body; // FROM THE HTML FORM
-
         if (!resetToken || !email || !newPassword || !confirmPassword) {
             return res.status(400).send({error: "All fields are required"});
         }
@@ -186,48 +185,20 @@ export async function resetPasswordController(req, res, next) {
         const validationPass = validatePassword(newPassword);
         if(validationPass !== true) return res.status(400).send({error: validationPass});
 
-
         const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex'); // must be the same as in forgotpass to match 
-        
         const [result] = await findUserByResetToken(email, hashedToken);
         if (result.length === 0) {
             return res.status(400).send({error: "Invalid or expired reset token"})
         }
 
         const hashedPassword = await bcrypt.hash(newPassword, 10); // new password + hashing + salt
-
         await updateUserPassword(email, hashedPassword);
-
         res.status(200).send({success: "Password reset succsessfully !"});
-
+        
     } catch (error) {
         next(new AppError(`Error while resetting password: ${error.message}`, 500));
     }
 };
 
 
-// @POST logout
-export async function logoutController(req, res, next) {
-    try {
-        await removeTokenWhenLogout(req.user.email); // removing tokens from DB
 
-        // Clear the cookies
-        res.clearCookie("accessToken", {
-            httpOnly: true,
-            secure: false, // true in production with HTTPS
-            sameSite: 'strict'   // LAX for CSRF protection and strict for same-site requests
-        }); 
-
-        res.clearCookie("refreshToken", {
-            httpOnly: true,
-            secure: false, // true in production with HTTPS
-            sameSite: 'strict'   // LAX for CSRF protection and strict for same-site requests
-        });
-
-        console.log("Logged out successfully ✅");
-        return res.redirect('/login');
-        
-    } catch (error) {
-        next(new AppError(`Error while logging out: ${error.message}`, 500));
-    }
-};
