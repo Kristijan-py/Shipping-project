@@ -77,5 +77,19 @@ router.get('/profilePage', authenticateToken, async (req, res) => {
   }
 });
 
+// @GET Delete Account page
+router.get('/deleteAccount', authenticateToken, async (req, res) => {
+  try {
+    const info = await getUserById(req.user.id);
+    if (!info) {
+      return res.status(404).render('deleteAccount', { user: null, error: "User not found." });
+    }
+
+    res.render('deleteAccount', {user: info, error: null}); // when render is called, express knows is ejs and search for views foulder where i setted in server.js
+  } catch (error) {
+    throw new AppError(`Error fetching user: ${error.message}`, 500);
+  }
+});
+
 
 export default router;

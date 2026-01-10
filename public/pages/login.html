@@ -66,15 +66,17 @@
                             <i id="eye"></i>
                         </button>
                     </div>
-                    
+
+                    <!--Remember me & forgot pass-->
                     <div class="flex flex-wrap justify-between items-center mb-6 text-sm text-gray-600 gap-2">
                         <label class="flex items-center gap-2">
-                            <input type="checkbox" name="rememberMe" class="accent-indigo-600">
+                            <input type="checkbox" name="rememberMe" id="rememberMe" class="accent-indigo-600">
                             Remember me
                         </label>
                         <a href="/forgot-password" class="hover:underline hover:text-black">Forgot Password</a>
                     </div>
                     
+                    <!--Sign in button-->
                     <button type="submit" class="w-full btn-shine cursor-pointer bg-indigo-600 text-white py-2.5 rounded-md font-semibold transition hover:bg-indigo-700 shadow-md">
                         Sign in
                     </button>
@@ -85,7 +87,8 @@
                         <div class="flex-grow border-t border-gray-200"></div>
                     </div>
                 </form>
-            
+                
+                <!--Sign in with third party-->
                 <div class="flex flex-col sm:flex-row gap-4 mb-8">
                     <a href="/auth/google" class="flex-1 flex items-center justify-center gap-2 border border-gray-200 px-4 py-2 rounded-md text-gray-500 text-sm font-medium hover:border-black hover:text-gray-600 transition-all duration-300">
                         <img src="https://developers.google.com/identity/images/g-logo.png" class="w-4"> Google
@@ -127,6 +130,7 @@
                 eye.className = "fa-solid fa-eye";
             }
         }
+
     </script>
 </body>
 </html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/output.css"> <!-- Tailwind CSS -->
+    <link rel="stylesheet" href="/css/global.css">
+    <link rel="icon" type="image/png" href="/images/brza_pratka_logo.svg"> <!--FAVICON-->
+    <script src="https://kit.fontawesome.com/5c1a15adf2.js" crossorigin="anonymous"></script> <!--ICONS-->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script> <!-- ALPINE.js -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+
+    <title>Delete Account Data | Brza Pratka</title>
+</head>
+<body>
+    <section class="max-w-4xl min-h-screen flex justify-center items-center mx-auto my-10 px-4">
+        <div class="w-full max-w-[480px] flex flex-col justify-center items-center rounded-xl shadow-xl px-10 py-8">
+            <h1 class="mb-10">Why you wanna delete your account?</h1>
+            <form action="api/deleteUser/<%= user.id %>?_method=DELETE" method="POST">
+                <button class="btn-shine cursor-pointer bg-yellow-400 px-10 py-3 rounded-xl shadow-xl hover:bg-yellow-500 transform hover:scale-[1.03] transition" type="submit">Delete account</button>
+            </form>
+        </div>
+    </section>
+</body>
+</html>

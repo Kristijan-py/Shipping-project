@@ -48,8 +48,8 @@ export async function signupController(req, res, next) {
         // EMAIL VERIFICATION
         const emailToken = crypto.randomBytes(32).toString('hex');
         const hashedToken = crypto.createHash('sha256').update(emailToken).digest('hex');
-        const expires = new Date(Date.now() + 1000 * 60 * 15);
-
+        const expires = new Date(Date.now() + 1000 * 60 * 60); // 1 hour
+        
         await insertUserEmailToken(hashedToken, expires, req.body.email); // insert user email token, expiration and the email
 
         const link = `${process.env.BASE_URL}/api/verify-email?token=${emailToken}&email=${req.body.email}`;
@@ -86,19 +86,24 @@ export async function loginController(req, res, next) {
             return res.status(403).send({error: "Verify your email before logging in."});
         }
 
-
+        const rememberMe = req.body.rememberMe === 'on'; // remember me checkbox boolean
+        const rememberMeAccessTime = rememberMe ? 15 * 60 * 1000 : 5 * 60 * 1000; // 15m | 5m
+        const rememberMeRefreshTime = rememberMe ? 15 * 60 * 60 * 1000 * 24 : 1 * 60 * 60 * 1000 ; // 15 days | 1 hour
+        
         // JWT
-        const payload = { id: user.id, email: user.email, role: user.user_role }; 
-
-        const accessToken = await generateAccessToken(payload);
-        const refreshToken = await generateRefreshToken(payload);
+        const payload = { id: user.id, email: user.email, role: user.user_role };
+        // Pass payload to add to cookies and also remember me option to match cookie and token expiration time
+        const accessToken = await generateAccessToken(payload, rememberMe);
+        const refreshToken = await generateRefreshToken(payload, rememberMe);
+       
+        
 
         // Access token
         res.cookie("accessToken", accessToken, {
             httpOnly: true,    
             secure: false,       // true in production with HTTPS
             sameSite: 'lax',  // With lax I can use it on redirects
-            maxAge: 15 * 60 * 1000       // 15 minutes
+            maxAge: rememberMeAccessTime
         });
 
         // Refresh token
@@ -106,8 +111,9 @@ export async function loginController(req, res, next) {
             httpOnly: true,
             secure: false,       // true in production with HTTPS
             sameSite: 'lax',  // With lax I can use it on redirects
-            maxAge: 15 * 24 * 60 * 60 * 1000 // 15 days
+            maxAge: rememberMeRefreshTime
         });
+
         
         console.log("Logged in successfully ✅");
         console.log("JWT payload:", { id: user.id, email: user.email, role: user.user_role }); // for debugging

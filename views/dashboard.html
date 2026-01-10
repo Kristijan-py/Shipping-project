@@ -3,25 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/output.css"> <!-- Tailwind CSS -->
     <link rel="stylesheet" href="/css/global.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
     <link rel="icon" type="image/png" href="/images/brza_pratka_logo.svg"> <!--FAVICON-->
     <script src="https://kit.fontawesome.com/5c1a15adf2.js" crossorigin="anonymous"></script> <!--ICONS-->
-    <title>Brza Pratka Dashboard</title>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script> <!-- ALPINE.js -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <title>Dashboard | Brza Pratka</title>
 </head>
 <body>
-    <header>
-        <img src="/images/brza_pratka_logo.png" alt="Brza Pratka Logo" width="100px">
-        <h1>Brza Pratka Dashboard</h1>
+    <header class="absolute right-10 top-10">
         <a href="/profilePage"><i class="fas fa-user fa-2xl"></i></a>
     </header>
 
-    <div class="actions">
+    <div class="actions m-10">
         <a href="/createOrder">Create Order</a>
         <a href="/orders">View Orders</a>
         <a href="/updateOrder">Update Order</a>
         <a href="/uploadOrders">Upload Order</a>
-        <a href="/pages/login.html">Login</a>
     </div>
 
 

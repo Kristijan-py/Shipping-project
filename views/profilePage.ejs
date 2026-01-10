@@ -3,26 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Page</title>
+    <link rel="stylesheet" href="/css/output.css"> <!-- Tailwind CSS -->
+    <link rel="stylesheet" href="/css/global.css">
+    <link rel="icon" type="image/png" href="/images/brza_pratka_logo.svg"> <!--FAVICON-->
+    <script src="https://kit.fontawesome.com/5c1a15adf2.js" crossorigin="anonymous"></script> <!--ICONS-->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script> <!-- ALPINE.js -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <title>Profile Page | Brza Pratka</title>
 </head>
 <body>
-    <h1>Profile Page</h1>
-    <p>Your profile info:</p>
-    <div style="display: flex; margin-left: 400px">
-        <button><a href="/dashboard">Dashboard</a></button>
+    <div class="p-10">
+        <h1>Profile Page</h1>
+        <p>Your profile info:</p>
+        <div style="display: flex; margin-left: 400px">
+            <button><a href="/dashboard">Dashboard</a></button>
+        </div>
+        <ul>
+            <li>Name: <%= user.name %></li>
+            <li>Phone: <%= user.phone %></li>
+            <li>Email: <%= user.email %></li>
+            <li>Role: <%= user.user_role %></li>
+        </ul>
+        <form action="/api/logout" method="POST">
+            <button type="submit">Logout</button>
+        </form>
+        <br><br>
+        
+        <a href="/deleteAccount">Delete account</a>
     </div>
-    <ul>
-        <li>Name: <%= user.name %></li>
-        <li>Phone: <%= user.phone %></li>
-        <li>Email: <%= user.email %></li>
-        <li>Role: <%= user.user_role %></li>
-    </ul>
-    <form action="/api/logout" method="POST">
-        <button type="submit">Logout</button>
-    </form>
-    <br><br>
-    <form action="api/deleteUser/<%= user.id %>?_method=DELETE" method="POST">
-        <button type="submit">Delete account</button>
-    </form>
 </body>
 </html>

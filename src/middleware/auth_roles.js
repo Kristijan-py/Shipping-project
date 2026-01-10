@@ -20,6 +20,8 @@ export function authenticateToken(req, res, next) {
     jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
         if (err) {
             if(!refreshToken) {
+                res.clearCookie('accessToken'); // clear cookies because expired
+                res.clearCookie('refreshToken');
                 return res.redirect('/login'); // expired
             }
             return authenticateRefreshToken(req, res, next);
@@ -35,8 +37,11 @@ export async function authenticateRefreshToken(req, res, next) {
 
     // Verify the refresh token
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async (err, decoded) => { // we use decoded cause already we have set it up jwt sign
-        if (err) return res.redirect('/login'); // Expired or invalid token
-
+        if (err) {
+            res.clearCookie('accessToken');
+            res.clearCookie('refreshToken');
+            return res.redirect('/login'); // Expired or invalid token
+        }
         // Creating new access token
         const { exp, iat, ...payload} = decoded // destructure to use only what we need
         const accessToken = await generateAccessToken(payload);
@@ -55,14 +60,19 @@ export async function authenticateRefreshToken(req, res, next) {
 
 // Redirect to dashboard if authenticated, otherwise next()
 export function redirectIfAuthenticated(req, res, next) {
-    const token = req.cookies?.accessToken; // ? to safely access cookies if cookies are undefined
-    if (token) {
-        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+    const accessToken = req.cookies?.accessToken; // ? to safely access cookies if cookies are undefined
+    const refreshToken = req.cookies?.refreshToken;
+
+    if(!accessToken && !refreshToken) return next(); // block dashboard page and redirect to homepage
+
+    if (accessToken) {
+        jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
             if (!err) return res.redirect('/dashboard'); // if no error, redirect to dashboard
+            if(refreshToken) return res.redirect('/dashboard'); // if accessToken is expired and refreshToken is not
             next(); // else continue to the next middleware
         });
-    } else {
-        next(); // no token, continue to the next middleware
+    } else if(refreshToken) {
+        return res.redirect('/dashboard');
     }
 }
 
