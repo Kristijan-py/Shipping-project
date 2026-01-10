@@ -36,7 +36,7 @@ export async function generateAccessToken(payload, rememberMe) { // if remember 
 };
 
 export async function generateRefreshToken(payload, rememberMe) {
-    return jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: rememberMe ? '15d' : '1h' });
+    return jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: rememberMe ? '15d' : '12h' });
 };
 
 

@@ -15,13 +15,13 @@ export async function insertUserEmailToken(emailToken, expires, email){
 }
 
 // find the user by email with email token for verification
-export async function findUserByEmailToken(email, emailToken) {
+export async function findUserByEmailToken(emailToken) {
     try {
-        if (!email || !emailToken) {
-            throw new AppError('Email and token are required', 400);
+        if (!emailToken) {
+            throw new AppError('No email token', 400);
         }
 
-        const [result] = await pool.query('SELECT * FROM users WHERE email = ? AND email_token = ? AND email_token_expires > NOW()', [email, emailToken]);
+        const [result] = await pool.query('SELECT * FROM users WHERE email_token = ? AND email_token_expires > NOW()', [emailToken]);
         return result;
     } catch (error) {
         throw new AppError(`Error finding user by email token: ${error.message}`, 500);
@@ -57,13 +57,13 @@ export async function insertUserResetToken(resetToken, expires, email) {
 };
 
 // find the user by email with reset token for password reset
-export async function findUserByResetToken(email, resetToken) {
+export async function findUserByResetToken(resetToken) {
     try {
-        if (!email || !resetToken) {
+        if (!resetToken) {
             throw new AppError('Email and resetToken are required', 400);
         }
 
-        const [result] = await pool.query('SELECT * FROM users WHERE email = ? AND reset_token = ? AND reset_token_expires > NOW()', [email, resetToken]);
+        const [result] = await pool.query('SELECT * FROM users WHERE reset_token = ? AND reset_token_expires > NOW()', [resetToken]);
         return result;
     } catch (error) {
         throw new AppError(`Error finding user by reset token: ${error.message}`, 500);

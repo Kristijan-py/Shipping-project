@@ -52,7 +52,7 @@ export function validatePhoneNumber(phoneNumber){
 
 // VALIDATION FOR EMAIL
 export function validateEmail(email) {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
     
     if (!emailRegex.test(email)) {
         return 'Invalid email format. Example: user@gmail.com';

@@ -32,13 +32,13 @@ export async function signupController(req, res, next) {
             return res.status(400).send({error: validationUser});
         }
         
-
+        const normalizeEmail = (req.body.email).toLowerCase();
         const salt = await bcrypt.genSalt(); // just in case some have the same pass, use salt for additional chars(every salt is different)
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
         const normalizePhone = normalizePhoneNumber(req.body.phone); // to make +389....
 
         // Creating user in database
-        const user = { name: req.body.name, phone: normalizePhone, email: req.body.email, password: hashedPassword, role: 'user' };
+        const user = { name: req.body.name, phone: normalizePhone, email: normalizeEmail, password: hashedPassword, role: 'user' };
         const newUser = await createUser(user.name, user.phone, user.email, user.password, user.role);
         if(!newUser) {
             return res.status(400).send({error: "Cannot create user, problem with database"});
@@ -50,10 +50,10 @@ export async function signupController(req, res, next) {
         const hashedToken = crypto.createHash('sha256').update(emailToken).digest('hex');
         const expires = new Date(Date.now() + 1000 * 60 * 60); // 1 hour
         
-        await insertUserEmailToken(hashedToken, expires, req.body.email); // insert user email token, expiration and the email
+        await insertUserEmailToken(hashedToken, expires, normalizeEmail); // insert user email token, expiration and the email
 
-        const link = `${process.env.BASE_URL}/api/verify-email?token=${emailToken}&email=${req.body.email}`;
-        await verifyEmail(req.body.email, link); // sendimg a mail to the user
+        const link = `${process.env.BASE_URL}/api/verify-email?token=${emailToken}`; // sending unhashed token so hackers can somehow see from query the actual token stored in DB. We will hash in verify controller instead.
+        await verifyEmail(normalizeEmail, link); // sendimg a mail to the user
 
         res.redirect('/login'); // redirect to login page after signup
 
@@ -116,7 +116,6 @@ export async function loginController(req, res, next) {
 
         
         console.log("Logged in successfully ✅");
-        console.log("JWT payload:", { id: user.id, email: user.email, role: user.user_role }); // for debugging
 
         return res.redirect('/dashboard'); // redirect to dashboard page after login
 
@@ -129,18 +128,18 @@ export async function loginController(req, res, next) {
 // @GET verify email
 export async function verifyEmailController(req, res, next) {
     try {
-        const { token, email } = req.query;
+        const { token } = req.query; // send from signup controller
         const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
     
         // Find a user with that info that sign up 
-        const [users] = await findUserByEmailToken(email, hashedToken);
+        const [users] = await findUserByEmailToken(hashedToken);
         // Check that user if exist
         if(users.length === 0) {
             return res.status(400).send({error: 'Invalid or expired token'});
         };
     
         // If exists in DATABASE, verify it
-        verifyUserEmail(email);
+        await verifyUserEmail(users.email);
     
         res.redirect('/login?is_verified=true'); // redirect to login page after verification
         
@@ -161,15 +160,14 @@ export async function forgotPasswordController(req, res, next) {
         // Generate a random token for password reset
         const resetToken = crypto.randomBytes(32).toString('hex'); // generate a secure random token
         const resetTokenHash = crypto.createHash('sha256').update(resetToken).digest('hex'); // hashing the token
-        const resetTokenExpiration = new Date(Date.now() + 900000 + 120 * 60_000) // 15 minutes expiration time (120 * 60_00 for UTC+2 timezone)
+        const resetTokenExpiration = new Date(Date.now() + 15 * 60 * 1000 + 1 * 60 * 60 * 1000) // 15 minutes expiration time
         .toISOString()
         .slice(0, 19).replace('T', ' '); // format to MySQL datetime
 
         await insertUserResetToken(resetTokenHash, resetTokenExpiration, user.email);
 
-        const link = `${process.env.BASE_URL}/reset-password?resetToken=${resetToken}&email=${user.email}`; // link to reset password
-        console.log(link);
-        await sendresetEmail(user.email, link); // send the reset link to the user's email for verification if the user is in our database
+        const link = `${process.env.BASE_URL}/reset-password?resetToken=${resetToken}`; // link to reset password
+        await sendresetEmail(user.email, link); // send the reset password link to the user's email
         return res.status(200).send({message: "Password reset link sent to your email!"});
 
     } catch (error) {
@@ -180,8 +178,8 @@ export async function forgotPasswordController(req, res, next) {
 // @POST reset password
 export async function resetPasswordController(req, res, next) {
     try {
-        const { resetToken, email, newPassword, confirmPassword } = req.body; // FROM THE HTML FORM
-        if (!resetToken || !email || !newPassword || !confirmPassword) {
+        const { resetToken, newPassword, confirmPassword } = req.body; // FROM THE HTML FORM
+        if (!resetToken || !newPassword || !confirmPassword) {
             return res.status(400).send({error: "All fields are required"});
         }
         if(newPassword !== confirmPassword){
@@ -192,13 +190,14 @@ export async function resetPasswordController(req, res, next) {
         if(validationPass !== true) return res.status(400).send({error: validationPass});
 
         const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex'); // must be the same as in forgotpass to match 
-        const [result] = await findUserByResetToken(email, hashedToken);
+        const result = await findUserByResetToken(hashedToken);
         if (result.length === 0) {
             return res.status(400).send({error: "Invalid or expired reset token"})
         }
 
         const hashedPassword = await bcrypt.hash(newPassword, 10); // new password + hashing + salt
-        await updateUserPassword(email, hashedPassword);
+        const user = result[0];
+        await updateUserPassword(user.email, hashedPassword);
         res.status(200).send({success: "Password reset succsessfully !"});
         
     } catch (error) {
