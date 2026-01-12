@@ -190,13 +190,13 @@ export async function resetPasswordController(req, res, next) {
         if(validationPass !== true) return res.status(400).send({error: validationPass});
 
         const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex'); // must be the same as in forgotpass to match 
-        const result = await findUserByResetToken(hashedToken);
-        if (result.length === 0) {
+        const users = await findUserByResetToken(hashedToken);
+        if (users.length === 0) {
             return res.status(400).send({error: "Invalid or expired reset token"})
         }
 
         const hashedPassword = await bcrypt.hash(newPassword, 10); // new password + hashing + salt
-        const user = result[0];
+        const user = users[0];
         await updateUserPassword(user.email, hashedPassword);
         res.status(200).send({success: "Password reset succsessfully !"});
         

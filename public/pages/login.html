@@ -38,7 +38,7 @@
                         <i class="fa-brands fa-instagram text-lg"></i>
                         Instagram
                     </a>
-                    <a href="https://www.facebook.com/search/top?q=%D0%B1%D1%80%D0%B7%D0%B0%20%D0%BF%D1%80%D0%B0%D1%82%D0%BA%D0%B0" target="_blank" class="flex justify-center gap-2 border border-white text-white px-6 py-3 rounded-md text-sm font-medium transition hover:bg-white hover:text-indigo-600">
+                    <a href="https://www.facebook.com/brza.pratka1" target="_blank" class="flex justify-center gap-2 border border-white text-white px-6 py-3 rounded-md text-sm font-medium transition hover:bg-white hover:text-indigo-600">
                         <i class="fa-brands fa-facebook-f text-lg"></i>
                         Facebook
                     </a>
@@ -80,14 +80,20 @@
                     <button type="submit" class="w-full btn-shine cursor-pointer bg-indigo-600 text-white py-2.5 rounded-md font-semibold transition hover:bg-indigo-700 shadow-md">
                         Sign in
                     </button>
-                
-                    <div class="flex items-center my-8">
-                        <div class="flex-grow border-t border-gray-200"></div>
-                        <span class="mx-4 text-xs uppercase tracking-wider text-gray-400">Or sign in with</span>
-                        <div class="flex-grow border-t border-gray-200"></div>
-                    </div>
                 </form>
+
+                <!-- Javascript response messages -->
+                <p id="verification" class="hidden text-center text-sm text-green-600 mt-4">
+                    A verification link was sent to your email
+                </p>
                 
+                <!-- Divider -->
+                <div class="flex items-center mt-8 mb-6">
+                    <div class="flex-grow border-t border-gray-200"></div>
+                    <span class="mx-4 text-xs uppercase tracking-wider text-gray-400">Or sign in with</span>
+                    <div class="flex-grow border-t border-gray-200"></div>
+                </div>
+
                 <!--Sign in with third party-->
                 <div class="flex flex-col sm:flex-row gap-4 mb-8">
                     <a href="/auth/google" class="flex-1 flex items-center justify-center gap-2 border border-gray-200 px-4 py-2 rounded-md text-gray-500 text-sm font-medium hover:border-black hover:text-gray-600 transition-all duration-300">
@@ -117,17 +123,17 @@
 
         // Showing pass and hiding
         const eye = document.getElementById("eye");
-        eye.className = "fa-solid fa-eye";
+        eye.className = "fa-solid fa-eye-slash";
 
         function togglePassword() {
             const password = document.getElementById("password");
 
             if (password.type === "password") {
                 password.type = "text";
-                eye.className = "fa-solid fa-eye-slash";
+                eye.className = "fa-solid fa-eye";
             } else {
                 password.type = "password";
-                eye.className = "fa-solid fa-eye";
+                eye.className = "fa-solid fa-eye-slash";
             }
         }
 

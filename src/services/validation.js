@@ -22,7 +22,9 @@ export function normalizePhoneNumber(phone) {
 
 //VALIDATION FOR LETTER ONLY INPUTS
 export function isOnlyLetters(str){
-    return /^[a-zA-z]+$/.test(str);
+    str = str.trim();
+
+    return /^[a-zA-z]+ *$/.test(str);
 }
 
 // VALIDATION FOR PASSWORD
@@ -65,7 +67,7 @@ export function validateEmail(email) {
 export function validateUserInput({name, phone, email, password, confirm_password}) {
     //Check name
     if(!isOnlyLetters(name)){
-        return "Name must have only letters and no spaces ❌";
+        return "Name must have only letters ❌";
     }
     if(name.length < 3) {
         return "Name must be at least 3 characters long ❌";
