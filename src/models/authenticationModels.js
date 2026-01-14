@@ -84,16 +84,3 @@ export async function updateUserPassword(email, newPassword) {
         throw new AppError(`Error updating user password: ${error.message}`, 500);
     }
 };
-
-export async function removeTokenWhenLogout(email) {
-    try {
-        if(!email) {
-            throw new AppError('Email is required', 400);
-        }
-
-        const [result] = await pool.query('UPDATE users SET reset_token = NULL, reset_token_expires = NULL WHERE email = ?', [email]);
-        return result;
-    } catch (error) {
-        throw new AppError(`Error removing tokens from DB: ${error.message}`, 500 );
-    }
-}

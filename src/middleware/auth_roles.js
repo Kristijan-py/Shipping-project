@@ -6,14 +6,15 @@ dotenv.config();
 
 // Authenticate token
 export function authenticateToken(req, res, next) {
+    // Check for tokens in cookies
     const accessToken = req.cookies?.accessToken;
     const refreshToken = req.cookies?.refreshToken;
 
     if (!accessToken) {
         if(!refreshToken) {
-            return res.redirect('/login'); // No token
+            return res.redirect('/login'); // No tokens
         }
-        return authenticateRefreshToken(req, res, next);   
+        return authenticateRefreshToken(req, res, next); // maybe arefresh token is still valid if access token is expired or missing
     } 
 
     // Verify the token
@@ -60,7 +61,7 @@ export async function authenticateRefreshToken(req, res, next) {
 
 // Redirect to dashboard if authenticated, otherwise next()
 export function redirectIfAuthenticated(req, res, next) {
-    const accessToken = req.cookies?.accessToken; // ? to safely access cookies if cookies are undefined
+    const accessToken = req.cookies?.accessToken; // "?" -- to safely access cookies if cookies are undefined
     const refreshToken = req.cookies?.refreshToken;
 
     if(!accessToken && !refreshToken) return next(); // block dashboard page and redirect to homepage

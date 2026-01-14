@@ -73,8 +73,8 @@ export async function createOrderController(req, res, next) {
     }
     
     try {
+        // Create the order if validation passed
         const newOrder = await createOrder(userId, sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying);
-        res.redirect('/dashboard');
     } catch (error) {
         next(new AppError(`Error while creating an order: ${error.message}`, 500));
     }
@@ -111,7 +111,7 @@ export async function updateOrderController(req, res, next) {
         return res.status(400).send({error: validateInfo.error})
     }
 
-
+    // Update the order after validation
     try {
         const SQLFunction = `UPDATE orders SET ${updates.join(', ')} WHERE id = ? AND user_id = ?`;
         const [result] = await pool.query(SQLFunction, values);
@@ -122,7 +122,6 @@ export async function updateOrderController(req, res, next) {
         console.log(`Order updated: ${id}`);
         // Delete cache from Redis
         await redisClient.del(`orders:${id}`);
-        res.redirect('/dashboard');
 
     } catch (error) {
         next(new AppError(`Error updating the order: ${error.message}`, 500));

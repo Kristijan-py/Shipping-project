@@ -39,7 +39,7 @@ export async function generateRefreshToken(payload, rememberMe) {
     return jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: rememberMe ? '15d' : '12h' });
 };
 
-
+// TOKEN VERIFICATION
 export async function verifyAccessToken(token) {
     try {
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);

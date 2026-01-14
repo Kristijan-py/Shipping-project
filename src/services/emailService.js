@@ -63,7 +63,7 @@ export async function sendresetEmail(email, link) {
         link: link
     });
     
-    
+    // Send the email
     try {
         await transporter.sendMail({
         from: "Brza pratka <"+process.env.EMAIL_USER+">",
@@ -102,6 +102,7 @@ export async function verifyEmail(email, link) {
         link: link
     });
     
+    // Send the email
     try {
         await transporter.sendMail({
         from: "Brza pratka <"+process.env.EMAIL_USER+">",

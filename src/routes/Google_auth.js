@@ -97,7 +97,7 @@ router.get('/google/callback',
         httpOnly: true,
         secure: false,       // true in production with HTTPS
         sameSite: 'lax',  // With lax I can use it on redirects
-        maxAge: 15 * 24 * 60 * 60 * 1000 // 15 days
+        maxAge: 15 * 24 * 60 * 60 * 1000 // 30 days
     });
 
 

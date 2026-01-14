@@ -5,6 +5,7 @@ import { getUsersController, getUserByIdController, updateUserController, delete
 const router = express.Router();
 router.use(express.json());
 
+// User Routes
 router.get('/users', authenticateToken, authorizeAdmin, getUsersController);
 router.get('/users/:id', authenticateToken, authorizeAdmin, getUserByIdController);
 router.put('/updateUser', authenticateToken, authorizeAdmin, updateUserController);

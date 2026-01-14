@@ -18,7 +18,7 @@ export const pool = createPool({
     password: process.env.MYSQL_PASSWORD,
     database: process.env.MYSQL_DATABASE,
     connectionLimit: 10
-}).promise();
+}).promise(); // Using promise-based pool for async/await support
 
 
 

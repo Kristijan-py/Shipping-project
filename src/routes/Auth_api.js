@@ -9,7 +9,7 @@ router.use(express.json());
 router.use(express.urlencoded({extended: false}));
 
 
-
+// Authentication Routes
 router.post('/signup', signupController);
 router.post('/login', loginRateLimit, loginController);
 router.get('/verify-email', verifyEmailController);
