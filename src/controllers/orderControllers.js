@@ -2,7 +2,6 @@
 import { pool } from '../config/database.js'; // connect to the database
 import { getOrders, getOrdersByUserId, getOrderById, createOrder, deleteOrder } from '../models/orderModels.js';
 import { validateOrderInfo, validateOrderInfoArray } from '../services/validation.js';
-import { error } from 'console';
 import { AppError } from '../utils/AppError.js';
 import { getOrSetCache } from '../utils/caching.js'; // Helper function for caching
 import redisClient from '../config/redis.js';
@@ -75,6 +74,13 @@ export async function createOrderController(req, res, next) {
     try {
         // Create the order if validation passed
         const newOrder = await createOrder(userId, sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, buyer_adress, price, package_type, whos_paying);
+        if(!newOrder) {
+            throw new AppError("Failed to create order!", 500);
+        }
+        console.log(`New order created! ID: ${newOrder.insertId}`);
+        // We are deleting the cache because new order is created and the cache is not update(if user calls all order he will not see the last one because Redis will return)
+        await redisClient.del('allOrders'); 
+        await redisClient.del(`orders:user:${userId}`);
     } catch (error) {
         next(new AppError(`Error while creating an order: ${error.message}`, 500));
     }
@@ -87,7 +93,9 @@ export async function updateOrderController(req, res, next) {
     delete req.body._method; // because it's in the body like input
 
     const { id, ...fieldsToUpdate } = req.body;  // ...somename --> create array with that name
-    if(!id) return res.status(400).send({error: 'Order ID is required'});
+    if(!id) {
+        throw new AppError('Order ID is required for update',400);
+    }
     const updates =[];
     const values = [];
 
@@ -121,6 +129,7 @@ export async function updateOrderController(req, res, next) {
         }
         console.log(`Order updated: ${id}`);
         // Delete cache from Redis
+        await redisClient.del('allOrders');
         await redisClient.del(`orders:${id}`);
 
     } catch (error) {
@@ -133,7 +142,11 @@ export async function updateOrderController(req, res, next) {
 export async function deleteOrderController(req, res, next) {
     try {
         const success = await deleteOrder(req.params.id, req.user.id); // pass user id for security check
-        if(!success) return res.status(404).send({error: "Order not found with that ID "});
+        if(!success) {
+            throw new AppError(`Order ${req.params.id} not found`, 404);
+        }
+        console.log(`Order ${req.params.id} deleted successfully! ✅`);
+        
         // Delete cache from Redis
         await redisClient.del(`orders:${req.params.id}`);
         await redisClient.del(`orders`); // we also delete orders because the deleted orders is still inside
