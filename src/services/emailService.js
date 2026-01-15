@@ -75,9 +75,7 @@ export async function sendresetEmail(email, link) {
         console.log("Reset email sent successfully ✅");
 
     } catch (error) {
-        console.error("Error sending reset email:", error.message);
-        throw new Error("Failed to send reset email");
-        
+        throw error;
     }
     
 }
@@ -114,8 +112,6 @@ export async function verifyEmail(email, link) {
         console.log("Verification email sent successfully ✅");
 
     } catch (error) {
-        console.error("Error sending verification email:", error.message);
-        throw new Error("Failed to send verification email");
-        
+        throw error;
     }
 }

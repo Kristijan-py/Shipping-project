@@ -1,24 +1,4 @@
-import validator from 'validator'; // for validating info
-import { pool } from '../config/database.js'; // for database connection
 
-
-
-// ADDING +389
-export function normalizePhoneNumber(phone) {
-    if(!phone) {
-        return "Phone number is required.";
-    }
-
-    let digits = phone.replace(/\D/g,'');
-
-    if(digits.startsWith('0')) { // 077446614 --> +38977446614
-        digits = digits.slice(1); // remove 0
-        digits = '+' + 389 + digits;
-        return digits;
-    } else {
-        return 'Your number must start with 07.. and be 9 digits long ❌';
-    }  
-};
 
 //VALIDATION FOR LETTER ONLY INPUTS
 export function isOnlyLetters(str){
@@ -32,7 +12,7 @@ export function validatePassword(password){
     const passwordMinLength = password.length >= 8;
     const hasUppercase = /[A-Z]/.test(password);
     const hasNumber = /[0-9]/.test(password);
-    const hasSymbol = /[!@#$+_%^&*(),.?":{}|<>]/.test(password);
+    const hasSymbol = /[-!@#$+_%^&*(),.?":{}|<>]/.test(password);
 
     if (!passwordMinLength) return 'Password must have at least 8 characters.';
     if (!hasUppercase) return 'Password must have at least one uppercase letter.';
@@ -44,9 +24,9 @@ export function validatePassword(password){
 
 // VALIDATION FOR PHONE NUMBER
 export function validatePhoneNumber(phoneNumber){
-    const phoneRegex = /^(07\d{7}|\+3897\d{7})$/; // phone regex for Macedonia
+    const phoneRegex = /^0\d{2}\s?\d{3}\s?\d{3}$/; // phone regex for Macedonia
     if(!phoneRegex.test(phoneNumber)){
-        return 'Your number must start with 07.. and be 9 digits long ❌';
+        return 'Your number must start with 0 and contain 9 digits';
     } 
     return true;
 }
@@ -67,16 +47,12 @@ export function validateEmail(email) {
 export function validateUserInput({name, phone, email, password, confirm_password}) {
     //Check name
     if(!isOnlyLetters(name)){
-        return "Name must have only letters ❌";
+        return "Name must have only letters and no space";
     }
     if(name.length < 3) {
-        return "Name must be at least 3 characters long ❌";
+        return "Name must be at least 3 characters long";
     }
 
-    // Check email
-    if(!validator.isEmail(email)) {
-        return  "Invalid email format. Example: user@gmail.com";    
-    }
 
     if(!validateEmail(email)) {
         return 'Invalid email format. Example: user@gmail.com';
@@ -87,9 +63,6 @@ export function validateUserInput({name, phone, email, password, confirm_passwor
     if(validationPhone !== true) {
         return validationPhone;
     }
-
-    // Add +389 on your phone
-    const normalizedPhone = normalizePhoneNumber(phone);
 
     // Check password
     const passValidation = validatePassword(password);
@@ -109,7 +82,15 @@ export function validateUserInput({name, phone, email, password, confirm_passwor
     return true;
 }
 
-// Orders info validation
+
+
+
+
+
+
+
+
+// ORDERS VALIDATION
 export function validateOrderInfo(sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, price) {
     const letterFields = [
         {value: sender_name, field: 'Sender Name'},
@@ -162,28 +143,3 @@ export function validateOrderInfoArray(fieldsToUpdate) {
     
 };
 
-
-// Checking user from database to see if it exists
-export async function ifUserExists(email, phone) {
-    try {
-        const normalizePhone = normalizePhoneNumber(phone); // to make +389....
-        const [rows] = await pool.query('SELECT * FROM users WHERE email = ? OR phone = ?', [email, normalizePhone]);
-        return rows.length > 0; // ITS BOOLEAN => if we found 1 user return true, otherwise false
-    } catch (error) {
-        console.error("Error checking if user exists:", error.message);
-        throw new Error("Database error while checking user");
-    }
-}
-
-
-// To see if the order is duplicate
-export async function duplicateOrderCheck(sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, price, package_type, whos_paying, user_id) {
-    try {
-        const [rows] = await pool.query(`SELECT * FROM orders WHERE sender_name = ? AND sender_phone = ? AND buyer_name = ? AND buyer_phone = ? AND buyer_city = ? AND buyer_village = ? AND price = ? AND package_type = ? AND whos_paying = ? AND user_id = ?`, 
-        [sender_name, sender_phone, buyer_name, buyer_phone, buyer_city, buyer_village, price, package_type, whos_paying, user_id]);
-        return rows[0];
-    } catch (error) {
-        console.error("Error fetching order by details: ", error.message);
-        return null;
-    }
-}

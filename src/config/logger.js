@@ -53,16 +53,31 @@ export const logger = winston.createLogger({
         })
     ],
     exceptionHandlers: [
-        new winston.transports.File({ 
-            filename: 'logs/exceptions.log', 
-            format: winston.format.errors({ stack: false })
-        })
-    ],
-    rejectionHandlers: [
-        new winston.transports.File({
-            filename: 'logs/rejections.log',
-            format: winston.format.errors({ stack: false })
-        })
-    ]
+    new winston.transports.File({ 
+        filename: 'logs/exceptions.log', 
+        format: winston.format.combine(
+            winston.format.timestamp({ format: 'DD-MM-YYYY HH:mm:ss' }),
+            winston.format.errors({ stack: true }), // include stack trace
+            winston.format.printf(({ timestamp, level, message, stack, ...meta }) => {
+                const metaString = Object.keys(meta).length ? JSON.stringify(meta, null, 2) : '';
+                return `${timestamp} ${level}: ${message}\n${stack || ''}\n${metaString}`;
+            })
+        )
+    })
+],
+rejectionHandlers: [
+    new winston.transports.File({
+        filename: 'logs/rejections.log',
+        format: winston.format.combine(
+            winston.format.timestamp({ format: 'DD-MM-YYYY HH:mm:ss' }),
+            winston.format.errors({ stack: true }),
+            winston.format.printf(({ timestamp, level, message, stack, ...meta }) => {
+                const metaString = Object.keys(meta).length ? JSON.stringify(meta, null, 2) : '';
+                return `${timestamp} ${level}: ${message}\n${stack || ''}\n${metaString}`;
+            })
+        )
+    })
+]
+
 
 });

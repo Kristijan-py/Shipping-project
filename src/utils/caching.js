@@ -2,7 +2,7 @@ import redisClient from "../config/redis.js";
 
 export const getOrSetCache = async (key, fetch, TTL = 3600) => {
     const cachedData = await redisClient.get(key);
-    // If we hit cache, return from Redis
+    // If we hit cache, return from Redis, not from Server
     if(cachedData) {
         console.log('Cache hit');
         return JSON.parse(cachedData);

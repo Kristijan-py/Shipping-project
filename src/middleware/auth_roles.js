@@ -14,7 +14,7 @@ export function authenticateToken(req, res, next) {
         if(!refreshToken) {
             return res.redirect('/login'); // No tokens
         }
-        return authenticateRefreshToken(req, res, next); // maybe arefresh token is still valid if access token is expired or missing
+        return authenticateRefreshToken(req, res, next); // maybe refresh token is still valid if access token is expired
     } 
 
     // Verify the token
@@ -23,7 +23,7 @@ export function authenticateToken(req, res, next) {
             if(!refreshToken) {
                 res.clearCookie('accessToken'); // clear cookies because expired
                 res.clearCookie('refreshToken');
-                return res.redirect('/login'); // expired
+                return res.redirect('/login');
             }
             return authenticateRefreshToken(req, res, next);
         } 
@@ -67,13 +67,22 @@ export function redirectIfAuthenticated(req, res, next) {
     if(!accessToken && !refreshToken) return next(); // block dashboard page and redirect to homepage
 
     if (accessToken) {
-        jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-            if (!err) return res.redirect('/dashboard'); // if no error, redirect to dashboard
-            if(refreshToken) return res.redirect('/dashboard'); // if accessToken is expired and refreshToken is not
-            next(); // else continue to the next middleware
+        jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, { algorithms: ['HS256'] }, (err) => {
+            if (!err) return res.redirect('/dashboard');
+            if(refreshToken) { // check refresh token only when access token is invalid
+                jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, { algorithms: ['HS256'] }, (err) => {
+                    if (!err) return res.redirect('/dashboard');
+                    next(); // else continue to the next middleware or route handler
+                });
+            } 
+            next(); // same
         });
+    // If accessToken is invalid or expired, check refreshToken only then
     } else if(refreshToken) {
-        return res.redirect('/dashboard');
+        jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, { algorithms: ['HS256'] }, (err) => {
+            if (!err) return res.redirect('/dashboard');
+            next();
+        })
     }
 }
 
@@ -85,6 +94,6 @@ export function authorizeAdmin(req, res, next) {
         next();
     } else {
         console.log('Admin access denied');
-        res.redirect('/dashboard'); // redirect to dashboard if not admin
+        res.redirect('/dashboard'); // redirect to dashboard if not admin(as regular user with no admin privileges)
     }
 }

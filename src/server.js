@@ -21,7 +21,7 @@ import protectedPages from './routes/protected_pages.js'; // protected routes(da
 
 
 // MIDDLEWARE AND HELPER FUNCTIONS
-import { errorHandler } from "./middleware/Error & Logger.js";
+import { errorHandler } from "./middleware/Global_Error.js";
 import { startCleanupInterval } from './utils/helperFunctions.js';
 import { generalRateLimit } from "./middleware/rateLimit.js";
 import { logger } from './config/logger.js'; // logger
@@ -73,10 +73,9 @@ app.use('/', authPages); // Authentication pages (login, signup)
 
 
 
-// ERROR HANDLING
+// ERROR HANDLING(404 NOT FOUND)
 app.use((req, res, next) => {
-  logger.error(`404 Not Found - ${req.method} ${req.originalUrl}`);
-  res.status(404).send({error: "route not found"});
+  next(new AppError(`Cannot find ${req.originalUrl} on this server!`, 404));
 })
 
 app.use(errorHandler) // custom middleware

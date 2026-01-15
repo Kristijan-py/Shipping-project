@@ -27,7 +27,7 @@ export function startCleanupInterval() {
     } catch (error) {
         console.error('Error cleaning the unverified users', error.message);
     }
-    }, 1000 * 60  * 20); // Refresh every 20 minutes
+    }, 1000 * 60  * 30); // Refresh every 30 minutes
 }
 
 // TOKEN GENERATION
@@ -42,7 +42,9 @@ export async function generateRefreshToken(payload, rememberMe) {
 // TOKEN VERIFICATION
 export async function verifyAccessToken(token) {
     try {
-        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, {
+            algorithms: ['HS256'] // hashing the algorithm if attacker tries to change the alg in header to none and gain entrance without jwt verify
+        });
         return decoded;
     } catch (error) {
         return null;
@@ -50,9 +52,27 @@ export async function verifyAccessToken(token) {
 }
 export async function verifyRefreshToken(token) {
     try {
-        const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+        const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, {
+            algorithms: ['HS256'] // hashing the algorithm if attacker tries to change the alg in header to none and gain entrance without jwt verify
+        });
         return decoded;
     } catch (error) {
         return null;
     }
 }
+
+
+
+
+// ADDING +389
+export function normalizePhoneNumber(phone) {
+    let digits = phone.replace(/\D/g,'');
+
+    if(digits.startsWith('0')) { // 077446614 --> +38977446614
+        digits = digits.slice(1); // remove 0
+        digits = '+' + 389 + digits;
+        return digits;
+    } else {
+        return 'Your number must start with 07...';
+    }  
+};
