@@ -1,20 +1,13 @@
 import bcrypt from "bcrypt"; // hashing passwords
 import crypto from 'crypto'; // for generating secure tokens
-import jwt from 'jsonwebtoken'; // Pass the login using token
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 import dotenv from 'dotenv';
 dotenv.config();
-import { normalizePhoneNumber, validateUserInput, ifUserExists,  validatePassword } from '../services/validation.js';
+import { validateUserInput, validatePassword, } from '../services/validation.js';
 import { sendresetEmail, verifyEmail } from '../services/emailService.js'; // Email service for sending verification and reset emails
 import { getUserByEmail, createUser } from '../models/userModels.js';
-import { insertUserEmailToken, findUserByEmailToken, verifyUserEmail, insertUserResetToken, findUserByResetToken, updateUserPassword } from '../models/authenticationModels.js'; // Model for updating user data
+import { ifUserExists, insertUserEmailToken, findUserByEmailToken, verifyUserEmail, insertUserResetToken, findUserByResetToken, updateUserPassword } from '../models/authenticationModels.js'; // Model for updating user data
 import { AppError } from '../utils/AppError.js';
-import { generateAccessToken, generateRefreshToken } from "../utils/helperFunctions.js";
-
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+import { generateAccessToken, generateRefreshToken, normalizePhoneNumber } from "../utils/helperFunctions.js";
 
 
 
@@ -22,11 +15,12 @@ const __dirname = dirname(__filename);
 export async function signupController(req, res, next) {
     try {
         // Check if user already exists
-        const ifUserExist = await ifUserExists(req.body.email, req.body.phone);
+        const normalizePhone = normalizePhoneNumber(req.body.phone); // to make +389....(to be the same as in the DB)
+        const ifUserExist = await ifUserExists(req.body.email, normalizePhone);
         if(ifUserExist) { // can be true or false so in that case dont put "!"
-            return res.status(400).send({error: "User with this email or phone number already exists"});
+            throw new AppError ("User with this email or phone number already exists", 400);        
         }
-        // If user does not exist, validate input
+        // Validate user input
         const validationUser = validateUserInput(req.body);
         if(validationUser !== true){
             return res.status(400).send({error: validationUser});
@@ -36,22 +30,21 @@ export async function signupController(req, res, next) {
         const normalizeEmail = (req.body.email).toLowerCase();
         const salt = await bcrypt.genSalt(); // just in case some have the same pass, use salt for additional chars(every salt is different)
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
-        const normalizePhone = normalizePhoneNumber(req.body.phone); // to make +389....
 
         // Creating user in Database
         const user = { name: req.body.name, phone: normalizePhone, email: normalizeEmail, password: hashedPassword, role: 'user' };
-        const newUser = await createUser(user.name, user.phone, user.email, user.password, user.role);
-        if(!newUser) {
-            return res.status(400).send({error: "Cannot create user, problem with database"});
-        }
+        await createUser(user.name, user.phone, user.email, user.password, user.role);
         console.log("User created successfully ✅");
 
         // EMAIL VERIFICATION
         const emailToken = crypto.randomBytes(32).toString('hex');
         const hashedToken = crypto.createHash('sha256').update(emailToken).digest('hex');
         const expires = new Date(Date.now() + 1000 * 60 * 60); // 1 hour
-        
-        await insertUserEmailToken(hashedToken, expires, normalizeEmail); // insert user email token, expiration and the email
+
+        const isInserted = await insertUserEmailToken(hashedToken, expires, normalizeEmail); // insert user email token, expiration and the email
+        if (!isInserted) {
+            throw new AppError("Failed to store email verification token", 500);
+        }
 
         const link = `${process.env.BASE_URL}/api/verify-email?token=${emailToken}`; // sending unhashed token because in query it should be as it is different than in the DB for security(hackers!). We will hash in verify controller instead.
         await verifyEmail(normalizeEmail, link); // sendimg a mail to the user
@@ -59,7 +52,7 @@ export async function signupController(req, res, next) {
         res.redirect('/login'); // redirect to login page after signup
 
     } catch (error) {
-        next(new AppError(`Error while creating a user: ${error.message}`, 500));
+        next(error instanceof AppError ? error : new AppError(`Error while creating a user:`, 500));
     }
 };
 
@@ -68,18 +61,23 @@ export async function signupController(req, res, next) {
 export async function loginController(req, res, next) {
     try {
         // Check if user exists
-        const user = await getUserByEmail(req.body.email);
-        if(!user){
-            return res.status(404).send({error: "Email not found"});
+        const normalizeEmail = (req.body.email).toLowerCase();
+        const user = await getUserByEmail(normalizeEmail);
+        if(!user) {
+            throw new AppError("Email not found", 404);
+        }
+        // Check if password is missing(logged via OAuth)
+        if(user.password_hash === null) {
+            throw new AppError("Missing password. You have logged in via Google or Facebook.", 400);
         }
         // Check password
         const passCheck = await bcrypt.compare(req.body.password, user.password_hash);
         if(!passCheck) {
-            return res.status(400).send({error: "Incorrect password!"});
+            throw new AppError("Incorrect password!", 400);
         };
         // This will force the user to check email accunt to verify before login
         if(user.is_verified !== 1){
-            return res.status(403).send({error: "Verify your email before logging in."});
+            throw new AppError("Verify your email before logging in.", 403);
         }
         // Remember me for cookies and tokens
         const rememberMe = req.body.rememberMe === 'on'; // remember me checkbox boolean
@@ -91,8 +89,7 @@ export async function loginController(req, res, next) {
         // Pass payload to add to cookies and also remember me option to match cookie and token expiration time
         const accessToken = await generateAccessToken(payload, rememberMe);
         const refreshToken = await generateRefreshToken(payload, rememberMe);
-       
-        
+
         // Storing tokens in HTTP-ONLY COOKIES
         // Access token
         res.cookie("accessToken", accessToken, {
@@ -131,12 +128,14 @@ export async function verifyEmailController(req, res, next) {
         const [users] = await findUserByEmailToken(hashedToken);
         // Check that user if still exist because maybe token expired
         if(users.length === 0) {
-            return res.status(400).send({error: 'Invalid or expired token'}); // Time expired, signup again
+            throw new AppError('Email verification expired, sign up again!', 400); // Time expired, signup again
         };
     
         // If exists in DATABASE, verify it
-        await verifyUserEmail(users.email);
-    
+        const isVerified = await verifyUserEmail(users.email);
+        if(isVerified === false){
+            throw new AppError('Error verifying email, try again later!', 500);
+        }
         res.redirect('/login?is_verified=true'); // redirect to login page after verification
         
     } catch (error) {
@@ -149,19 +148,23 @@ export async function verifyEmailController(req, res, next) {
 export async function forgotPasswordController(req, res, next) {
     try {
         // Find if user exists
-        const user = await getUserByEmail(req.body.email);
+        const normalizeEmail = (req.body.email).toLowerCase();
+        const user = await getUserByEmail(normalizeEmail);
         if(!user) {
-            return res.status(404).send({error: "Email not found"});
+            throw new AppError("Email not found", 404); 
         }
 
         // Generate a token for password reset
         const resetToken = crypto.randomBytes(32).toString('hex'); // generate a secure token
         const resetTokenHash = crypto.createHash('sha256').update(resetToken).digest('hex'); // hashing the token
-        const resetTokenExpiration = new Date(Date.now() + 15 * 60 * 1000 + 1 * 60 * 60 * 1000) // 15 minutes expiration time
+        const resetTokenExpiration = new Date(Date.now() + 60 * 60 * 1000 + 60 * 60 * 1000) // 1 hour expiration time
         .toISOString()
         .slice(0, 19).replace('T', ' '); // format to MySQL datetime
 
-        await insertUserResetToken(resetTokenHash, resetTokenExpiration, user.email); // store hashed token in DB
+        const isInserted = await insertUserResetToken(resetTokenHash, resetTokenExpiration, user.email); // store hashed token in DB
+        if (!isInserted) {
+            throw new AppError("Cannot insert reset token", 500);
+        }
 
         const link = `${process.env.BASE_URL}/reset-password?resetToken=${resetToken}`; // link to reset password
         await sendresetEmail(user.email, link); // send the reset password link to the user's email
@@ -178,24 +181,30 @@ export async function resetPasswordController(req, res, next) {
         // Check required fields
         const { resetToken, newPassword, confirmPassword } = req.body; // FROM THE HTML FORM
         if (!resetToken || !newPassword || !confirmPassword) {
-            return res.status(400).send({error: "All fields are required"});
+            throw new AppError("All fields are required", 400);
         }
         if(newPassword !== confirmPassword){
-            return res.status(400).send({error: "Passwords doesn't match"});
+            throw new AppError("Passwords doesn't match", 400);
         }
         // validate password
         const validationPass = validatePassword(newPassword);
-        if(validationPass !== true) return res.status(400).send({error: validationPass});
+        if(validationPass !== true){
+            throw new AppError(validationPass);
+        } 
+            
 
         const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex'); // must be the same as in forgotpass to match 
         const users = await findUserByResetToken(hashedToken);
         if (users.length === 0) {
-            return res.status(400).send({error: "Invalid or expired reset token"}) // User is not found
+            throw new AppError("Invalid or expired reset token");
         }
 
         const hashedPassword = await bcrypt.hash(newPassword, 10); // new password + hashing + salt
         const user = users[0];
-        await updateUserPassword(user.email, hashedPassword);
+        const isUpdated = await updateUserPassword(user.email, hashedPassword);
+        if(!isUpdated){
+            throw new AppError("Error with updating password", 500);
+        }
         res.status(200).send({success: "Password reset succsessfully !"});
         
     } catch (error) {
