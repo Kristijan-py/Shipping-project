@@ -3,6 +3,7 @@ import https from 'https';
 import fs from 'fs';
 import dotenv from 'dotenv' // loading env files
 dotenv.config();
+import { AppError } from "./utils/AppError.js"; // custom error class
 import cookieParser from 'cookie-parser'; // needs to import here in main server file to use cookies into all routes
 import methodOverride from 'method-override';
 import path from "path";

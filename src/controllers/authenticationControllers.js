@@ -8,6 +8,7 @@ import { getUserByEmail, createUser } from '../models/userModels.js';
 import { ifUserExists, insertUserEmailToken, findUserByEmailToken, verifyUserEmail, insertUserResetToken, findUserByResetToken, updateUserPassword } from '../models/authenticationModels.js'; // Model for updating user data
 import { AppError } from '../utils/AppError.js';
 import { generateAccessToken, generateRefreshToken, normalizePhoneNumber } from "../utils/helperFunctions.js";
+import { error } from "console";
 
 
 
@@ -18,7 +19,7 @@ export async function signupController(req, res, next) {
         const normalizePhone = normalizePhoneNumber(req.body.phone); // to make +389....(to be the same as in the DB)
         const ifUserExist = await ifUserExists(req.body.email, normalizePhone);
         if(ifUserExist) { // can be true or false so in that case dont put "!"
-            throw new AppError ("User with this email or phone number already exists", 400);        
+            return res.status(400).send({ error: "User with this email or phone number already exists" });
         }
         // Validate user input
         const validationUser = validateUserInput(req.body);
@@ -43,13 +44,13 @@ export async function signupController(req, res, next) {
 
         const isInserted = await insertUserEmailToken(hashedToken, expires, normalizeEmail); // insert user email token, expiration and the email
         if (!isInserted) {
-            throw new AppError("Failed to store email verification token", 500);
+            return res.status(500).send({ error: "System error, try again later" });
         }
 
         const link = `${process.env.BASE_URL}/api/verify-email?token=${emailToken}`; // sending unhashed token because in query it should be as it is different than in the DB for security(hackers!). We will hash in verify controller instead.
         await verifyEmail(normalizeEmail, link); // sendimg a mail to the user
 
-        res.redirect('/login'); // redirect to login page after signup
+        res.status(201).send({ message: "A verification link was sent to your email." });
 
     } catch (error) {
         next(error instanceof AppError ? error : new AppError(`Error while creating a user:`, 500));
@@ -64,20 +65,24 @@ export async function loginController(req, res, next) {
         const normalizeEmail = (req.body.email).toLowerCase();
         const user = await getUserByEmail(normalizeEmail);
         if(!user) {
-            throw new AppError("Email not found", 404);
+            return res.status(404).send({ error: "Email not found" });
         }
         // Check if password is missing(logged via OAuth)
         if(user.password_hash === null) {
-            throw new AppError("Missing password. You have logged in via Google or Facebook.", 400);
+            return res.status(400).send({ error: "Missing password. You have logged in via Google or Facebook." });
         }
         // Check password
         const passCheck = await bcrypt.compare(req.body.password, user.password_hash);
         if(!passCheck) {
-            throw new AppError("Incorrect password!", 400);
+            return res.status(400).send({ error: "Incorrect password!" });
         };
+        // Check if email verification expired
+        if(user.email_token && user.email_token_expires < new Date()){
+            return res.status(403).send({ error: "Email verification expired, sign up again!" });
+        }
         // This will force the user to check email accunt to verify before login
         if(user.is_verified !== 1){
-            throw new AppError("Verify your email before logging in.", 403);
+            return res.status(403).send({ error: "Verify your email before logging in." });
         }
         // Remember me for cookies and tokens
         const rememberMe = req.body.rememberMe === 'on'; // remember me checkbox boolean
@@ -107,10 +112,7 @@ export async function loginController(req, res, next) {
             maxAge: rememberMeRefreshTime
         });
 
-        
-        console.log("Logged in successfully ✅");
-
-        return res.redirect('/dashboard'); // redirect to dashboard page after login
+        return res.status(200).send({ message: "Logged in successfully" });
 
     } catch (error) {
         next(new AppError(`Error while logging in: ${error.message}`, 500));
@@ -130,13 +132,12 @@ export async function verifyEmailController(req, res, next) {
         if(users.length === 0) {
             throw new AppError('Email verification expired, sign up again!', 400); // Time expired, signup again
         };
-    
         // If exists in DATABASE, verify it
         const isVerified = await verifyUserEmail(users.email);
         if(isVerified === false){
             throw new AppError('Error verifying email, try again later!', 500);
         }
-        res.redirect('/login?is_verified=true'); // redirect to login page after verification
+        res.redirect('/login'); // redirect to login page after verification
         
     } catch (error) {
         next(new AppError(`Error while verifying email: ${error.message}`, 500));
@@ -151,7 +152,7 @@ export async function forgotPasswordController(req, res, next) {
         const normalizeEmail = (req.body.email).toLowerCase();
         const user = await getUserByEmail(normalizeEmail);
         if(!user) {
-            throw new AppError("Email not found", 404); 
+            return res.status(404).send({ error: "Email not found" }); 
         }
 
         // Generate a token for password reset
@@ -161,10 +162,7 @@ export async function forgotPasswordController(req, res, next) {
         .toISOString()
         .slice(0, 19).replace('T', ' '); // format to MySQL datetime
 
-        const isInserted = await insertUserResetToken(resetTokenHash, resetTokenExpiration, user.email); // store hashed token in DB
-        if (!isInserted) {
-            throw new AppError("Cannot insert reset token", 500);
-        }
+        await insertUserResetToken(resetTokenHash, resetTokenExpiration, user.email); // store hashed token in DB
 
         const link = `${process.env.BASE_URL}/reset-password?resetToken=${resetToken}`; // link to reset password
         await sendresetEmail(user.email, link); // send the reset password link to the user's email
@@ -181,31 +179,27 @@ export async function resetPasswordController(req, res, next) {
         // Check required fields
         const { resetToken, newPassword, confirmPassword } = req.body; // FROM THE HTML FORM
         if (!resetToken || !newPassword || !confirmPassword) {
-            throw new AppError("All fields are required", 400);
+            return res.status(400).send({ error: "All fields are required" });
         }
         if(newPassword !== confirmPassword){
-            throw new AppError("Passwords doesn't match", 400);
+            return res.status(400).send({ error: "Passwords doesn't match" });
         }
         // validate password
         const validationPass = validatePassword(newPassword);
         if(validationPass !== true){
-            throw new AppError(validationPass);
+            return res.status(400).send({ error: validationPass });
         } 
-            
 
         const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex'); // must be the same as in forgotpass to match 
         const users = await findUserByResetToken(hashedToken);
-        if (users.length === 0) {
-            throw new AppError("Invalid or expired reset token");
-        }
 
         const hashedPassword = await bcrypt.hash(newPassword, 10); // new password + hashing + salt
         const user = users[0];
         const isUpdated = await updateUserPassword(user.email, hashedPassword);
         if(!isUpdated){
-            throw new AppError("Error with updating password", 500);
+            return res.status(500).send({ error: "Error with updating password, change it again" });
         }
-        res.status(200).send({success: "Password reset succsessfully !"});
+        return res.status(200).send({message: "Password reset succsessfully !"});
         
     } catch (error) {
         next(new AppError(`Error while resetting password: ${error.message}`, 500));
@@ -213,4 +207,25 @@ export async function resetPasswordController(req, res, next) {
 };
 
 
+// @POST logout
+export async function logoutController(req, res, next) {
+    try {
 
+        // Clear the cookies
+        res.clearCookie("accessToken", {
+            httpOnly: true,
+            secure: false, // true in production with HTTPS
+            sameSite: 'strict'   // LAX for CSRF protection and strict for same-site requests
+        }); 
+
+        res.clearCookie("refreshToken", {
+            httpOnly: true,
+            secure: false, // true in production with HTTPS
+            sameSite: 'strict'   // LAX for CSRF protection and strict for same-site requests
+        });
+        return res.redirect('/login');
+        
+    } catch (error) {
+        next(new AppError(`Error while logging out: ${error.message}`, 500));
+    }
+};

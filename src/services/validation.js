@@ -76,7 +76,7 @@ export function validateUserInput({name, phone, email, password, confirm_passwor
     }
     // Compare passwords
     if(password !== confirm_password) {
-        return "Passwords do not match ❌";
+        return "Passwords do not match !";
     }
 
     return true;

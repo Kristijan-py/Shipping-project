@@ -23,42 +23,16 @@ export async function getUsersController(req, res, next) {
 };
 
 
-// @POST logout
-export async function logoutController(req, res, next) {
-    try {
-
-        // Clear the cookies
-        res.clearCookie("accessToken", {
-            httpOnly: true,
-            secure: false, // true in production with HTTPS
-            sameSite: 'strict'   // LAX for CSRF protection and strict for same-site requests
-        }); 
-
-        res.clearCookie("refreshToken", {
-            httpOnly: true,
-            secure: false, // true in production with HTTPS
-            sameSite: 'strict'   // LAX for CSRF protection and strict for same-site requests
-        });
-
-        console.log("Logged out successfully ✅");
-        return res.redirect('/login');
-        
-    } catch (error) {
-        next(new AppError(`Error while logging out: ${error.message}`, 500));
-    }
-};
-
-
 // @DELETE a user by id
 export async function deleteUserController(req, res, next) {
     try {
         if(req.user.id !== parseInt(req.params.id)){ // check if user's id is the same as the one to delete(to prevent deleting other users URL)
-            return res.redirect('/dashboard');
+            return res.redirect('/login');
         }
     
         const success = await deleteUser(req.params.id);
         if(!success) {
-            throw new AppError("User not found with that id", 404);
+            throw new Error("User not found with that id", 404);
         }
         console.log(`User ${req.params.id} deleted successfully ✅`);
 

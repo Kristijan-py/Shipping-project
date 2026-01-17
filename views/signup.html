@@ -18,13 +18,13 @@
     <div id="header"></div>
 
     <div class="min-h-screen flex justify-center items-center my-10 lg:my-20 px-4">
-        <form action="/api/signup" method="POST"
+        <form  id="signup" action="/api/signup" method="POST"
               class="w-full max-w-[480px] bg-white p-8 rounded-xl shadow-lg">
 
             <h1 class="text-2xl font-bold text-center mb-6">Sign up</h1>
 
             <!-- Name -->
-            <div class="relative mb-4">
+            <div class="relative mb-3">
                 <label class="block mb-1 font-semibold text-gray-800">Name:</label>
                 <input type="text" name="name" required
                         class="w-full border border-gray-300 rounded-md px-10 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
@@ -32,7 +32,7 @@
             </div>
 
             <!-- Phone -->
-            <div class="relative mb-4">
+            <div class="relative mb-3">
                 <label class="block mb-1 font-semibold text-gray-800">Phone:</label>
                 <input type="text" name="phone" placeholder="Example: 071234567" required
                         class="w-full border border-gray-300 rounded-md px-10 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
@@ -40,7 +40,7 @@
             </div>
 
             <!-- Email -->
-            <div class="relative mb-4">
+            <div class="relative mb-3">
                 <label class="block mb-1 font-semibold text-gray-800">Email:</label>
                 <input type="email" name="email" required
                         class="w-full border border-gray-300 rounded-md px-10 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
@@ -48,7 +48,7 @@
             </div>
 
             <!-- Password -->
-            <div class="relative mb-4">
+            <div class="relative mb-3">
                 <label class="block mb-1 font-semibold text-gray-800">Password:</label>
                 <input type="password" id="password" name="password" autocomplete="new-password" placeholder="8 chars min" required
                         class="w-full border border-gray-300 rounded-md px-10 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
@@ -70,18 +70,16 @@
             </div>
 
             <!-- Submit -->
-            <button type="submit" onclick="sendVerificationMessage()"
-                    class="w-full btn-shine cursor-pointer bg-indigo-600 text-white py-2.5 rounded-md font-semibold hover:bg-indigo-800 transition">
+            <button type="submit"
+                    class="w-full btn-shine cursor-pointer bg-indigo-600 text-white py-2.5 mb-2 rounded-md font-semibold hover:bg-indigo-800 transition">
                 Sign up
             </button>
 
             <!-- Javascript response messages -->
-            <p id="verification" class="hidden text-center text-sm text-green-600 mt-4">
-                A verification link was sent to your email
-            </p>
+            <p id="answer" class="hidden"></p>
 
             <!-- Divider -->
-            <div class="flex items-center my-8">
+            <div id="divider" class="flex items-center mt-8 mb-8">
                 <div class="flex-grow border-t border-gray-200"></div>
                 <span class="mx-4 text-xs uppercase tracking-wider text-gray-400">or sign up with</span>
                 <div class="flex-grow border-t border-gray-200"></div>
@@ -135,12 +133,46 @@
             }
         }
 
-        //Appear verification text when submit the form
-        function sendVerificationMessage() {
-            verText = document.getElementById('verification');
-            verText.style.display = "block";
-        }
-        
+        //Fetch response message from backend to display to the user
+        const form = document.getElementById('signup');
+        const answer = document.getElementById('answer');
+        const divider = document.getElementById('divider');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault(); // prevent browser default behavior
+
+            const formData = new FormData(form); // get all data from the form(input fields, checkbox, etc)
+            const data = Object.fromEntries(formData.entries()); // convert formData to a regular object
+
+            try {
+                const res = await fetch('/api/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+
+                const result = await res.json(); // in JSON because in the controller we send JSON responses
+
+                answer.classList.remove('hidden');
+                divider.classList.remove('mt-8'); // just for better looks
+                divider.classList.add('mt-4');
+
+                if(res.ok) {
+                    answer.className = "text-center text-sm text-green-600";
+                    answer.textContent = result.message;
+                    form.reset(); // reset the form fields after successful submission
+                } else {
+                    answer.className = "text-center text-sm text-red-600";
+                    answer.textContent = result.error;
+                }
+            } catch (error) {
+                answer.classList.remove('hidden', 'text-green-600');
+                answer.className = "text-center text-sm text-red-600";
+                answer.textContent = "An error occurred. Please try again later.";
+            }
+        })
     </script>
 </body>
 </html>

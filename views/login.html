@@ -47,7 +47,7 @@
 
             <!--SIGN IN-->
             <div class="w-full max-w-[480px] mx-auto md:max-w-none md:mx-0 bg-white px-6 sm:px-10 py-10 rounded-xl md:rounded-l-none md:rounded-r-xl shadow-lg">
-                <form action="/api/login" method="POST">
+                <form id="login" action="/api/login" method="POST" class="mb-3">
                     <h1 class="text-center text-2xl font-bold text-black mb-6">Sign in</h1>
                     
                     <div class="relative mb-4">
@@ -83,12 +83,11 @@
                 </form>
 
                 <!-- Javascript response messages -->
-                <p id="verification" class="hidden text-center text-sm text-green-600 mt-4">
-                    A verification link was sent to your email
-                </p>
+                <p id="answer" class="hidden text-center text-sm"></p>
+
                 
                 <!-- Divider -->
-                <div class="flex items-center mt-8 mb-6">
+                <div id="divider" class="flex items-center mt-6 mb-6">
                     <div class="flex-grow border-t border-gray-200"></div>
                     <span class="mx-4 text-xs uppercase tracking-wider text-gray-400">Or sign in with</span>
                     <div class="flex-grow border-t border-gray-200"></div>
@@ -137,6 +136,53 @@
             }
         }
 
+        //Fetch response message from backend to display to the user
+        const form = document.getElementById('login');
+        const answer = document.getElementById('answer');
+        const divider = document.getElementById('divider');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault(); // prevent browser default behavior
+
+            const formData = new FormData(form); // get all data from the form(input fields, checkbox, etc)
+            const data = Object.fromEntries(formData.entries()); // convert formData to a regular object
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+
+                const result = await res.json(); // in JSON because in the controller we send JSON responses
+
+                answer.classList.remove('hidden');
+                divider.classList.remove('mt-6');
+                divider.classList.add('mt-3');
+
+                if(res.ok) {
+                    answer.classList.remove('text-red-600');
+                    answer.classList.add('text-green-600');
+                    answer.textContent = result.message;
+                    // Redirect to dashboard after 1 second
+                    setTimeout(() => {
+                        window.location.href = '/dashboard';
+                    }, 1000);
+
+                } else {
+                    answer.classList.remove('text-green-600');
+                    answer.classList.add('text-red-600');
+                    answer.textContent = result.error;
+                }
+
+            } catch (error) {
+                answer.classList.remove('text-green-600');
+                answer.classList.add('text-red-600');
+                answer.textContent = "An error occurred. Please try again later.";
+            }
+        })
     </script>
 </body>
 </html>

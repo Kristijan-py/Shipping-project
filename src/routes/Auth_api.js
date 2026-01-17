@@ -1,7 +1,7 @@
 import express from 'express';
 import { loginRateLimit } from '../middleware/rateLimit.js';
 import { signupController, loginController, verifyEmailController, forgotPasswordController, resetPasswordController } from '../controllers/authenticationControllers.js';
-import { logoutController } from '../controllers/userControllers.js'
+import { logoutController } from '../controllers/authenticationControllers.js'
 import { authenticateToken } from '../middleware/auth_roles.js';
 
 const router = express.Router();
