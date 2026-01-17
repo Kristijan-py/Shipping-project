@@ -2,8 +2,8 @@ import { pool } from '../config/database.js'; // Database connection
 
 // Checking user from database to see if it exists
 export async function ifUserExists(email, phone) {
-    const [rows] = await pool.query('SELECT * FROM users WHERE email = ? OR phone = ?', [email, phone]);
-    return rows.length > 0; // ITS BOOLEAN => if we found 1 user return true, otherwise false
+    const [result] = await pool.query('SELECT * FROM users WHERE email = ? OR phone = ?', [email, phone]);
+    return result.length > 0; // ITS BOOLEAN => if we found 1 user return true, otherwise false
 }
 
 // insert user email token for verification

@@ -8,7 +8,6 @@ import { getUserByEmail, createUser } from '../models/userModels.js';
 import { ifUserExists, insertUserEmailToken, findUserByEmailToken, verifyUserEmail, insertUserResetToken, findUserByResetToken, updateUserPassword } from '../models/authenticationModels.js'; // Model for updating user data
 import { AppError } from '../utils/AppError.js';
 import { generateAccessToken, generateRefreshToken, normalizePhoneNumber } from "../utils/helperFunctions.js";
-import { error } from "console";
 
 
 
@@ -34,7 +33,10 @@ export async function signupController(req, res, next) {
 
         // Creating user in Database
         const user = { name: req.body.name, phone: normalizePhone, email: normalizeEmail, password: hashedPassword, role: 'user' };
-        await createUser(user.name, user.phone, user.email, user.password, user.role);
+        const createdUser = await createUser(user.name, user.phone, user.email, user.password, user.role);
+        if(!createdUser){
+            return res.status(500).send({ error: "Error creating user, try again later" });
+        }
         console.log("User created successfully ✅");
 
         // EMAIL VERIFICATION
@@ -192,7 +194,11 @@ export async function resetPasswordController(req, res, next) {
 
         const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex'); // must be the same as in forgotpass to match 
         const users = await findUserByResetToken(hashedToken);
+        if(users.length === 0) {
+            return res.status(400).send({ error: "Invalid or expired password reset token" });
+        }
 
+        // Update the user's password
         const hashedPassword = await bcrypt.hash(newPassword, 10); // new password + hashing + salt
         const user = users[0];
         const isUpdated = await updateUserPassword(user.email, hashedPassword);

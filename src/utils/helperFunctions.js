@@ -31,11 +31,11 @@ export function startCleanupInterval() {
 }
 
 // TOKEN GENERATION
-export async function generateAccessToken(payload, rememberMe) { // if remember me is checked on login form will have 15 days of access and if not only 1 hour
+export async function generateAccessToken(payload, rememberMe = true) { // rememberMe true to see if user logged in with remember me option(manually not with OAuth)
     return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: rememberMe ? '15m' : '5m' });
 };
 
-export async function generateRefreshToken(payload, rememberMe) {
+export async function generateRefreshToken(payload, rememberMe = true) {
     return jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: rememberMe ? '15d' : '12h' });
 };
 

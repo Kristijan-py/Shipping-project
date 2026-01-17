@@ -17,7 +17,7 @@ import orders from "./routes/orders_routes.js"; // orders routes
 import fileUploads from "./routes/file_routes.js"; // file upload routes
 import authPages from './routes/Auth_pages.js'; // signup, login, forgetpass htmls
 import authApi from './routes/Auth_api.js'; // authentication API
-import googleAuth from './routes/Google_auth.js'; // Google OAuth authentication
+import OAuth from './routes/OAuth_routes.js'; // Google/Facebook OAuth authentication
 import protectedPages from './routes/protected_pages.js'; // protected routes(dashboard page, profile page...)
 
 
@@ -63,7 +63,7 @@ startCleanupInterval();
 
 
 // ROUTES
-app.use('/auth', googleAuth); // Google OAuth authentication routes
+app.use('/auth', OAuth); // Google/Facebook OAuth authentication routes
 app.use('/api', users); // Users routes
 app.use('/api', orders); // Orders routes
 app.use('/api', authApi); // Authentication routes
