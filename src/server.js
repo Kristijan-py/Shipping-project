@@ -76,7 +76,7 @@ app.use('/', authPages); // Authentication pages (login, signup)
 
 // ERROR HANDLING(404 NOT FOUND)
 app.use((req, res, next) => {
-  next(new AppError(`Cannot find ${req.originalUrl} on this server!`, 404));
+    return res.redirect('/pages/template/404page.html');
 })
 
 app.use(errorHandler) // custom middleware

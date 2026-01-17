@@ -69,6 +69,10 @@ export async function loginController(req, res, next) {
         }
         // Check if password is missing(logged via OAuth)
         if(user.password_hash === null) {
+            // Check if email verification token is expired
+            if(user.email_token && user.email_token_expires < new Date()){
+                return res.status(403).send({ error: "Email verification expired, sign up again!" });
+            }
             return res.status(400).send({ error: "Missing password. You have logged in via Google or Facebook." });
         }
         // Check password
@@ -76,10 +80,6 @@ export async function loginController(req, res, next) {
         if(!passCheck) {
             return res.status(400).send({ error: "Incorrect password!" });
         };
-        // Check if email verification expired
-        if(user.email_token && user.email_token_expires < new Date()){
-            return res.status(403).send({ error: "Email verification expired, sign up again!" });
-        }
         // This will force the user to check email accunt to verify before login
         if(user.is_verified !== 1){
             return res.status(403).send({ error: "Verify your email before logging in." });
@@ -181,14 +181,14 @@ export async function resetPasswordController(req, res, next) {
         if (!resetToken || !newPassword || !confirmPassword) {
             return res.status(400).send({ error: "All fields are required" });
         }
-        if(newPassword !== confirmPassword){
-            return res.status(400).send({ error: "Passwords doesn't match" });
-        }
         // validate password
         const validationPass = validatePassword(newPassword);
         if(validationPass !== true){
             return res.status(400).send({ error: validationPass });
         } 
+        if(newPassword !== confirmPassword){
+            return res.status(400).send({ error: "Passwords doesn't match" });
+        }
 
         const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex'); // must be the same as in forgotpass to match 
         const users = await findUserByResetToken(hashedToken);
