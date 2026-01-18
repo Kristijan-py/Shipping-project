@@ -17,7 +17,7 @@ const router = express.Router();
 // @GET dashboard page
 router.get('/dashboard', authenticateToken, (req, res) => {  // secure page with JWT authentication
   try {
-    res.sendFile(path.join(__dirname, '..', '..', 'views', 'dashboard.html'));
+    res.sendFile(path.join(__dirname, '..', 'views', 'dashboard.html'));
   } catch (error) {
     throw new AppError(`Error sending dashboard page: ${error.message}`, 500);
   }
@@ -26,7 +26,7 @@ router.get('/dashboard', authenticateToken, (req, res) => {  // secure page with
 // @GET Create Orders page
 router.get('/createOrder', authenticateToken, (req, res) => {
   try {
-    res.sendFile(path.join(__dirname, '..', '..', 'views', 'createOrder.html'));
+    res.sendFile(path.join(__dirname, '..', 'views', 'createOrder.html'));
   } catch (error) {
     throw new AppError(`Error sending create orders page: ${error.message}`, 500);
   }
@@ -48,7 +48,7 @@ router.get('/orders', authenticateToken, paginateResults, async (req, res) => {
 // @GET Create Orders page
 router.get('/updateOrder', authenticateToken, (req, res) => {
   try {
-    res.sendFile(path.join(__dirname, '..', '..', 'views', 'updateOrder.html'));
+    res.sendFile(path.join(__dirname, '..', 'views', 'updateOrder.html'));
   } catch (error) {
     throw new AppError(`Error sending update orders page: ${error.message}`, 500);
   }
@@ -57,7 +57,7 @@ router.get('/updateOrder', authenticateToken, (req, res) => {
 // @GET Upload Orders page 
 router.get('/uploadOrders', authenticateToken, (req, res) => {
   try {
-    res.sendFile(path.join(__dirname, '..', '..', 'views', 'uploadOrders.html'));
+    res.sendFile(path.join(__dirname, '..', 'views', 'uploadOrders.html'));
   } catch (error) {
     throw new AppError(`Error sending upload orders page: ${error.message}`, 500);
   }

@@ -1,9 +1,7 @@
 import express from "express";
 import https from 'https';
-import fs from 'fs';
 import dotenv from 'dotenv' // loading env files
 dotenv.config();
-import { AppError } from "./utils/AppError.js"; // custom error class
 import cookieParser from 'cookie-parser'; // needs to import here in main server file to use cookies into all routes
 import methodOverride from 'method-override';
 import path from "path";
@@ -47,7 +45,7 @@ app.use('/api', generalRateLimit); // use rate limit only for api
 
 
 app.set('view engine', 'ejs'); // setting view engine to show views
-app.set('views', path.join(__dirname, '..', 'views'));
+app.set('views', path.join(__dirname, 'views'));
 
 // setting LOGGER
 app.use((req, res, next) => {
@@ -82,13 +80,7 @@ app.use((req, res, next) => {
 app.use(errorHandler) // custom middleware
 
 
-// HTTPS configuration
-// const options = {
-//   key: fs.readFileSync('../SHIPPING_SOFTWARE/certs/key.pem'),
-//   cert: fs.readFileSync('../SHIPPING_SOFTWARE/certs/cert.pem')
-// }
-// const server = https.createServer(options, app);
-
+// SERVER LISTENING
 app.listen(PORT, () => {
     console.log(`App listening on port ${PORT}`)
 })

@@ -1,9 +1,10 @@
 import express from 'express';
 import passport from 'passport'; // Passport for authentication
 import GoogleStrategy from 'passport-google-oauth20'; // Google OAuth strategy
+import FacebookStrategy from 'passport-facebook'; // Facebook OAuth strategy
 import cookieParser from 'cookie-parser'; // to use cookies in all routes
 import dotenv from 'dotenv';
-import { handleGoogleOAuth, handleGoogleOAuthCallback } from '../controllers/OAuthControllers.js';
+import { handleGoogleOAuth, handleGoogleOAuthCallback, handleFacebookOAuth, handleFacebookOAuthCallback } from '../controllers/OAuthControllers.js';
 
 dotenv.config();
 
@@ -24,7 +25,7 @@ passport.use(new GoogleStrategy({
 router.get('/google',
   passport.authenticate('google', { 
     scope: ['profile', 'email'],
-    session: false // we don't need session for this
+    session: false // we don't need session for this, as we are using JWT
 }));
 
 router.get('/google/callback', 
@@ -35,8 +36,25 @@ router.get('/google/callback',
 
 
 // Facebook OAuth routes
+passport.use(new FacebookStrategy({
+    clientID: process.env.FACEBOOK_CLIENT_ID,
+    clientSecret: process.env.FACEBOOK_SECRET_KEY,
+    callbackURL: "http://localhost:3000/auth/facebook/callback",
+    profileFields: ['id', 'displayName', 'emails'] // Request email field
+  },
+  handleFacebookOAuth // controller function
+));
 
+router.get('/facebook',
+  passport.authenticate('facebook', { 
+    scope: ['email', 'public_profile'], 
+    session: false // we don't need session for this, as we are using JWT
+}));
 
+router.get('/facebook/callback',
+  passport.authenticate('facebook', { failureRedirect: '/login', session: false }),
+  handleFacebookOAuthCallback // controller function);
+); // if authentication fails, redirect to login
 
 
 export default router;
