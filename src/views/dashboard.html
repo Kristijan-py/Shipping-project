@@ -1,34 +1,817 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" x-data="dashboard()" x-init="init()">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/output.css"> <!-- Tailwind CSS -->
-    <link rel="stylesheet" href="/css/global.css">
-    <link rel="stylesheet" href="/css/dashboard.css">
-    <link rel="icon" type="image/png" href="/images/brza_pratka_logo.svg"> <!--FAVICON-->
-    <script src="https://kit.fontawesome.com/5c1a15adf2.js" crossorigin="anonymous"></script> <!--ICONS-->
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script> <!-- ALPINE.js -->
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-    <title>Dashboard | Brza Pratka</title>
+    <title>Analytics Dashboard | Corporate Insights - Free Tailwind CSS Template by Tailflux</title>
+    <meta name="theme-color" content="#0ea5e9">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        },
+                        sky: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'pulse-slow': 'pulse 2s infinite',
+                        'bounce-slow': 'bounce 2s infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { 
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .shadow-soft { 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); 
+        }
+        .shadow-hover:hover {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+            transform: translateY(-2px);
+        }
+        .border-light { border-color: rgba(226, 232, 240, 0.5); }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .chart-grid {
+            background-image: 
+                linear-gradient(to right, rgba(226, 232, 240, 0.3) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(226, 232, 240, 0.3) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .progress-bar {
+            transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .stat-card:hover .stat-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+        .notification-badge {
+            animation: pulse-slow 2s infinite;
+        }
+        .backdrop {
+            background: rgba(15, 23, 42, 0.5);
+            -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+<link rel="canonical" href="https://tailflux.com/template/preview/01KD6147F99KSV2HBNK6FEVBED">
 </head>
-<body>
-    <header class="absolute right-10 top-10">
-        <a href="/profilePage"><i class="fas fa-user fa-2xl"></i></a>
-    </header>
+<body class="bg-slate-50 text-slate-700">
+    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] bg-white border border-light rounded-lg px-4 py-2 text-sm shadow">Skip to content</a>
+    <div class="min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="glass-effect border-b border-light shadow-soft sticky top-0 z-50">
+            <div class="px-4 sm:px-6 py-4 flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <!-- Mobile menu button -->
+                    <button @click="toggleSidebar" aria-label="Open menu" class="lg:hidden w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                        <i class="fas fa-bars text-slate-600"></i>
+                    </button>
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-sky-600 flex items-center justify-center shadow-md shadow-sky-100 transition-all duration-300 hover:shadow-lg hover:shadow-sky-200">
+                        <i class="fas fa-chart-line text-white text-lg"></i>
+                    </div>
+                    <div class="animate-fade-in hidden sm:block">
+                        <h1 class="text-xl font-bold text-slate-800 tracking-tight">Analytics Dashboard</h1>
+                        <p class="text-sm text-slate-500 font-medium">Corporate Performance Insights</p>
+                    </div>
+                </div>
+                <!-- Search + Actions -->
+                <div class="flex items-center space-x-3 sm:space-x-4">
+                    <div class="relative hidden md:block">
+                        <i class="fas fa-magnifying-glass text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                        <input type="search" placeholder="Search reports, users..." class="pl-9 pr-3 py-2.5 w-64 rounded-lg border border-light bg-white text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition" />
+                    </div>
 
-    <div class="actions m-10">
-        <a href="/createOrder">Create Order</a>
-        <a href="/orders">View Orders</a>
-        <a href="/updateOrder">Update Order</a>
-        <a href="/uploadOrders">Upload Order</a>
+                    <!-- Notifications dropdown -->
+                    <div x-data="{open:false}" @keydown.escape.window="open=false" class="relative">
+                        <button @click="open=!open" aria-haspopup="true" :aria-expanded="open" class="w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                            <i class="fas fa-bell text-slate-600 text-lg"></i>
+                            <span class="notification-badge absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>
+                        </button>
+                        <div x-show="open" x-transition @click.outside="open=false" class="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-light">
+                            <div class="p-4">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h3 class="font-semibold text-slate-800">Notifications</h3>
+                                    <button @click="open=false" class="w-8 h-8 rounded-lg hover:bg-slate-50 grid place-items-center text-slate-400 hover:text-slate-600"><i class="fas fa-times"></i></button>
+                                </div>
+                                <div class="space-y-3">
+                                    <div class="flex items-start space-x-3 p-3 bg-sky-50 rounded-lg">
+                                        <i class="fas fa-chart-line text-sky-600 mt-1"></i>
+                                        <div>
+                                            <p class="font-medium text-slate-800">Revenue milestone reached</p>
+                                            <p class="text-sm text-slate-500">Monthly target exceeded by 15%</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start space-x-3 p-3 rounded-lg">
+                                        <i class="fas fa-user-plus text-slate-600 mt-1"></i>
+                                        <div>
+                                            <p class="font-medium text-slate-800">New team member</p>
+                                            <p class="text-sm text-slate-500">Sarah joined the marketing team</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="mt-4 w-full text-sm text-sky-600 hover:text-sky-700 font-medium">View all</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile -->
+                    <a href="/profilePage">
+
+                        <div class="flex items-center space-x-3 group cursor-pointer">
+                            <div class="relative">
+                                <img src="https://images.unsplash.com/photo-1762522927402-f390672558d8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MDcxMzN8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBidXNpbmVzcyUyMGhlYWRzaG90JTIwcG9ydHJhaXR8ZW58MHwwfHx8MTc2NjUyMDQ2NXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=TailFlux&photo_id=ezIcdj3ZnKg" 
+                                alt="Alex Morgan headshot" loading="lazy"
+                                class="w-10 h-10 rounded-full object-cover border-2 border-white shadow-md transition-all duration-300 group-hover:scale-105">
+                                <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                            </div>
+                            <div class="animate-slide-up hidden sm:block">
+                                <p class="text-sm font-semibold text-slate-800">Alex Morgan</p>
+                                <p class="text-xs text-slate-500 font-medium">Administrator</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex flex-1">
+            <!-- Mobile Sidebar Overlay -->
+            <div class="lg:hidden">
+                <div x-show="sidebarOpen" x-transition.opacity class="fixed inset-0 z-40 backdrop" aria-hidden="true"></div>
+                <aside x-show="sidebarOpen" x-transition:enter="transition transform ease-out duration-200"
+                       x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0"
+                       x-transition:leave="transition transform ease-in duration-150"
+                       x-transition:leave-start="translate-x-0" x-transition:leave-end="-translate-x-full"
+                       class="fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-light shadow-xl p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-sky-500 to-sky-600 grid place-items-center text-white"><i class="fas fa-chart-line"></i></div>
+                            <span class="font-semibold text-slate-800">Menu</span>
+                        </div>
+                        <button @click="toggleSidebar" class="w-9 h-9 rounded-lg hover:bg-slate-50 grid place-items-center text-slate-500"><i class="fas fa-times"></i></button>
+                    </div>
+                    <nav class="space-y-2">
+                        <a href="#" class="flex items-center space-x-3 p-3 rounded-xl bg-gradient-to-r from-sky-50 to-sky-100 text-sky-700 border border-sky-200 shadow-sm transition-all duration-300 hover:shadow-md group">
+                            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-500 to-sky-600 flex items-center justify-center shadow-sm">
+                                <i class="fas fa-home text-white text-sm"></i>
+                            </div>
+                            <span class="font-semibold">Dashboard</span>
+                            <i class="fas fa-chevron-right text-sky-400 ml-auto text-sm opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                        </a>
+                        <a href="#" class="flex items-center space-x-3 p-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all duration-300 group">
+                            <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
+                                <i class="fas fa-chart-bar text-slate-500"></i>
+                            </div>
+                            <span>Reports</span>
+                        </a>
+                        <a href="#" class="flex items-center space-x-3 p-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all duration-300 group">
+                            <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
+                                <i class="fas fa-users text-slate-500"></i>
+                            </div>
+                            <span>Users</span>
+                        </a>
+                        <a href="#" class="flex items-center space-x-3 p-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all duration-300 group">
+                            <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
+                                <i class="fas fa-cog text-slate-500"></i>
+                            </div>
+                            <span>Settings</span>
+                        </a>
+                        <a href="#" class="flex items-center space-x-3 p-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all duration-300 group">
+                            <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
+                                <i class="fas fa-question-circle text-slate-500"></i>
+                            </div>
+                            <span>Support</span>
+                        </a>
+                    </nav>
+                </aside>
+            </div>
+
+            <!-- Sidebar (Desktop) -->
+            <aside class="w-64 bg-white border-r border-light hidden lg:block sticky top-16 h-[calc(100vh-4rem)]">
+                <nav class="p-6 space-y-2">
+                    <a href="#" class="flex items-center space-x-3 p-3 rounded-xl bg-gradient-to-r from-sky-50 to-sky-100 text-sky-700 border border-sky-200 shadow-sm transition-all duration-300 hover:shadow-md group">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-500 to-sky-600 flex items-center justify-center shadow-sm">
+                            <i class="fas fa-home text-white text-sm"></i>
+                        </div>
+                        <span class="font-semibold">Dashboard</span>
+                        <i class="fas fa-chevron-right text-sky-400 ml-auto text-sm opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all duration-300 group">
+                        <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
+                            <i class="fas fa-chart-bar text-slate-500"></i>
+                        </div>
+                        <span>Reports</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all duration-300 group">
+                        <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
+                            <i class="fas fa-users text-slate-500"></i>
+                        </div>
+                        <span>Users</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all duration-300 group">
+                        <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
+                            <i class="fas fa-cog text-slate-500"></i>
+                        </div>
+                        <span>Settings</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-3 p-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all duration-300 group">
+                        <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
+                            <i class="fas fa-question-circle text-slate-500"></i>
+                        </div>
+                        <span>Support</span>
+                    </a>
+                </nav>
+                <div class="px-6 py-4 border-t border-light mt-6">
+                    <div class="relative p-4 bg-gradient-to-br from-slate-50 to-white rounded-xl border border-light shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
+                        <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-sky-500 to-sky-600 flex items-center justify-center mb-3 shadow-md">
+                            <i class="fas fa-rocket text-white text-lg"></i>
+                        </div>
+                        <p class="text-sm font-semibold text-slate-800">Upgrade to Pro</p>
+                        <p class="text-xs text-slate-500 mt-1">Unlock advanced analytics features</p>
+                        <!-- Illustration -->
+                        <img src="https://images.unsplash.com/photo-1760239037245-a372db8630f3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MDcxMzN8MHwxfHNlYXJjaHwxfHxhbmFseXRpY3MlMjBkYXRhJTIwdmlzdWFsaXphdGlvbiUyMGFic3RyYWN0JTIwaWxsdXN0cmF0aW9ufGVufDB8MHx8fDE3NjY1MjA0NjV8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=TailFlux&photo_id=gk3ancC-E3w" alt="Analytics illustration" loading="lazy" class="mt-4 rounded-lg border border-light">
+                        <button class="mt-4 w-full py-2.5 bg-gradient-to-r from-sky-600 to-sky-700 hover:from-sky-700 hover:to-sky-800 text-white text-sm font-semibold rounded-lg transition-all duration-300 transform hover:-translate-y-0.5 shadow-md hover:shadow-lg">
+                            Upgrade Now
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main id="main" class="flex-1 p-4 sm:p-6 animate-fade-in">
+                <!-- Stats Overview -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+                    <div class="stat-card bg-white rounded-2xl border border-light p-6 shadow-soft hover:shadow-hover transition-all duration-500">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm text-slate-500 font-medium">Total Revenue</p>
+                                <p class="text-3xl font-bold text-slate-800 mt-2">$124,580</p>
+                                <p class="text-xs mt-2 flex items-center">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-green-50 text-green-700 font-medium">
+                                        <i class="fas fa-arrow-up mr-1 text-xs"></i>12.5%
+                                    </span>
+                                    <span class="ml-2 text-slate-400">from last month</span>
+                                </p>
+                            </div>
+                            <div class="stat-icon w-14 h-14 rounded-xl bg-gradient-to-br from-sky-50 to-sky-100 flex items-center justify-center shadow-sm transition-transform duration-300">
+                                <i class="fas fa-dollar-sign text-sky-600 text-2xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-light">
+                            <div class="flex items-center justify-between text-xs text-slate-500">
+                                <span>Monthly Target</span>
+                                <span class="font-medium text-slate-700">$120K</span>
+                            </div>
+                            <div class="mt-2 w-full bg-slate-100 rounded-full h-2" role="progressbar" aria-label="Revenue progress" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100">
+                                <div class="progress-bar bg-gradient-to-r from-sky-500 to-sky-600 h-2 rounded-full" style="width: 92%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card bg-white rounded-2xl border border-light p-6 shadow-soft hover:shadow-hover transition-all duration-500">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm text-slate-500 font-medium">Active Users</p>
+                                <p class="text-3xl font-bold text-slate-800 mt-2">3,842</p>
+                                <p class="text-xs mt-2 flex items-center">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-green-50 text-green-700 font-medium">
+                                        <i class="fas fa-arrow-up mr-1 text-xs"></i>8.2%
+                                    </span>
+                                    <span class="ml-2 text-slate-400">from last month</span>
+                                </p>
+                            </div>
+                            <div class="stat-icon w-14 h-14 rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center shadow-sm transition-transform duration-300">
+                                <i class="fas fa-user-group text-slate-600 text-2xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-light">
+                            <div class="flex items-center justify-between text-xs text-slate-500">
+                                <span>New Users Today</span>
+                                <span class="font-medium text-slate-700">48</span>
+                            </div>
+                            <div class="mt-2 w-full bg-slate-100 rounded-full h-2" role="progressbar" aria-label="New users" aria-valuenow="78" aria-valuemin="0" aria-valuemax="100">
+                                <div class="progress-bar bg-gradient-to-r from-slate-500 to-slate-600 h-2 rounded-full" style="width: 78%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card bg-white rounded-2xl border border-light p-6 shadow-soft hover:shadow-hover transition-all duration-500">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm text-slate-500 font-medium">Conversion Rate</p>
+                                <p class="text-3xl font-bold text-slate-800 mt-2">4.7%</p>
+                                <p class="text-xs mt-2 flex items-center">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-red-50 text-red-700 font-medium">
+                                        <i class="fas fa-arrow-down mr-1 text-xs"></i>1.3%
+                                    </span>
+                                    <span class="ml-2 text-slate-400">from last month</span>
+                                </p>
+                            </div>
+                            <div class="stat-icon w-14 h-14 rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center shadow-sm transition-transform duration-300">
+                                <i class="fas fa-percentage text-slate-600 text-2xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-light">
+                            <div class="flex items-center justify-between text-xs text-slate-500">
+                                <span>Target Rate</span>
+                                <span class="font-medium text-slate-700">5.5%</span>
+                            </div>
+                            <div class="mt-2 w-full bg-slate-100 rounded-full h-2" role="progressbar" aria-label="Conversion vs target" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100">
+                                <div class="progress-bar bg-gradient-to-r from-amber-500 to-amber-600 h-2 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card bg-white rounded-2xl border border-light p-6 shadow-soft hover:shadow-hover transition-all duration-500">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-sm text-slate-500 font-medium">Avg. Session Duration</p>
+                                <p class="text-3xl font-bold text-slate-800 mt-2">4m 32s</p>
+                                <p class="text-xs mt-2 flex items-center">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-green-50 text-green-700 font-medium">
+                                        <i class="fas fa-arrow-up mr-1 text-xs"></i>2.1%
+                                    </span>
+                                    <span class="ml-2 text-slate-400">from last month</span>
+                                </p>
+                            </div>
+                            <div class="stat-icon w-14 h-14 rounded-xl bg-gradient-to-br from-sky-50 to-sky-100 flex items-center justify-center shadow-sm transition-transform duration-300">
+                                <i class="fas fa-clock text-sky-600 text-2xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-light">
+                            <div class="flex items-center justify-between text-xs text-slate-500">
+                                <span>Industry Average</span>
+                                <span class="font-medium text-slate-700 flex items-center gap-2">3m 45s <span class="px-1.5 py-0.5 rounded bg-green-50 text-green-700">112%</span></span>
+                            </div>
+                            <div class="mt-2 w-full bg-slate-100 rounded-full h-2" role="progressbar" aria-label="Session vs industry" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+                                <div class="progress-bar bg-gradient-to-r from-emerald-500 to-emerald-600 h-2 rounded-full" style="width: 100%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts & Data -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
+                    <!-- Revenue Chart -->
+                    <div class="lg:col-span-2 bg-white rounded-2xl border border-light p-6 shadow-soft hover:shadow-hover transition-all duration-300">
+                        <div class="flex justify-between items-center mb-6">
+                            <div>
+                                <h2 class="text-lg font-bold text-slate-800">Revenue Overview</h2>
+                                <p class="text-sm text-slate-500">Monthly performance metrics</p>
+                            </div>
+                            <div class="flex items-center space-x-2 sm:space-x-3">
+                                <select class="text-sm border border-light rounded-lg px-3 sm:px-4 py-2.5 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all">
+                                    <option>Last 7 days</option>
+                                    <option selected>Last 30 days</option>
+                                    <option>Last quarter</option>
+                                </select>
+                                <button class="w-10 h-10 rounded-lg border border-light bg-white hover:bg-slate-50 flex items-center justify-center transition-colors" title="Download report" aria-label="Download report">
+                                    <i class="fas fa-download text-slate-600"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Chart with improved visualization -->
+                        <div class="h-72 relative chart-grid rounded-xl border border-light overflow-hidden bg-gradient-to-b from-white to-slate-50">
+                            <div class="absolute inset-0 p-6">
+                                <div class="flex items-end h-full space-x-2 sm:space-x-4">
+                                    <!-- Chart bars with animation -->
+                                    <div class="flex-1 group">
+                                        <div class="h-0 bg-gradient-to-t from-sky-400 to-sky-500 rounded-t-lg transition-all duration-1000 group-hover:from-sky-500 group-hover:to-sky-600" style="height: 60%" title="Jan: $90K"></div>
+                                        <p class="text-xs text-slate-500 text-center mt-2">Jan</p>
+                                    </div>
+                                    <div class="flex-1 group">
+                                        <div class="h-0 bg-gradient-to-t from-sky-400 to-sky-500 rounded-t-lg transition-all duration-1000 delay-100 group-hover:from-sky-500 group-hover:to-sky-600" style="height: 75%" title="Feb: $112K"></div>
+                                        <p class="text-xs text-slate-500 text-center mt-2">Feb</p>
+                                    </div>
+                                    <div class="flex-1 group">
+                                        <div class="h-0 bg-gradient-to-t from-sky-400 to-sky-500 rounded-t-lg transition-all duration-1000 delay-200 group-hover:from-sky-500 group-hover:to-sky-600" style="height: 85%" title="Mar: $128K"></div>
+                                        <p class="text-xs text-slate-500 text-center mt-2">Mar</p>
+                                    </div>
+                                    <div class="flex-1 group">
+                                        <div class="h-0 bg-gradient-to-t from-sky-400 to-sky-500 rounded-t-lg transition-all duration-1000 delay-300 group-hover:from-sky-500 group-hover:to-sky-600" style="height: 92%" title="Apr: $138K"></div>
+                                        <p class="text-xs text-slate-500 text-center mt-2">Apr</p>
+                                    </div>
+                                    <div class="flex-1 group">
+                                        <div class="h-0 bg-gradient-to-t from-sky-400 to-sky-500 rounded-t-lg transition-all duration-1000 delay-400 group-hover:from-sky-500 group-hover:to-sky-600" style="height: 88%" title="May: $132K"></div>
+                                        <p class="text-xs text-slate-500 text-center mt-2">May</p>
+                                    </div>
+                                    <div class="flex-1 group">
+                                        <div class="h-0 bg-gradient-to-t from-sky-400 to-sky-500 rounded-t-lg transition-all duration-1000 delay-500 group-hover:from-sky-500 group-hover:to-sky-600" style="height: 95%" title="Jun: $142K"></div>
+                                        <p class="text-xs text-slate-500 text-center mt-2">Jun</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="absolute bottom-6 left-6 right-6 flex justify-between text-xs text-slate-400">
+                                <span>$0</span>
+                                <span>$50K</span>
+                                <span>$100K</span>
+                                <span>$150K</span>
+                            </div>
+                        </div>
+                        <div class="mt-6 flex items-center justify-between text-sm">
+                            <div class="flex items-center space-x-4">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 rounded-full bg-sky-500 mr-2"></div>
+                                    <span class="text-slate-600">Revenue</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 rounded-full bg-slate-300 mr-2"></div>
+                                    <span class="text-slate-600">Target</span>
+                                </div>
+                            </div>
+                            <button class="text-sm font-medium text-sky-600 hover:text-sky-700 flex items-center transition-colors">
+                                <i class="fas fa-expand-alt mr-2"></i> View Details
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Top Sources -->
+                    <div class="bg-white rounded-2xl border border-light p-6 shadow-soft hover:shadow-hover transition-all duration-300">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-lg font-bold text-slate-800">Top Traffic Sources</h2>
+                            <i class="fas fa-info-circle text-slate-400 hover:text-slate-600 cursor-pointer" title="Overview of traffic channels"></i>
+                        </div>
+                        <div class="space-y-6">
+                            <div class="group">
+                                <div class="flex justify-between items-center mb-2">
+                                    <div class="flex items-center">
+                                        <div class="w-3 h-3 rounded-full bg-sky-600 mr-3"></div>
+                                        <span class="text-sm font-medium text-slate-700">Direct</span>
+                                    </div>
+                                    <span class="text-sm font-bold text-slate-800">42%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden" role="progressbar" aria-label="Direct traffic" aria-valuenow="42" aria-valuemin="0" aria-valuemax="100">
+                                    <div class="progress-bar bg-gradient-to-r from-sky-600 to-sky-700 h-2.5 rounded-full group-hover:from-sky-700 group-hover:to-sky-800" style="width: 42%"></div>
+                                </div>
+                            </div>
+                            <div class="group">
+                                <div class="flex justify-between items-center mb-2">
+                                    <div class="flex items-center">
+                                        <div class="w-3 h-3 rounded-full bg-sky-500 mr-3"></div>
+                                        <span class="text-sm font-medium text-slate-700">Organic Search</span>
+                                    </div>
+                                    <span class="text-sm font-bold text-slate-800">28%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden" role="progressbar" aria-label="Organic Search" aria-valuenow="28" aria-valuemin="0" aria-valuemax="100">
+                                    <div class="progress-bar bg-gradient-to-r from-sky-500 to-sky-600 h-2.5 rounded-full group-hover:from-sky-600 group-hover:to-sky-700" style="width: 28%"></div>
+                                </div>
+                            </div>
+                            <div class="group">
+                                <div class="flex justify-between items-center mb-2">
+                                    <div class="flex items-center">
+                                        <div class="w-3 h-3 rounded-full bg-slate-500 mr-3"></div>
+                                        <span class="text-sm font-medium text-slate-700">Social Media</span>
+                                    </div>
+                                    <span class="text-sm font-bold text-slate-800">18%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden" role="progressbar" aria-label="Social Media" aria-valuenow="18" aria-valuemin="0" aria-valuemax="100">
+                                    <div class="progress-bar bg-gradient-to-r from-slate-500 to-slate-600 h-2.5 rounded-full group-hover:from-slate-600 group-hover:to-slate-700" style="width: 18%"></div>
+                                </div>
+                            </div>
+                            <div class="group">
+                                <div class="flex justify-between items-center mb-2">
+                                    <div class="flex items-center">
+                                        <div class="w-3 h-3 rounded-full bg-slate-400 mr-3"></div>
+                                        <span class="text-sm font-medium text-slate-700">Email Campaigns</span>
+                                    </div>
+                                    <span class="text-sm font-bold text-slate-800">12%</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden" role="progressbar" aria-label="Email Campaigns" aria-valuenow="12" aria-valuemin="0" aria-valuemax="100">
+                                    <div class="progress-bar bg-gradient-to-r from-slate-400 to-slate-500 h-2.5 rounded-full group-hover:from-slate-500 group-hover:to-slate-600" style="width: 12%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-8 pt-6 border-t border-light">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-slate-800">Total Traffic</p>
+                                    <p class="text-2xl font-bold text-slate-800">284.5K</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm text-green-600 font-medium">
+                                        <i class="fas fa-arrow-up mr-1"></i>14.2%
+                                    </p>
+                                    <p class="text-xs text-slate-500">vs last month</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity & Quick Stats -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+                    <!-- Recent Activity -->
+                    <div class="lg:col-span-2 bg-white rounded-2xl border border-light p-6 shadow-soft hover:shadow-hover transition-all duration-300">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-lg font-bold text-slate-800">Recent Activity</h2>
+                            <button class="text-sm font-medium text-sky-600 hover:text-sky-700 flex items-center transition-colors">
+                                <i class="fas fa-filter mr-2"></i> Filter
+                            </button>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex items-start space-x-4 p-4 hover:bg-slate-50 rounded-xl transition-all duration-300 group">
+                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-sky-50 to-sky-100 flex items-center justify-center shadow-sm group-hover:shadow transition-all">
+                                    <i class="fas fa-file-invoice-dollar text-sky-600 text-lg"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex justify-between items-start">
+                                        <p class="font-semibold text-slate-800">New invoice processed</p>
+                                        <span class="text-xs px-2 py-1 bg-green-50 text-green-700 rounded-full font-medium">Completed</span>
+                                    </div>
+                                    <p class="text-sm text-slate-500 mt-1">Invoice #INV-7842 for $2,500 was approved</p>
+                                    <div class="flex items-center mt-2">
+                                        <i class="fas fa-clock text-slate-400 text-xs mr-2"></i>
+                                        <p class="text-xs text-slate-400">2 hours ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4 p-4 hover:bg-slate-50 rounded-xl transition-all duration-300 group">
+                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center shadow-sm group-hover:shadow transition-all">
+                                    <i class="fas fa-user-plus text-slate-600 text-lg"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex justify-between items-start">
+                                        <p class="font-semibold text-slate-800">New user registration</p>
+                                        <span class="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded-full font-medium">Active</span>
+                                    </div>
+                                    <p class="text-sm text-slate-500 mt-1">Sarah Johnson joined the platform</p>
+                                    <div class="flex items-center mt-2">
+                                        <i class="fas fa-clock text-slate-400 text-xs mr-2"></i>
+                                        <p class="text-xs text-slate-400">5 hours ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4 p-4 hover:bg-slate-50 rounded-xl transition-all duration-300 group">
+                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-sky-50 to-sky-100 flex items-center justify-center shadow-sm group-hover:shadow transition-all">
+                                    <i class="fas fa-chart-line text-sky-600 text-lg"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex justify-between items-start">
+                                        <p class="font-semibold text-slate-800">Weekly report generated</p>
+                                        <span class="text-xs px-2 py-1 bg-amber-50 text-amber-700 rounded-full font-medium">Pending</span>
+                                    </div>
+                                    <p class="text-sm text-slate-500 mt-1">Q3 performance report is ready for review</p>
+                                    <div class="flex items-center mt-2">
+                                        <i class="fas fa-clock text-slate-400 text-xs mr-2"></i>
+                                        <p class="text-xs text-slate-400">1 day ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="mt-6 w-full py-3.5 border border-light rounded-xl text-slate-700 hover:bg-slate-50 font-semibold transition-all duration-300 hover:border-slate-300 flex items-center justify-center group">
+                            <span>View All Activity</span>
+                            <i class="fas fa-arrow-right ml-2 text-slate-400 group-hover:translate-x-1 transition-transform"></i>
+                        </button>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div class="bg-white rounded-2xl border border-light p-6 shadow-soft hover:shadow-hover transition-all duration-300">
+                        <h2 class="text-lg font-bold text-slate-800 mb-6">Quick Stats</h2>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-white rounded-xl border border-light hover:border-slate-300 transition-all duration-300 group">
+                                <div>
+                                    <p class="text-sm text-slate-500 font-medium">Pending Requests</p>
+                                    <p class="text-2xl font-bold text-slate-800 mt-1">18</p>
+                                </div>
+                                <div class="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
+                                    <i class="fas fa-inbox text-slate-600 text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between p-4 bg-gradient-to-r from-sky-50 to-white rounded-xl border border-sky-100 hover:border-sky-200 transition-all duration-300 group">
+                                <div>
+                                    <p class="text-sm text-sky-700 font-medium">Completed Tasks</p>
+                                    <p class="text-2xl font-bold text-sky-800 mt-1">124</p>
+                                </div>
+                                <div class="w-12 h-12 rounded-lg bg-sky-100 flex items-center justify-center group-hover:bg-sky-200 transition-colors">
+                                    <i class="fas fa-check-circle text-sky-600 text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-white rounded-xl border border-light hover:border-slate-300 transition-all duration-300 group">
+                                <div>
+                                    <p class="text-sm text-slate-500 font-medium">Open Tickets</p>
+                                    <p class="text-2xl font-bold text-slate-800 mt-1">7</p>
+                                </div>
+                                <div class="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
+                                    <i class="fas fa-ticket-alt text-slate-600 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-8 pt-6 border-t border-light">
+                            <div class="flex items-center justify-between mb-4">
+                                <p class="text-sm font-semibold text-slate-800">Data Last Updated</p>
+                                <div class="flex items-center">
+                                    <div class="w-2 h-2 rounded-full bg-green-500 mr-2 animate-pulse-slow"></div>
+                                    <span class="text-xs text-green-600 font-medium">Live</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                                <div>
+                                    <p class="text-lg font-bold text-slate-800">Today, 10:42 AM</p>
+                                    <p class="text-xs text-slate-500 mt-1">Auto-refresh in 2:18</p>
+                                </div>
+                                <button @click="refreshData()" class="w-10 h-10 rounded-lg bg-white border border-light hover:bg-slate-50 flex items-center justify-center transition-all duration-300 hover:rotate-180" title="Refresh Data" aria-label="Refresh Data">
+                                    <i class="fas fa-sync-alt text-sky-600"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Insight card with subtle image overlay -->
+                        <div class="mt-6 relative overflow-hidden rounded-xl">
+                            <div class="absolute inset-0 opacity-10">
+                                <img src="https://images.unsplash.com/photo-1760239037245-a372db8630f3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4MDcxMzN8MHwxfHNlYXJjaHwxfHxhbmFseXRpY3MlMjBkYXRhJTIwdmlzdWFsaXphdGlvbiUyMGFic3RyYWN0JTIwaWxsdXN0cmF0aW9ufGVufDB8MHx8fDE3NjY1MjA0NjV8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=TailFlux&photo_id=gk3ancC-E3w" alt="" class="w-full h-full object-cover">
+                            </div>
+                            <div class="relative p-4 bg-gradient-to-r from-slate-900/95 to-slate-800/95 rounded-xl text-white">
+                                <div class="flex items-center mb-3">
+                                    <i class="fas fa-lightbulb text-amber-300 mr-3"></i>
+                                    <p class="font-semibold">Insight of the Day</p>
+                                </div>
+                                <p class="text-sm text-slate-300">Mobile traffic increased by 23% this week. Consider optimizing mobile experience.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="bg-white border-t border-light py-6 px-4 sm:px-6 mt-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center space-x-3 mb-4 md:mb-0">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-500 to-sky-600 flex items-center justify-center">
+                        <i class="fas fa-chart-line text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-slate-800">&copy; 2025 Analytics Dashboard</p>
+                        <p class="text-xs text-slate-500">All rights reserved. v2.1.4</p>
+                    </div>
+                </div>
+                <div class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-8">
+                    <div class="flex items-center space-x-6">
+                        <a href="#" class="text-sm text-slate-500 hover:text-sky-600 transition-colors duration-300">Privacy Policy</a>
+                        <a href="#" class="text-sm text-slate-500 hover:text-sky-600 transition-colors duration-300">Terms of Service</a>
+                        <a href="#" class="text-sm text-slate-500 hover:text-sky-600 transition-colors duration-300">Help Center</a>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <a href="#" aria-label="Twitter" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-sky-100 flex items-center justify-center transition-all duration-300 hover:text-sky-600">
+                            <i class="fab fa-twitter text-slate-500"></i>
+                        </a>
+                        <a href="#" aria-label="LinkedIn" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-sky-100 flex items-center justify-center transition-all duration-300 hover:text-sky-600">
+                            <i class="fab fa-linkedin text-slate-500"></i>
+                        </a>
+                        <a href="#" aria-label="GitHub" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-sky-100 flex items-center justify-center transition-all duration-300 hover:text-sky-600">
+                            <i class="fab fa-github text-slate-500"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
     </div>
 
-
     <script>
-        console.log("Home page loaded successfully.");
+        function dashboard() {
+            return {
+                // Alpine.js data and methods
+                sidebarOpen: false,
+                notifications: [
+                    { id: 1, title: 'Revenue milestone reached', message: 'Monthly target exceeded by 15%', icon: 'chart-line', color: 'sky', time: '2 min ago' },
+                    { id: 2, title: 'New team member', message: 'Sarah joined the marketing team', icon: 'user-plus', color: 'slate', time: '1 hour ago' }
+                ],
+                activities: [
+                    { id: 1, title: 'New invoice processed', description: 'Invoice #INV-7842 for $2,500 was approved', icon: 'file-invoice-dollar', color: 'sky', status: 'Completed', time: '2 hours ago' },
+                    { id: 2, title: 'New user registration', description: 'Sarah Johnson joined the platform', icon: 'user-plus', color: 'slate', status: 'Active', time: '5 hours ago' },
+                    { id: 3, title: 'Weekly report generated', description: 'Q3 performance report is ready for review', icon: 'chart-line', color: 'sky', status: 'Pending', time: '1 day ago' }
+                ],
+                stats: {
+                    revenue: 124580,
+                    users: 3842,
+                    conversion: 4.7,
+                    session: '4m 32s'
+                },
+                
+                toggleSidebar() {
+                    this.sidebarOpen = !this.sidebarOpen;
+                    document.body.classList.toggle('overflow-hidden', this.sidebarOpen);
+                },
+                
+                refreshData() {
+                    // Simulate data refresh
+                    const refreshBtn = document.querySelector('[title="Refresh Data"]');
+                    if (refreshBtn) {
+                        refreshBtn.classList.add('animate-spin');
+                    }
+                    
+                    setTimeout(() => {
+                        if (refreshBtn) {
+                            refreshBtn.classList.remove('animate-spin');
+                        }
+                        // Update some random stats
+                        this.stats.revenue += Math.floor(Math.random() * 1000);
+                        this.stats.users += Math.floor(Math.random() * 50);
+                        this.stats.conversion = (4.7 + (Math.random() * 0.5 - 0.25)).toFixed(1);
+                        
+                        // Add a notification
+                        this.notifications.unshift({
+                            id: Date.now(),
+                            title: 'Data refreshed',
+                            message: 'Dashboard data has been updated',
+                            icon: 'sync-alt',
+                            color: 'sky',
+                            time: 'Just now'
+                        });
+                    }, 1000);
+                },
+                
+                init() {
+                    // Initialize progress bar animations
+                    setTimeout(() => {
+                        const progressBars = document.querySelectorAll('.progress-bar');
+                        progressBars.forEach(bar => {
+                            const width = bar.style.width;
+                            bar.style.width = '0';
+                            setTimeout(() => {
+                                bar.style.width = width;
+                            }, 100);
+                        });
+                    }, 300);
+                    
+                    // Auto-refresh simulation
+                    setInterval(() => {
+                        this.stats.revenue += Math.floor(Math.random() * 100);
+                        this.stats.users += Math.floor(Math.random() * 10);
+                    }, 30000);
+                }
+            }
+        }
+        
+        // Initialize dashboard when page loads
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('dashboard', dashboard);
+        });
     </script>
-    
+<style>
+.tailflux-bottom-bar {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background: #111;
+    color: #fff;
+    text-align: center;
+    padding: 12px 0;
+    font-family: inherit;
+    z-index: 9999;
+}
+.tailflux-bottom-bar a {
+    color: #fff;
+    text-decoration: underline;
+    font-weight: bold;
+}
+</style>
 </body>
 </html>
