@@ -67,7 +67,7 @@ export const handleGoogleOAuthCallback = async (req, res) => {
     // Access token
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure: false, // true in production with HTTPS
+      secure: process.env.SECURE_COOKIE === 'true', // true in production with HTTPS
       sameSite: 'lax', // CSRF protection
       maxAge: 15 * 60 * 1000 // 15 minutes
     });
@@ -75,7 +75,7 @@ export const handleGoogleOAuthCallback = async (req, res) => {
     // Refresh token
     res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
-        secure: false,       // true in production with HTTPS
+        secure: process.env.SECURE_COOKIE === 'true',       // true in production with HTTPS
         sameSite: 'lax',  // With lax I can use it on redirects
         maxAge: 15 * 24 * 60 * 60 * 1000 // 15 days
     });
@@ -150,7 +150,7 @@ export const handleFacebookOAuthCallback = async (req, res) => {
     // Access token
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
-      secure: false, // true in production with HTTPS
+      secure: process.env.SECURE_COOKIE === 'true', // true in production with HTTPS
       sameSite: 'lax', // CSRF protection
       maxAge: 15 * 60 * 1000 // 15 minutes
     });
@@ -158,7 +158,7 @@ export const handleFacebookOAuthCallback = async (req, res) => {
     // Refresh token
     res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
-        secure: false,       // true in production with HTTPS
+        secure: process.env.SECURE_COOKIE === 'true',       // true in production with HTTPS
         sameSite: 'lax',  // With lax I can use it on redirects
         maxAge: 15 * 24 * 60 * 60 * 1000 // 15 days
     });

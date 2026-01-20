@@ -101,7 +101,7 @@ export async function loginController(req, res, next) {
         // Access token
         res.cookie("accessToken", accessToken, {
             httpOnly: true,    
-            secure: false,       // true in production with HTTPS
+            secure: process.env.SECURE_COOKIE === 'true',       // true in production with HTTPS
             sameSite: 'lax',  // With lax I can use it on redirects
             maxAge: rememberMeAccessTime
         });
@@ -109,7 +109,7 @@ export async function loginController(req, res, next) {
         // Refresh token
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            secure: false,       // true in production with HTTPS
+            secure: process.env.SECURE_COOKIE === 'true',       // true in production with HTTPS
             sameSite: 'lax',  // With lax I can use it on redirects
             maxAge: rememberMeRefreshTime
         });
@@ -219,13 +219,13 @@ export async function logoutController(req, res, next) {
         // Clear the cookies
         res.clearCookie("accessToken", {
             httpOnly: true,
-            secure: false, // true in production with HTTPS
+            secure: process.env.SECURE_COOKIE === 'true', // true in production with HTTPS
             sameSite: 'strict'   // LAX for CSRF protection and strict for same-site requests
         }); 
 
         res.clearCookie("refreshToken", {
             httpOnly: true,
-            secure: false, // true in production with HTTPS
+            secure: process.env.SECURE_COOKIE === 'true', // true in production with HTTPS
             sameSite: 'strict'   // LAX for CSRF protection and strict for same-site requests
         });
         return res.redirect('/login');

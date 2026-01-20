@@ -49,7 +49,7 @@ export async function authenticateRefreshToken(req, res, next) {
 
         res.cookie('accessToken', accessToken, {
             httpOnly: true,
-            secure: false,       // true in production with HTTPS
+            secure: process.env.SECURE_COOKIE === 'true',       // true in production with HTTPS
             sameSite: 'lax',  // With lax I can use it on redirects
             maxAge: 15 * 60 * 1000       // 15 minutes
         });

@@ -43,13 +43,13 @@ export async function deleteUserController(req, res, next) {
         // Delete cookies
         res.clearCookie("accessToken", {
             httpOnly: true,
-            secure: false,
+            secure: process.env.SECURE_COOKIE === 'true',
             sameSite: 'strict'
         });
 
         res.clearCookie("refreshToken", {
             httpOnly: true,
-            secure: false,
+            secure: process.env.SECURE_COOKIE === 'true',
             sameSite: 'strict'
         });
 

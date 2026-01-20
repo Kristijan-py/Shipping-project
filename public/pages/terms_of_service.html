@@ -15,9 +15,6 @@
 
 </head>
 <body>
-    <!-- HEADER -->
-    <div id="header"></div>
-
     <section class="max-w-4xl mx-auto py-10 px-6 md:px-8 lg:px-10 mt-16">
         <h2 class="text-3xl font-extrabold text-slate-900 mb-6">Terms & Conditions</h2>
         
@@ -53,9 +50,9 @@
 
 
         <div class="flex flex-wrap gap-4">
-            <a href="/#enroll" class="btn-shine px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transform hover:scale-[1.03] shadow-lg transition">
-                Join Us Now
-            </a>
+            <button id="btn-back" class="btn-shine px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transform hover:scale-[1.03] shadow-lg cursor-pointer transition">
+                Go back
+            </button>
             <a href="/pages/privacy_policy.html" class="px-6 py-2 border border-indigo-600 text-indigo-600 rounded-lg hover:bg-indigo-50 transform hover:scale-[1.03] shadow-lg transition">
                 Privacy Policy
             </a>
@@ -70,6 +67,11 @@
                 document.getElementById('header').innerHTML = data;
             })
             .catch(error => console.error("Header load error:", error));
+
+        document.getElementById('btn-back').addEventListener('click', function(event) {
+            event.preventDefault();
+            window.history.back();
+        });
     </script>
 </body>
 </html>
