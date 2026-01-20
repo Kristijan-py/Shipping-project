@@ -80,7 +80,7 @@ export const handleGoogleOAuthCallback = async (req, res) => {
         maxAge: 15 * 24 * 60 * 60 * 1000 // 15 days
     });
 
-    res.redirect('/dashboard');
+    res.redirect(`${process.env.CLIENT_URL}/dashboard`);
 }
 
 
@@ -163,5 +163,5 @@ export const handleFacebookOAuthCallback = async (req, res) => {
         maxAge: 15 * 24 * 60 * 60 * 1000 // 15 days
     });
 
-    res.redirect('/dashboard');
+    res.redirect(`${process.env.CLIENT_URL}/dashboard`);
 }

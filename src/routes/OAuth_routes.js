@@ -18,7 +18,7 @@ router.use(cookieParser());
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost:3000/auth/google/callback"
+    callbackURL: `${process.env.CLIENT_URL}/auth/google/callback`
   }, handleGoogleOAuth // controller function
 )); 
 
@@ -29,7 +29,7 @@ router.get('/google',
 }));
 
 router.get('/google/callback', 
-  passport.authenticate('google', { failureRedirect: '/login', session: false }), 
+  passport.authenticate('google', { failureRedirect: `${process.env.CLIENT_URL}/login`, session: false }), 
   handleGoogleOAuthCallback // controller function
 ); // if authentication fails, redirect to login
 
@@ -39,7 +39,7 @@ router.get('/google/callback',
 passport.use(new FacebookStrategy({
     clientID: process.env.FACEBOOK_CLIENT_ID,
     clientSecret: process.env.FACEBOOK_SECRET_KEY,
-    callbackURL: "http://localhost:3000/auth/facebook/callback",
+    callbackURL: `${process.env.CLIENT_URL}/auth/facebook/callback`,
     profileFields: ['id', 'displayName', 'emails'] // Request email field
   },
   handleFacebookOAuth // controller function
@@ -52,7 +52,7 @@ router.get('/facebook',
 }));
 
 router.get('/facebook/callback',
-  passport.authenticate('facebook', { failureRedirect: '/login', session: false }),
+  passport.authenticate('facebook', { failureRedirect: `${process.env.CLIENT_URL}/login`, session: false }),
   handleFacebookOAuthCallback // controller function);
 ); // if authentication fails, redirect to login
 

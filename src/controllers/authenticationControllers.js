@@ -49,7 +49,7 @@ export async function signupController(req, res, next) {
             return res.status(500).send({ error: "System error, try again later" });
         }
 
-        const link = `${process.env.BASE_URL}/api/verify-email?token=${emailToken}`; // sending unhashed token because in query it should be as it is different than in the DB for security(hackers!). We will hash in verify controller instead.
+        const link = `${process.env.CLIENT_URL}/api/verify-email?token=${emailToken}`; // sending unhashed token because in query it should be as it is different than in the DB for security(hackers!). We will hash in verify controller instead.
         await verifyEmail(normalizeEmail, link); // sendimg a mail to the user
 
         res.status(201).send({ message: "A verification link was sent to your email." });
@@ -139,12 +139,11 @@ export async function verifyEmailController(req, res, next) {
         if(isVerified === false){
             throw new AppError('Error verifying email, try again later!', 500);
         }
-        res.redirect('/login'); // redirect to login page after verification
+        res.redirect(`${process.env.CLIENT_URL}/login`); // redirect to login page after verification
         
     } catch (error) {
         next(new AppError(`Error while verifying email: ${error.message}`, 500));
     }
-
 };
 
 // @POST forgot password
@@ -166,7 +165,7 @@ export async function forgotPasswordController(req, res, next) {
 
         await insertUserResetToken(resetTokenHash, resetTokenExpiration, user.email); // store hashed token in DB
 
-        const link = `${process.env.BASE_URL}/reset-password?resetToken=${resetToken}`; // link to reset password
+        const link = `${process.env.CLIENT_URL}/reset-password?resetToken=${resetToken}`; // link to reset password
         await sendresetEmail(user.email, link); // send the reset password link to the user's email
         return res.status(200).send({message: "Password reset link sent to your email!"});
 
